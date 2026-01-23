@@ -21,4 +21,4 @@ class CustomUser(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return self.email or self.username
+        return self.email
