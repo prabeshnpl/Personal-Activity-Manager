@@ -19,23 +19,23 @@ class Organization(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-class Member(models.Model):
-    ROLE_CHOICES = (
-        ('owner', 'Owner'),
-        ('admin', 'Admin'),
-        ('member', 'Member'),
-    )
+    class Member(models.Model):
+        ROLE_CHOICES = (
+            ('owner', 'Owner'),
+            ('admin', 'Admin'),
+            ('member', 'Member'),
+        )
 
-    organization = models.ForeignKey(Organization, related_name="members", on_delete=models.CASCADE)
-    user = models.ForeignKey(CustomUser, related_name="memberships", on_delete=models.CASCADE)
-    role = models.CharField(choices=ROLE_CHOICES, max_length=128)
+        organization = models.ForeignKey(Organization, related_name="members", on_delete=models.CASCADE)
+        user = models.ForeignKey(CustomUser, related_name="memberships", on_delete=models.CASCADE)
+        role = models.CharField(choices=ROLE_CHOICES, max_length=128)
 
-    updated_at = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+        updated_at = models.DateTimeField(auto_now=True)
+        created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        unique_together = ('organization', 'user')
+        class Meta:
+            unique_together = ('organization', 'user')
 
-    def __str__(self):
-        return f"{self.user.email}"
+        def __str__(self):
+            return f"{self.user.email}"
     
