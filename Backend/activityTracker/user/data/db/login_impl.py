@@ -9,23 +9,24 @@ from rest_framework_simplejwt.tokens import RefreshToken
 class LoginImpl:
     def login_user(self, data) -> TokenEntity | Response:
         try:
-            with transaction.atomic():
-                email = data.get("email")
-                password = data.get("password")
+            email = data.get("email")
+            password = data.get("password")
+            print(email, password)
+  
+            user =  authenticate(email=email, password=password)
 
-                if user:=CustomUser.objects.filter(email=email).first():
-                    if not user.is_active:
-                        raise AuthenticationFailed("User is not active. Please verify your email address through the provided link in your email.")
-                 
-                user =  authenticate(email=email, password=password)
+            print(user)
+            if not user:
+                return Response({'detail':"Invalid credentials."}, status=400)
 
-                refresh = RefreshToken.for_user(user) # type: ignore
-                
-                return self.to_entity({
-                    "refresh": str(refresh),
-                    "access": str(refresh.access_token),
-                    "user": user,
-                })
+            refresh = RefreshToken.for_user(user) # type: ignore
+            print(user)
+            
+            return self.to_entity({
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+                "user": user,
+            })
 
         except Exception as e:
             print(f"Error in login_user: {repr(e)}")

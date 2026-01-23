@@ -1,28 +1,29 @@
 from abc import ABC, abstractmethod
+from typing import List, Optional
 from user.domain.entity.token_entity import TokenEntity
-from user.models import CustomUser
 from user.domain.entity.user_entity import CustomUserEntity
+from rest_framework.response import Response
 
 class CustomUserRepository(ABC):
 
     @abstractmethod
-    def create_user(self, data: dict) -> TokenEntity:
+    def create_user(self, data: dict) -> Optional[TokenEntity] | Optional[Response]:
         pass
 
     @abstractmethod
-    def get_user_by_id(self, id:int) -> CustomUserEntity:
+    def get_user_by_id(self, id:int) -> Optional[CustomUserEntity] | Optional[Response]:
         pass
 
     @abstractmethod 
-    def delete_user(self, id:int) -> CustomUserEntity:
+    def delete_user(self, id:int) -> None | Optional[Response]:
         pass
 
     @abstractmethod 
-    def update_user(self, id:int, data:dict) -> CustomUserEntity:
+    def update_user(self, id:int, data:dict) -> Optional[CustomUserEntity] | Optional[Response]:
         pass
 
     @abstractmethod 
-    def list_user(self, search_params:dict) -> CustomUserEntity:
+    def list_user(self, search_params:dict) -> Optional[List[CustomUserEntity]] | Optional[Response]:
         pass
 
 
