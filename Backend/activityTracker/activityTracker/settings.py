@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'organization',
     'tasks',
     'finance',
+    'notification',
+    'roadmap',
     
     
 ]

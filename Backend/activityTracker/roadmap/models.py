@@ -1,3 +1,100 @@
 from django.db import models
+from organization.models import Organization
+from user.models import CustomUser
+from tasks.models import Task
 
-# Create your models here.
+
+class Roadmap(models.Model):
+    STATUS_CHOICES = (
+        ('active', 'Active'),
+        ('paused', 'Paused'),
+        ('completed', 'Completed'),
+    )
+
+    organization = models.ForeignKey(
+        Organization,
+        related_name="roadmaps",
+        on_delete=models.CASCADE
+    )
+
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    created_by = models.ForeignKey(
+        CustomUser,
+        related_name="created_roadmaps",
+        on_delete=models.SET_NULL,
+        null=True
+    )
+
+    status = models.CharField(
+        max_length=16,
+        choices=STATUS_CHOICES,
+        default='active'
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+class Milestone(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('missed', 'Missed'),
+    )
+
+    roadmap = models.ForeignKey(
+        Roadmap,
+        related_name="milestones",
+        on_delete=models.CASCADE
+    )
+
+    title = models.CharField(max_length=255)
+
+    start_date = models.DateField()
+    due_date = models.DateField()
+
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    linked_task = models.ForeignKey(
+        Task,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
+    status = models.CharField(
+        max_length=16,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+class ProgressSnapshot(models.Model):
+    roadmap = models.ForeignKey(
+        Roadmap,
+        related_name="snapshots",
+        on_delete=models.CASCADE
+    )
+
+    snapshot_date = models.DateField()
+
+    expected_completion_percent = models.FloatField()
+    actual_completion_percent = models.FloatField()
+    delta_percent = models.FloatField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('roadmap', 'snapshot_date')
+
+
