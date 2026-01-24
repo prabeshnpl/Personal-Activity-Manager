@@ -9,6 +9,8 @@ class LoginTokenSerializer(serializers.Serializer):
         return {
             'id':obj.user.id,
             'username':obj.user.username,
-            'email':obj.user.email
+            'email':obj.user.email,
+            'first_name':obj.user.first_name,
+            'last_name':obj.user.last_name
         }
     

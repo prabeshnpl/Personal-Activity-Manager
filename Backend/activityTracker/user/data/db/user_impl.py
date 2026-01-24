@@ -1,4 +1,6 @@
+from os import name
 from typing import List, Optional
+from organization.models import Member, Organization
 from user.domain.entity.token_entity import TokenEntity
 from user.domain.entity.user_entity import CustomUserEntity
 from user.domain.repository.user_repo import CustomUserRepository
@@ -8,7 +10,7 @@ from user.models import CustomUser
 from rest_framework_simplejwt.tokens import RefreshToken
 
 class CustomUserRepoImpl(CustomUserRepository):
-    def create_user(self, data: dict) -> Optional[TokenEntity] | Response:
+    def create_user(self, data: dict) -> Optional[TokenEntity] | Optional[Response]:
         try:
             with transaction.atomic():
                 user_data = {
@@ -20,6 +22,17 @@ class CustomUserRepoImpl(CustomUserRepository):
                 user = CustomUser(**user_data)
                 user.set_password(data.get("password"))
                 user.save()
+
+                organization = Organization.objects.create(
+                    name=f"{user.first_name} {user.last_name}",
+                    type="personal",
+                    created_by=user
+                )
+                member = Member.objects.create(
+                    organization=organization,
+                    user=user,
+                    role="owner"
+                )
 
                 refresh = RefreshToken.for_user(user) # type: ignore
 

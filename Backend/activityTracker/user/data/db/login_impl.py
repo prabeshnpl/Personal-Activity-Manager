@@ -1,8 +1,5 @@
 from user.domain.entity.token_entity import TokenEntity
-from django.db import transaction
 from rest_framework.response import Response
-from rest_framework.exceptions import AuthenticationFailed
-from user.models import CustomUser
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -11,16 +8,13 @@ class LoginImpl:
         try:
             email = data.get("email")
             password = data.get("password")
-            print(email, password)
   
             user =  authenticate(email=email, password=password)
 
-            print(user)
             if not user:
                 return Response({'detail':"Invalid credentials."}, status=400)
 
             refresh = RefreshToken.for_user(user) # type: ignore
-            print(user)
             
             return self.to_entity({
                 "refresh": str(refresh),

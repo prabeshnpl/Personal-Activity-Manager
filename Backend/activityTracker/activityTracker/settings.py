@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
 
     'user',
@@ -178,8 +179,8 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),  
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),     
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),  
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=3),     
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
     'AUTH_HEADER_TYPES': ('Bearer',),
