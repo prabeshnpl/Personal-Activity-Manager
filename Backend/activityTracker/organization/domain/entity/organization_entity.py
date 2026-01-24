@@ -6,8 +6,8 @@ class OrganizationEntity:
         self,
         id: int,
         name: str,
-        type: str,  # "personal", "family", or "business"
-        created_by: int,  # store user id or a CustomUserEntity reference
+        type: str, 
+        created_by: Optional['CustomUser'], # type: ignore
         created_at: Optional[datetime] = None,
         updated_at: Optional[datetime] = None,
     ):
