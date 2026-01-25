@@ -6,7 +6,7 @@ class MemberEntity:
         self,
         id: int,
         organization: int,
-        user: int,
+        user: Optional['CustomUser'], # type: ignore
         role: str,
         created_at: Optional[datetime] = None,
         updated_at: Optional[datetime] = None,
