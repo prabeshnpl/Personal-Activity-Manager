@@ -1,11 +1,13 @@
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
 from user.adapter.serializers.login_token_serializer import LoginTokenSerializer
 from user.data.db.login_impl import LoginImpl
+from utils.tenantViewsets import BaseTenantAPIView
 
-class LoginView(APIView):
+class LoginView(BaseTenantAPIView):
+
+    require_organization = False
     
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 

@@ -1,9 +1,12 @@
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from utils.tenantViewsets import BaseTenantAPIView
 
-class LogoutView(APIView):
+class LogoutView(BaseTenantAPIView):
+
+    require_organization = False
+    
     def post(self, request):
         try:
             refresh_token = request.data["refresh"]

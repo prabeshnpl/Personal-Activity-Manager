@@ -1,4 +1,3 @@
-from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from organization.adapter.serializers.organization_serializer import OrganizationSerializer
 from organization.data.db.organization_impl import OrganizationRepositoryImpl
@@ -6,13 +5,16 @@ from organization.domain.usecase.organization_usecase import GetOrganizationById
 from utils.pagniator import CustomPageNumberPagination
 from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
 from rest_framework.response import Response
+from utils.tenantViewsets import BaseTenantModelViewSet
 
-class OrganizationViewset(viewsets.ModelViewSet):
+class OrganizationViewset(BaseTenantModelViewSet):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
     repository = OrganizationRepositoryImpl
     permission_classes = [IsAuthenticated]
     serializer_class = OrganizationSerializer
     pagination_class = CustomPageNumberPagination
+
+    require_organization = False
 
     def retrieve(self, request, pk:int):
         usecase = GetOrganizationByIdUseCase(repo=self.repository())

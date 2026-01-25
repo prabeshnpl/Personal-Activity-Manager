@@ -1,4 +1,3 @@
-from rest_framework.views import APIView 
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
 from rest_framework import status
@@ -8,10 +7,14 @@ from user.adapter.serializers.user_serializer import CustomUserSerializer
 from user.data.db.user_impl import CustomUserRepoImpl
 from user.domain.usecase.user_usecase import CreateCustomUserUseCase
 from user.models import CustomUser
+from utils.tenantViewsets import BaseTenantAPIView
 from utils.pagniator import CustomPageNumberPagination
 
 
-class CreateUserView(APIView):
+class CreateUserView(BaseTenantAPIView):
+
+    require_organization = False
+    
     parser_classes = [JSONParser, MultiPartParser, FormParser]
     repository = CustomUserRepoImpl
 

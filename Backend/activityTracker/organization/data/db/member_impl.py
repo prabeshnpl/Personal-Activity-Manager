@@ -7,13 +7,12 @@ from organization.models import Member
 class MemberRepositoryImpl(MemberRepository):
     def list_members(self, search_params: dict) -> List[MemberEntity] | Response:
         try:
-            organization=  search_params.get("organization")
+            organization =  search_params.get("organization")
             members = Member.objects.filter(organization=organization)
 
             if is_admin:=search_params.get("is_admin"):
                 members.filter(role = 'admin' if is_admin=='true' else 'member')
 
-            print("yes1")
             return [self.to_entity(member) for member in members]
         except Exception as e:
             print(f"Error occured in fetching members:{repr(e)}")

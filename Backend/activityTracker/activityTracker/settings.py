@@ -65,7 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'activityTracker.middlewares.TenantMiddleware'
+    # 'activityTracker.middlewares.TenantMiddleware'
 ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -162,6 +162,7 @@ CORS_ALLOW_ALL_ORIGINS = False # Set True Only for development
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "X-CSRFToken",
+    "X-ORG-ID"
 ]
 
 CORS_ALLOW_METHODS = [
@@ -192,11 +193,6 @@ SIMPLE_JWT = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
     ),
     # standard type safety
     'DATETIME_FORMAT': "%Y-%m-%dT%H:%M:%SZ",
