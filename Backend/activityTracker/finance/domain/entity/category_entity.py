@@ -5,7 +5,7 @@ class CategoryEntity:
     def __init__(
         self,
         id: int,
-        organization: int,
+        organization: ['Organization'], # type: ignore
         name: str,
         category_type: str,
         created_at: Optional[datetime] = None,

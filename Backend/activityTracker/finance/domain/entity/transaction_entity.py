@@ -6,10 +6,10 @@ class TransactionEntity:
     def __init__(
         self,
         id: int,
-        organization: int,
-        account: int,
-        category: Optional[int] = None,
-        created_by: Optional[int] = None,
+        organization: ['Organization'], # type: ignore
+        account: ['Account'], # type: ignore
+        category: ['Category'] = None, # type: ignore
+        created_by: ['CustomUser'] = None, # type: ignore
         amount: Decimal = Decimal("0.00"),
         transaction_type: str = "income",
         occurred_at: Optional[datetime] = None,

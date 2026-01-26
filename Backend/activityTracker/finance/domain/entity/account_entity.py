@@ -5,7 +5,7 @@ class AccountEntity:
     def __init__(
         self,
         id: int,
-        organization: int,
+        organization: ['Organization'], # type: ignore
         name: str,
         account_type: str,
         is_active: bool = True,
