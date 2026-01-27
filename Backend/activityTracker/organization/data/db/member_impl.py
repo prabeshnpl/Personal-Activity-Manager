@@ -33,18 +33,50 @@ class MemberRepositoryImpl(MemberRepository):
             print(f"Error occured in fetching members:{repr(e)}")
             return Response({'detail':f"{str(e)}"}, status=500)
         
-        
     def create_member(self, data: dict, organization:int, role:str) -> MemberEntity | Response:
-        return super().create_member(data, organization, role)
+        try:
+            if data.get('member_type') not in ['cash', 'bank', 'digital']:
+                return Response({'detail':"Invalid member_type"}, status=400)
+            member = Member.objects.create(**data)
+            
+            return self.to_entity(member)
+        except Exception as e:
+            print(f"Error occured while creating member:{repr(e)}")
+            return Response({"detail":f"str{e}"}, status=500)
     
     def update_member(self, id: int, data: dict, organization:int, role:str) -> MemberEntity | Response:
-        return super().update_member(id, data,organization, role)
-    
+        try:
+            member = Member.objects.filter(organization=organization, id=id).first()
+            if not member:
+                return Response({'detail':'Invalid member'}, status=400)
+
+            for key, value in data.items():
+                if key in ['id', 'organization', 'created_at']:
+                    continue
+                elif key=='member_type':
+                    if value not in ['cash', 'bank', 'digital']:
+                        return Response({'detail':"Invalid member_type"}, status=400)
+                setattr(member, key, value)
+                
+            return self.to_entity(member) # type: ignore
+        except Exception as e:
+            print(f"Error occured while updating member:{repr(e)}")
+            return Response({"detail":f"str{e}"}, status=500)
+        
     def get_member_by_id(self, id: int, organization:int, role:str) -> MemberEntity | Response:
-        return super().get_member_by_id(id, organization, role)
+        try:
+            member = Member.objects.filter(organization=organization, id=id).first()
+            return self.to_entity(member) # type: ignore
+        except Exception as e:
+            print(f"Error occured while creating member:{repr(e)}")
+            return Response({"detail":f"str{e}"}, status=500)
     
-    def delete_member(self, id: int, organization:int, role:str) -> MemberEntity | Response:
-        return super().delete_member(id, organization, role)
+    def delete_member(self, id: int, organization:int, role:str) -> Response:
+        member = Member.objects.filter(organization=organization, id=id).first()
+        if member:
+            member.delete() 
+            return Response({'detail':"Deleted successfully"})
+        return Response({'detail':"Not found"}, status=400)
     
     def to_entity(self, obj:Member):
         return MemberEntity(
