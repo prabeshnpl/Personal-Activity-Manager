@@ -19,7 +19,10 @@ class TransactionRepositoryImpl(TransactionRepository):
         
     def create_transaction(self, data: dict, organization:int, role:str) -> TransactionEntity | Response:
         try:
-            transaction = Transaction.objects.create(**data, organization=organization)
+            if data.get('transaction_type') not in ['income', 'expense']:
+                return Response({'detail':"Invalid transaction_type"}, status=400)
+            
+            transaction = Transaction.objects.create(**data)
             return self.to_entity(transaction)
         except Exception as e:
             print(f"Error occured while creating transaction:{repr(e)}")
@@ -28,10 +31,15 @@ class TransactionRepositoryImpl(TransactionRepository):
     def update_transaction(self, id: int, data: dict, organization:int, role:str) -> TransactionEntity | Response:
         try:
             transaction = Transaction.objects.filter(organization=organization, id=id).first()
+            if not transaction:
+                return Response({'detail':'Invalid transaction'}, status=400)
 
-            for key, value in data:
+            for key, value in data.items():
                 if key in ['id', 'organization', 'created_at', 'account', 'created_by']:
-                    pass
+                    continue
+                elif key=='transaction_type':
+                    if value not in ['income', 'expense']:
+                        return Response({'detail':"Invalid transaction_type"}, status=400)
                 setattr(transaction, key, value)
                 
             return self.to_entity(transaction) # type: ignore

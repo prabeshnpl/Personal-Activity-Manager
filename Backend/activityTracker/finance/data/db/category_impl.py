@@ -16,7 +16,10 @@ class CategoryRepositoryImpl(CategoryRepository):
         
     def create_category(self, data: dict, organization:int, role:str) -> CategoryEntity | Response:
         try:
-            category = Category.objects.create(**data, organization=organization)
+            if data.get('category_type') not in ['income', 'expense']:
+                return Response({'detail':"Invalid category_type"}, status=400)
+            
+            category = Category.objects.create(**data)
             return self.to_entity(category)
         except Exception as e:
             print(f"Error occured while creating category:{repr(e)}")
@@ -25,10 +28,15 @@ class CategoryRepositoryImpl(CategoryRepository):
     def update_category(self, id: int, data: dict, organization:int, role:str) -> CategoryEntity | Response:
         try:
             category = Category.objects.filter(organization=organization, id=id).first()
+            if not category:
+                return Response({'detail':'Invalid category'}, status=400)
 
-            for key, value in data:
+            for key, value in data.items():
                 if key in ['id', 'organization', 'created_at']:
-                    pass
+                    continue
+                elif key=='category_type':
+                    if value not in ['income', 'expense']:
+                        return Response({'detail':"Invalid category_type"}, status=400)
                 setattr(category, key, value)
                 
             return self.to_entity(category) # type: ignore

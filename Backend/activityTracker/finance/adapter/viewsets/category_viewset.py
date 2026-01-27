@@ -69,8 +69,12 @@ class CategoryViewset(BaseTenantModelViewSet):
     def create(self, request, *args, **kwargs):
         usecase = CreateCategoryUseCase(repo=self.repository())
         data = request.data
+        data['organization'] = request.organization.id
 
-        entity = usecase.execute(data=data, organization=request.organization,role=request.role)
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+
+        entity = usecase.execute(data=serializer.validated_data, organization=request.organization,role=request.role)
 
         if isinstance(entity, Response):
             return entity
@@ -85,11 +89,17 @@ class CategoryViewset(BaseTenantModelViewSet):
 
         return Response(serializer.data)
     
-    def update(self, request, pk):
+    def update(self, request, *args, **kwargs):
         data = request.data
 
+        pk = (kwargs.get("pk"))
+        partial=kwargs.get('partial')
+
+        serializer = self.get_serializer(data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
         usecase = UpdateCategoryUseCase(repo=self.repository())
-        entity = usecase.execute(id=pk, data=data, organization=request.organization, role=request.role)
+        entity = usecase.execute(id=pk, data=serializer.validated_data, organization=request.organization, role=request.role) # type: ignore
 
         if isinstance(entity, Response):
             return entity

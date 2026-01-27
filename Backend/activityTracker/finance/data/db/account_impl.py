@@ -16,7 +16,10 @@ class AccountRepositoryImpl(AccountRepository):
         
     def create_account(self, data: dict, organization:int, role:str) -> AccountEntity | Response:
         try:
-            account = Account.objects.create(**data, organization=organization)
+            if data.get('account_type') not in ['cash', 'bank', 'digital']:
+                return Response({'detail':"Invalid account_type"}, status=400)
+            account = Account.objects.create(**data)
+            
             return self.to_entity(account)
         except Exception as e:
             print(f"Error occured while creating account:{repr(e)}")
@@ -25,15 +28,20 @@ class AccountRepositoryImpl(AccountRepository):
     def update_account(self, id: int, data: dict, organization:int, role:str) -> AccountEntity | Response:
         try:
             account = Account.objects.filter(organization=organization, id=id).first()
+            if not account:
+                return Response({'detail':'Invalid account'}, status=400)
 
-            for key, value in data:
+            for key, value in data.items():
                 if key in ['id', 'organization', 'created_at']:
-                    pass
+                    continue
+                elif key=='account_type':
+                    if value not in ['cash', 'bank', 'digital']:
+                        return Response({'detail':"Invalid account_type"}, status=400)
                 setattr(account, key, value)
                 
             return self.to_entity(account) # type: ignore
         except Exception as e:
-            print(f"Error occured while creating account:{repr(e)}")
+            print(f"Error occured while updating account:{repr(e)}")
             return Response({"detail":f"str{e}"}, status=500)
     
     def get_account_by_id(self, id: int, organization:int, role:str) -> AccountEntity | Response:
