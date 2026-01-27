@@ -1,11 +1,12 @@
 from rest_framework.permissions import IsAuthenticated
-from finance.adapter.serializers.category_serializer import CategorySerializer
+from finance.adapter.serializers.category_serializer import CategoryBreakdownSerializer, CategorySerializer
 from finance.data.db.category_impl import CategoryRepositoryImpl
-from finance.domain.usecase.category_usecase import CreateCategoryUseCase, DeleteCategoryUseCase, GetCategoryByIdUseCase, ListCategoriesUseCase, UpdateCategoryUseCase
+from finance.domain.usecase.category_usecase import BreakdownCategoriesUsecase, CreateCategoryUseCase, DeleteCategoryUseCase, GetCategoryByIdUseCase, ListCategoriesUseCase, UpdateCategoryUseCase
 from utils.pagniator import CustomPageNumberPagination
 from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
 from rest_framework.response import Response
 from utils.tenantViewsets import BaseTenantModelViewSet
+from rest_framework.decorators import action
 
 class CategoryViewset(BaseTenantModelViewSet):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
@@ -113,3 +114,23 @@ class CategoryViewset(BaseTenantModelViewSet):
         )
 
         return Response(serializer.data)
+    
+    @action(methods=['GET'], detail=False, url_path='breakdown')
+    def category_breakdown(self, request):
+        usecase = BreakdownCategoriesUsecase(repo=self.repository())
+        search_params = {k: v[0] if isinstance(v, list) else v for k, v in request.query_params.items()}
+        search_params['user'] = request.user
+        entities = usecase.execute(search_params=search_params, organization=request.organization,role=request.role)
+
+        if isinstance(entities, Response):
+            return entities
+        
+        serializer = CategoryBreakdownSerializer(
+            entities, many=True, 
+            context={
+                "timezone": request.headers.get("X-Timezone"), 
+                "request":request
+            }
+        )
+        return Response(serializer.data)
+

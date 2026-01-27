@@ -41,3 +41,11 @@ class ListCategoriesUseCase:
 
     def execute(self, search_params: dict, organization:int, role:str) -> List[CategoryEntity] | Response:
         return self.repo.list_categories(search_params=search_params, organization=organization, role=role)
+
+class BreakdownCategoriesUsecase:
+    def __init__(self, repo: CategoryRepository):
+        self.repo = repo
+
+    def execute(self, search_params: dict, organization:int, role:str) -> List[CategoryEntity] | Response:
+        return self.repo.breakdown_categories(search_params=search_params, organization=organization, role=role)
+

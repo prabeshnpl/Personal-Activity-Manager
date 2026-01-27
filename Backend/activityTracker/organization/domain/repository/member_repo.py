@@ -6,21 +6,26 @@ from rest_framework.response import Response
 class MemberRepository(ABC):
 
     @abstractmethod
-    def create_member(self, data: dict) -> MemberEntity | Response:
+    def create_member(self, data: dict, organization:int, role:str) -> MemberEntity | Response:
         pass
 
     @abstractmethod
-    def get_member_by_id(self, id: int) -> MemberEntity | Response:
+    def get_member_by_id(self, id: int, organization:int, role:str) -> MemberEntity | Response:
         pass
 
     @abstractmethod
-    def update_member(self, id: int, data: dict) -> MemberEntity | Response:
+    def update_member(self, id: int, data: dict, organization:int, role:str) -> MemberEntity | Response:
         pass
 
     @abstractmethod
-    def delete_member(self, id: int) -> MemberEntity | Response:
+    def delete_member(self, id: int, organization:int, role:str) -> MemberEntity | Response:
         pass
 
     @abstractmethod
-    def list_members(self, search_params: dict) -> List[MemberEntity] | Response:
+    def list_members(self, search_params: dict, organization:int, role:str) -> List[MemberEntity] | Response:
         pass
+        
+    @abstractmethod
+    def breakdown_members(self, search_params: dict, organization:int, role:str) -> List[MemberEntity] | Response:
+        pass
+

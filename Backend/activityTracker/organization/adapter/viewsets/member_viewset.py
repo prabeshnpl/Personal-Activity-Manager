@@ -1,11 +1,12 @@
 from rest_framework.permissions import IsAuthenticated
-from organization.adapter.serializers.member_serializer import MemberSerializer
+from organization.adapter.serializers.member_serializer import MemberBreakdownSerializer, MemberSerializer
 from organization.data.db.member_impl import MemberRepositoryImpl
-from organization.domain.usecase.member_usecase import GetMemberByIdUseCase, ListMembersUseCase
+from organization.domain.usecase.member_usecase import GetMemberByIdUseCase, ListMembersUseCase, MemberBreakdownUsecase
 from utils.pagniator import CustomPageNumberPagination
 from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
 from rest_framework.response import Response
 from utils.tenantViewsets import BaseTenantModelViewSet
+from rest_framework.decorators import action
 
 class MemberViewset(BaseTenantModelViewSet):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
@@ -18,7 +19,11 @@ class MemberViewset(BaseTenantModelViewSet):
 
     def retrieve(self, request, pk:int):
         usecase = GetMemberByIdUseCase(repo=self.repository())
-        response = usecase.execute(id=pk)
+        response = usecase.execute(
+            id=pk, 
+            organization=request.organization, 
+            role=request.role
+        )
         if isinstance(response, Response):
             return response
         response = self.get_serializer(
@@ -35,7 +40,11 @@ class MemberViewset(BaseTenantModelViewSet):
         search_params = {k: v[0] if isinstance(v, list) else v for k, v in request.query_params.items()}
         search_params['user'] = request.user
         search_params['organization'] = request.organization
-        entities = usecase.execute(search_params=search_params)
+        entities = usecase.execute(
+            search_params=search_params, 
+            organization=request.organization, 
+            role=request.role
+        )
 
         if isinstance(entities, Response):
             return entities
@@ -68,3 +77,24 @@ class MemberViewset(BaseTenantModelViewSet):
     
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
+    
+        
+    @action(methods=['GET'], detail=False, url_path='breakdown')
+    def category_breakdown(self, request):
+        usecase = MemberBreakdownUsecase(repo=self.repository())
+        search_params = {k: v[0] if isinstance(v, list) else v for k, v in request.query_params.items()}
+        search_params['user'] = request.user
+        entities = usecase.execute(search_params=search_params, organization=request.organization,role=request.role)
+
+        if isinstance(entities, Response):
+            return entities
+        
+        serializer = MemberBreakdownSerializer(
+            entities, many=True, 
+            context={
+                "timezone": request.headers.get("X-Timezone"), 
+                "request":request
+            }
+        )
+        return Response(serializer.data)
+

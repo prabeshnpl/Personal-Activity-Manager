@@ -25,3 +25,7 @@ class CategoryRepository(ABC):
     def list_categories(self, search_params: dict, organization:int, role:str) -> List[CategoryEntity] | Response:
         pass
 
+    @abstractmethod
+    def breakdown_categories(self, search_params: dict, organization:int, role:str) -> List[CategoryEntity] | Response:
+        pass
+

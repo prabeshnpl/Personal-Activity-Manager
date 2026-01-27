@@ -12,3 +12,6 @@ class MemberSerializer(serializers.ModelSerializer):
 
     def get_user(self, instance):
         return CustomUserSerializer(instance.user).data
+    
+class MemberBreakdownSerializer(MemberSerializer):
+    total = serializers.FloatField(required=False)

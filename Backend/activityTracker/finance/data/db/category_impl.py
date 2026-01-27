@@ -1,8 +1,9 @@
 from typing import List
 from rest_framework.response import Response
-from finance.domain.entity.category_entity import CategoryEntity
+from finance.domain.entity.category_entity import CategoryBreakdownEntity, CategoryEntity
 from finance.domain.repository.category_repo import CategoryRepository
 from finance.models import Category
+from django.db.models import Sum
 
 class CategoryRepositoryImpl(CategoryRepository):
     def list_categories(self, search_params: dict, organization:int, role:str) -> List[CategoryEntity] | Response:
@@ -58,6 +59,18 @@ class CategoryRepositoryImpl(CategoryRepository):
             category.delete() 
             return Response({'detail':"Deleted successfully"})
         return Response({'detail':"Not found"}, status=400)
+
+    def breakdown_categories(self, search_params: dict, organization:int, role:str) -> List[CategoryEntity] | Response:
+        try:
+            categories = Category.objects.filter(organization=organization)
+            categories = categories.annotate(
+                total=Sum('transactions__amount')
+            )
+            return [self.to_breakdown_entity(category) for category in categories]
+        except Exception as e:
+            print(f"Error occured in fetching categories:{repr(e)}")
+            return Response({'detail':f"{str(e)}"}, status=500)
+    
     
     def to_entity(self, obj:Category):
         return CategoryEntity(
@@ -66,4 +79,14 @@ class CategoryRepositoryImpl(CategoryRepository):
             name=obj.name,
             category_type=obj.category_type,    
             created_at=obj.created_at,
+        )
+
+    def to_breakdown_entity(self, obj:Category):
+        return CategoryBreakdownEntity(
+            id=obj.id, # type: ignore
+            organization=obj.organization,
+            name=obj.name,
+            category_type=obj.category_type,    
+            created_at=obj.created_at,
+            total=obj.total # type: ignore
         )
