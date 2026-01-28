@@ -9,7 +9,6 @@ class TransactionRepositoryImpl(TransactionRepository):
     def list_transactions(self, search_params: dict, organization:int, role:str) -> List[TransactionEntity] | Response:
         try:
             transactions = Transaction.objects.filter(organization=organization)
-            print(search_params)
             if transaction_type:=search_params.get("type"):
                 transactions = transactions.filter(transaction_type=transaction_type)
             if category:=search_params.get('category'):

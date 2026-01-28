@@ -9,6 +9,7 @@ class AccountEntity:
         name: str,
         account_type: str,
         is_active: bool = True,
+        balance:float = 0,
         created_at: Optional[datetime] = None,
     ):
         self.id = id
@@ -16,6 +17,7 @@ class AccountEntity:
         self.name = name
         self.account_type = account_type
         self.is_active = is_active
+        self.balance = balance
         self.created_at = created_at
 
     def __str__(self):

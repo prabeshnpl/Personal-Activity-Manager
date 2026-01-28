@@ -68,6 +68,7 @@ class AccountRepositoryImpl(AccountRepository):
             organization=obj.organization,
             name=obj.name,
             account_type=obj.account_type,    
-            is_active=obj.is_active,        
+            is_active=obj.is_active,  
+            balance=obj.balance,      
             created_at=obj.created_at,
         )

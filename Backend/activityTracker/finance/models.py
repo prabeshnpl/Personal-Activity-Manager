@@ -16,6 +16,8 @@ class Account(models.Model):
     )
 
     name = models.CharField(max_length=128)
+    
+    balance = models.FloatField()
 
     account_type = models.CharField(
         max_length=32,
