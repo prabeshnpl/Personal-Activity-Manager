@@ -49,6 +49,7 @@ class Category(models.Model):
         choices=CATEGORY_TYPE_CHOICES
     )
 
+    color = models.CharField(max_length=32, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

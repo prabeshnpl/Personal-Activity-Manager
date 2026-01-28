@@ -92,15 +92,16 @@ class CategoryViewset(BaseTenantModelViewSet):
     
     def update(self, request, *args, **kwargs):
         data = request.data
+        data['organization']=request.organization
 
         pk = (kwargs.get("pk"))
         partial=kwargs.get('partial')
 
-        serializer = self.get_serializer(data=data, partial=partial)
-        serializer.is_valid(raise_exception=True)
+        serializer = self.get_serializer(data, partial=partial)
+        # serializer.is_valid(raise_exception=True)
 
         usecase = UpdateCategoryUseCase(repo=self.repository())
-        entity = usecase.execute(id=pk, data=serializer.validated_data, organization=request.organization, role=request.role) # type: ignore
+        entity = usecase.execute(id=pk, data=serializer.data, organization=request.organization, role=request.role) # type: ignore
 
         if isinstance(entity, Response):
             return entity

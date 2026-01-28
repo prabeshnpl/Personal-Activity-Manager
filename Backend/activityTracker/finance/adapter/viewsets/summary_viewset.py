@@ -27,7 +27,6 @@ class SummaryView(BaseTenantViewSet):
         if isinstance(entity, Response):
             return entity
 
-        # print(entity.income)
         serializer = self.serializer_class(entity)
 
         return Response(serializer.data)

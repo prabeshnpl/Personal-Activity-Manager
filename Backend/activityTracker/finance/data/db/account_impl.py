@@ -38,8 +38,11 @@ class AccountRepositoryImpl(AccountRepository):
                     if value not in ['cash', 'bank', 'digital']:
                         return Response({'detail':"Invalid account_type"}, status=400)
                 setattr(account, key, value)
-                
+
+            account.save()
+
             return self.to_entity(account) # type: ignore
+            
         except Exception as e:
             print(f"Error occured while updating account:{repr(e)}")
             return Response({"detail":f"str{e}"}, status=500)

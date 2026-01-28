@@ -39,6 +39,7 @@ class CategoryRepositoryImpl(CategoryRepository):
                     if value not in ['income', 'expense']:
                         return Response({'detail':"Invalid category_type"}, status=400)
                 setattr(category, key, value)
+            category.save()
                 
             return self.to_entity(category) # type: ignore
         except Exception as e:
@@ -78,6 +79,7 @@ class CategoryRepositoryImpl(CategoryRepository):
             organization=obj.organization,
             name=obj.name,
             category_type=obj.category_type,    
+            color=obj.color,
             created_at=obj.created_at,
         )
 
@@ -87,6 +89,7 @@ class CategoryRepositoryImpl(CategoryRepository):
             organization=obj.organization,
             name=obj.name,
             category_type=obj.category_type,    
+            color=obj.color,
             created_at=obj.created_at,
             total=obj.total # type: ignore
         )

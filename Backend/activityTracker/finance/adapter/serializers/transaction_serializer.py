@@ -11,7 +11,10 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = "__all__"
     
     def get_category(self, instance):
-        return {
-            'id':instance.category.id,
-            'name':instance.category.name
-        }
+        category = getattr(instance, "category", None)
+        if category:
+            return {
+                'id':instance.category.id,
+                'name':instance.category.name
+            }
+        return {}

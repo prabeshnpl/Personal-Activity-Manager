@@ -3,14 +3,17 @@ from rest_framework.response import Response
 from finance.domain.entity.transaction_entity import TransactionEntity
 from finance.domain.repository.transaction_repo import TransactionRepository
 from finance.models import Transaction
+from django.db import transaction
 
 class TransactionRepositoryImpl(TransactionRepository):
     def list_transactions(self, search_params: dict, organization:int, role:str) -> List[TransactionEntity] | Response:
         try:
             transactions = Transaction.objects.filter(organization=organization)
-            
-            if transaction_type:=search_params.get("transaction_type"):
-                transactions.filter(transaction_type=transaction_type)
+            print(search_params)
+            if transaction_type:=search_params.get("type"):
+                transactions = transactions.filter(transaction_type=transaction_type)
+            if category:=search_params.get('category'):
+                transactions = transactions.filter(category=category)
 
             return [self.to_entity(transaction) for transaction in transactions]
         except Exception as e:
@@ -19,11 +22,11 @@ class TransactionRepositoryImpl(TransactionRepository):
         
     def create_transaction(self, data: dict, organization:int, role:str) -> TransactionEntity | Response:
         try:
-            if data.get('transaction_type') not in ['income', 'expense']:
-                return Response({'detail':"Invalid transaction_type"}, status=400)
-            
-            transaction = Transaction.objects.create(**data)
-            return self.to_entity(transaction)
+            with transaction.atomic(): # type: ignore
+                if data.get('transaction_type') not in ['income', 'expense']:
+                    return Response({'detail':"Invalid transaction_type"}, status=400)
+                _transaction = Transaction.objects.create(**data)
+                return self.to_entity(_transaction)
         except Exception as e:
             print(f"Error occured while creating transaction:{repr(e)}")
             return Response({"detail":f"str{e}"}, status=500)
@@ -41,8 +44,11 @@ class TransactionRepositoryImpl(TransactionRepository):
                     if value not in ['income', 'expense']:
                         return Response({'detail':"Invalid transaction_type"}, status=400)
                 setattr(transaction, key, value)
-                
+            
+            transaction.save()
+
             return self.to_entity(transaction) # type: ignore
+            
         except Exception as e:
             print(f"Error occured while updating transaction:{repr(e)}")
             return Response({"detail":f"str{e}"}, status=500)
