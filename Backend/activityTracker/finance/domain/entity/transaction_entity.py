@@ -10,7 +10,7 @@ class TransactionEntity:
         account: ['Account'], # type: ignore
         category: ['Category'] = None, # type: ignore
         created_by: ['CustomUser'] = None, # type: ignore
-        amount: Decimal = Decimal("0.00"),
+        amount: float = 0,
         transaction_type: str = "income",
         occurred_at: Optional[datetime] = None,
         description: Optional[str] = None,

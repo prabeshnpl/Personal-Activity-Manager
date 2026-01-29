@@ -70,6 +70,13 @@ class SummaryRepositoryImpl(SummaryRepository):
                 if expense_last != 0 else 0
             )
 
+            # Ratio and avg
+            savings_ratio = balance / income_this * 100 if income_this!=0 else 0
+            expense_ratio = expense_this / income_this * 100 if income_this!=0 else 0
+
+            total_days = 1 if period == 'daily' else (30 if period == 'monthly' else 365)
+            avg_daily_expense = expense_this / total_days
+
             # --- Trend Flags ---
             income_positive = income_pct_change >= 0
             expense_positive = expense_pct_change >= 0
@@ -85,7 +92,10 @@ class SummaryRepositoryImpl(SummaryRepository):
                 "expenses_trend": {
                     "positive": expense_positive,
                     "value": f"{'+' if expense_positive else ''}{expense_pct_change:.2f}%"
-                }
+                },
+                "savings_ratio": savings_ratio,
+                "expense_ratio" : expense_ratio,
+                "avg_daily_expense": avg_daily_expense
             }
 
 
@@ -100,6 +110,9 @@ class SummaryRepositoryImpl(SummaryRepository):
         return SummaryEntity(
             income=data['income'],
             expenses=data['expenses'],
+            savings_ratio=data['savings_ratio'],
+            expense_ratio=data['expense_ratio'],
+            avg_daily_expense=data['avg_daily_expense'],
             balance=data['balance'],
             income_trend=data['income_trend'],
             expenses_trend=data['expenses_trend']

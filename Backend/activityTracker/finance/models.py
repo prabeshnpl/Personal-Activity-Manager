@@ -93,7 +93,7 @@ class Transaction(models.Model):
         null=True
     )
 
-    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    amount = models.FloatField()
 
     transaction_type = models.CharField(
         max_length=16,
