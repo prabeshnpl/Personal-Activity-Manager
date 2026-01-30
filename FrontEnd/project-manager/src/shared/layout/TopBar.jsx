@@ -51,17 +51,19 @@ export const TopBar = () => {
             <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
               {getInitials()}
             </div>
-            <span className="text-sm font-medium text-gray-700">{getFullName()}</span>
+            <span className="text-sm font-medium text-gray-700 hidden sm:block">
+              {getFullName()}
+            </span>
           </button>
 
           {showUserMenu && (
             <>
-              <div 
-                className="fixed inset-0 z-40" 
+              <div
+                className="fixed inset-0 z-40"
                 onClick={() => setShowUserMenu(false)}
               ></div>
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-                <button 
+                <button
                   onClick={() => {
                     setShowUserMenu(false);
                     navigate('/profile');
@@ -71,7 +73,7 @@ export const TopBar = () => {
                   <User className="h-4 w-4" />
                   <span>Profile</span>
                 </button>
-                <button 
+                <button
                   onClick={() => {
                     setShowUserMenu(false);
                     navigate('/settings');

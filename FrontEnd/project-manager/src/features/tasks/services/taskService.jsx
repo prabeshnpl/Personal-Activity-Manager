@@ -3,7 +3,7 @@ import { ENDPOINTS } from "../../../api/endpoints";
 
 export const taskService = {
   // Tasks CRUD
-  getTasks: (params) =>
+  getTasks: (params) => 
     api.get(`${ENDPOINTS.TASKS}/`, { params }),
 
   createTask: (data) =>
@@ -20,10 +20,6 @@ export const taskService = {
 
   updateTaskStatus: (id, status) =>
     api.patch(`${ENDPOINTS.TASKS}/${id}/status/`, { status }),
-
-  // Statistics
-  getTaskStats: () =>
-    api.get(`${ENDPOINTS.TASKS}/stats/`),
 
   // Bulk operations
   bulkUpdateTasks: (taskIds, updates) =>

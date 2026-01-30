@@ -12,11 +12,15 @@ export const TransactionCard = ({ transaction, onUpdate, onDelete }) => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    console.log(dateString)
+    var date = new Date(dateString);
+    date = date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
     });
+    console.log(date)
+    return date
   };
 
   const isIncome = transaction.transaction_type === 'income';

@@ -26,4 +26,8 @@ export const ENDPOINTS = {
 
   // Tasks
   TASKS: '/tasks',
+
+  // Profile
+  PROFILE: '/user',
+  CHANGE_PASSWORD: '/user/change-password',
 };

@@ -63,9 +63,10 @@ export function useTasks() {
   });
 
   // Helper functions
-  const getTasksByStatus = (status) => {
-    return tasks.data?.data?.filter(task => task.status === status) || [];
-  };
+  const getTasksByStatus = (status) => useQuery({
+    queryKey: ["tasks", status],
+    queryFn: () => taskService.getTasks({status}),
+  }); 
 
   return {
     // Data

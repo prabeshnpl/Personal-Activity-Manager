@@ -11,19 +11,19 @@ class CustomUserRepository(ABC):
         pass
 
     @abstractmethod
-    def get_user_by_id(self, id:int) -> Optional[CustomUserEntity] | Optional[Response]:
+    def get_user_by_id(self, id:int, organization:int, role:str) -> Optional[CustomUserEntity] | Optional[Response]:
         pass
 
     @abstractmethod 
-    def delete_user(self, id:int) -> None | Optional[Response]:
+    def delete_user(self, id:int, organization:int, role:str) -> None | Optional[Response]:
         pass
 
     @abstractmethod 
-    def update_user(self, id:int, data:dict) -> Optional[CustomUserEntity] | Optional[Response]:
+    def update_user(self, id:int, data:dict, organization:int, role:str) -> Optional[CustomUserEntity] | Optional[Response]:
         pass
 
     @abstractmethod 
-    def list_user(self, search_params:dict) -> Optional[List[CustomUserEntity]] | Optional[Response]:
+    def list_user(self, search_params:dict, organization:int, role:str) -> Optional[List[CustomUserEntity]] | Optional[Response]:
         pass
 
 

@@ -15,27 +15,27 @@ class GetCustomUserByIdUsecase:
     def __init__(self, repo: CustomUserRepository):
         self.repo = repo  
 
-    def execute(self, id:int) -> Optional[CustomUserEntity] | Optional[Response]:
-        return self.repo.get_user_by_id(id=id)    
+    def execute(self, id:int, organization:int, role:str) -> Optional[CustomUserEntity] | Optional[Response]:
+        return self.repo.get_user_by_id(id=id, organization=organization, role=role)    
 
 class UpdateCustomUserUsecase:
     def __init__(self, repo: CustomUserRepository):
         self.repo = repo  
 
-    def execute(self, id:int, data:dict) -> Optional[CustomUserEntity] | Optional[Response]:
-        return self.repo.update_user(id=id, data=data)    
+    def execute(self, id:int, data:dict, organization:int, role:str) -> Optional[CustomUserEntity] | Optional[Response]:
+        return self.repo.update_user(id=id, data=data, organization=organization, role=role)    
     
 class DeleteCustomUserUsecase:
     def __init__(self, repo: CustomUserRepository):
         self.repo = repo  
 
-    def execute(self, id:int):
-        return self.repo.delete_user(id=id)
+    def execute(self, id:int, organization:int, role:str):
+        return self.repo.delete_user(id=id, organization=organization, role=role)
 
 class ListCustomUserUsecase:
     def __init__(self, repo: CustomUserRepository):
         self.repo = repo  
 
-    def execute(self, search_params:dict):
-        return self.repo.list_user(search_params=search_params)
+    def execute(self, search_params:dict, organization:int, role:str):
+        return self.repo.list_user(search_params=search_params, organization=organization, role=role)
         
