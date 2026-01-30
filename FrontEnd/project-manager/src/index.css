@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+:root{
+    --primary-color:#2eed97;
+    --secondary-color:#03d175;
+    --font-size-lg: 1.25rem;
+    --font-size-xlg: 2.5rem;
+    --font-weight-xlg: 700;
+}
+
+body {
+  font-family: Comic Sans MS, Comic Sans, cursive; 
+}
