@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { AppLayout } from './shared/layout/AppLayout';
 import { useOrganizationstore } from './features/organization/hooks/useOrganizationstore';

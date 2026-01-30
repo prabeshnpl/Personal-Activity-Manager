@@ -10,7 +10,7 @@ export const AddTransactionModal = ({ onClose, onCreate }) => {
     amount: '',
     category: '',
     account: '',
-    occurred_at: new Date().toISOString(),
+    occurred_at: '',
     description: '',
   });
   const { categories, accounts } = useTransaction();
@@ -28,6 +28,7 @@ export const AddTransactionModal = ({ onClose, onCreate }) => {
       setError('Amount and description are required');
       return;
     }
+    formData.occurred_at = formData?.occurred_at ? `${formData.occurred_at}T00:00:00Z` : new Date();
 
     try {
       setLoading(true);
@@ -152,8 +153,8 @@ export const AddTransactionModal = ({ onClose, onCreate }) => {
             </label>
             <input
               type="date"
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              value={formData.occurred_at}
+              onChange={(e) => setFormData({ ...formData, occurred_at: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
             />

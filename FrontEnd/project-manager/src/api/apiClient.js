@@ -3,7 +3,7 @@ import { useAuthStore } from "../stores/authStore";
 import { useErrorStore } from "../stores/errorStore";
 import { useOrganizationStore } from "../stores/organizationStore";
 
-const BASE_URL = "http://127.0.0.1:8002//api/v1";
+const BASE_URL = "http://127.0.0.1:8000/api/v1";
 
 /* ---------------------------------------
    Axios Instance
