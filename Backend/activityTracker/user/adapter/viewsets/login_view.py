@@ -12,14 +12,22 @@ class LoginView(BaseTenantAPIView):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def post(self, request):
-        data = request.data
+        data = dict(request.data.copy())
+        print(data)
         repo = LoginImpl()
         
         response = repo.login_user(data=data)
+        print(response)
         if isinstance(response, Response):
             return response
         
-        response = Response(LoginTokenSerializer(response, context={"timezone": request.headers.get("X-Timezone"), "request":request}).data, status=status.HTTP_200_OK)
-
-        return response
+        serializer = LoginTokenSerializer(
+            response, 
+            context={
+                "timezone": request.headers.get("X-Timezone"), 
+                "request":request
+            }
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+ 
 
