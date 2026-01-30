@@ -1,27 +1,22 @@
 import api from "../../../api/apiClient";
 import { ENDPOINTS } from "../../../api/endpoints";
-import { useAuthStore } from "../../../stores/authStore";
 
 export const profileService = {
-  
-  // Profile
-  getProfile: () => {
-    const { user: currentUser } = useAuthStore();
-    return api.get(`${ENDPOINTS.PROFILE}/${currentUser?.id}`)
-  },
 
-  updateProfile: (data) =>
-    api.put(`${ENDPOINTS.PROFILE}/`, data),
+  updateProfile: (data, userId) =>
+    api.patch(`${ENDPOINTS.PROFILE}/${userId}/`, data),
 
-  uploadProfilePicture: (file) => {
+  uploadProfilePicture: (file, userId) => {
     const formData = new FormData();
     formData.append('profile_picture', file);
-    return api.post(`${ENDPOINTS.PROFILE}/upload-picture/`, formData, {
+    return api.patch(`${ENDPOINTS.PROFILE}/${userId}/`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+        "Content-Type": "multipart/form-data",
+      }
+      }
+    )
   },
+  
 
   deleteProfilePicture: () =>
     api.delete(`${ENDPOINTS.PROFILE}/picture/`),

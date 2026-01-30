@@ -30,7 +30,10 @@ export const useAuthStore = create(
         });
       },
 
-      updateUser: (user) => set({ user }),
+      updateUser: (user) => {
+        console.log("updating user", user);
+        set({ user })
+      },
     }),
     {
       name: "auth-storage",

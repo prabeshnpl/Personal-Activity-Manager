@@ -4,14 +4,6 @@ import { useAuthStore } from "../../../stores/authStore";
 
 export function useProfile() {
   const queryClient = useQueryClient();
-  const { user: currentUser } = useAuthStore();
-
-  // Queries
-  const profile = useQuery({
-    queryKey: ["profile"],
-    queryFn: profileService.getProfile,
-    enabled: !!currentUser,
-  });
 
 //   const sessions = useQuery({
 //     queryKey: ["profile", "sessions"],
@@ -29,9 +21,10 @@ export function useProfile() {
   });
 
   const uploadProfilePicture = useMutation({
-    mutationFn: profileService.uploadProfilePicture,
-    onSuccess: () => {
+    mutationFn: ({file, userId}) => profileService.uploadProfilePicture(file, userId),
+    onSuccess: (response) => {
       queryClient.invalidateQueries(["profile"]);
+      useAuthStore.getState().updateUser(response.data);
     },
   });
 
@@ -61,14 +54,7 @@ export function useProfile() {
   });
 
   return {
-    // Data
-    profile: profile.data?.data || currentUser,
     // sessions: sessions.data?.data || [],
-
-    // Loading states
-    isLoading: profile.isLoading,
-    // isLoadingSessions: sessions.isLoading,
-    error: profile.error,
 
     // Mutations
     updateProfile,
@@ -77,8 +63,5 @@ export function useProfile() {
     changePassword,
     deleteAccount,
     revokeSession,
-
-    // Refetch
-    refetch: profile.refetch,
   };
 }

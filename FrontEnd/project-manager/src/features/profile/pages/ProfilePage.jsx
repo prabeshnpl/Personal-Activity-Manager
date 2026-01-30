@@ -4,23 +4,17 @@ import { ProfileHeader } from '../components/ProfileHeader';
 import { PersonalInformation } from '../components/PersonalInformation';
 import { SecuritySettings } from '../components/SecuritySettings';
 import { Tabs, TabPanel } from '../../../shared/components/tabs/Tabs';
-import { Spinner } from '../../../shared/components/Spinner';
-import ErrorState from '../../../shared/components/Error/ErrorState';
 import { User, Shield } from 'lucide-react';
 
 export const ProfilePage = () => {
   const {
-    profile,
     // sessions,
-    isLoading,
-    error,
     updateProfile,
     uploadProfilePicture,
     deleteProfilePicture,
     changePassword,
     deleteAccount,
-    revokeSession,
-    refetch,
+    revokeSession
   } = useProfile();
 
   const [activeTab, setActiveTab] = useState('personal');
@@ -38,22 +32,6 @@ export const ProfilePage = () => {
     },
   ];
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
-
-  // if (error) {
-  //   return (
-  //     <div className="p-6">
-  //       <ErrorState message="Failed to load profile." onRetry={refetch} />
-  //     </div>
-  //   );
-  // }
-
   return (
     <div className="p-4 sm:p-6 space-y-6 max-w-5xl mx-auto">
       {/* Header */}
@@ -66,7 +44,6 @@ export const ProfilePage = () => {
 
       {/* Profile Header */}
       <ProfileHeader
-        profile={profile}
         onUploadPicture={uploadProfilePicture}
         onDeletePicture={deleteProfilePicture}
       />
@@ -78,7 +55,6 @@ export const ProfilePage = () => {
       <div>
         <TabPanel isActive={activeTab === 'personal'}>
           <PersonalInformation
-            profile={profile}
             onUpdate={updateProfile}
           />
         </TabPanel>

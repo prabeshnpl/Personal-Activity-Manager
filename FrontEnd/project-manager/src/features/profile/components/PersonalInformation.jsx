@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '../../../shared/components/Card';
 import { Button } from '../../../shared/components/Button';
 import { Edit2, Save, X } from 'lucide-react';
+import { useAuthStore } from '../../../stores/authStore';
 
-export const PersonalInformation = ({ profile, onUpdate }) => {
+export const PersonalInformation = ({ onUpdate }) => {
+
+  const {user:profile} = useAuthStore();
+
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     first_name: '',
@@ -35,7 +39,7 @@ export const PersonalInformation = ({ profile, onUpdate }) => {
 
     try {
       setLoading(true);
-      await onUpdate.mutateAsync(formData);
+      await onUpdate.mutateAsync({data:formData, userId:profile.id});
       setSuccess(true);
       setIsEditing(false);
       setTimeout(() => setSuccess(false), 3000);

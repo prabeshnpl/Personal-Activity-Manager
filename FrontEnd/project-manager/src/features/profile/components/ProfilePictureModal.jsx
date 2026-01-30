@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '../../../shared/components/Button';
 import { X, Upload, Trash2 } from 'lucide-react';
+import { useAuthStore } from '../../../stores/authStore';
 
 export const ProfilePictureModal = ({ currentPicture, onClose, onUpload, onDelete }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -8,6 +9,7 @@ export const ProfilePictureModal = ({ currentPicture, onClose, onUpload, onDelet
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
+  const {user} = useAuthStore();
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -39,7 +41,7 @@ export const ProfilePictureModal = ({ currentPicture, onClose, onUpload, onDelet
     try {
       setLoading(true);
       setError(null);
-      await onUpload.mutateAsync(selectedFile);
+      await onUpload.mutateAsync({ file: selectedFile, userId: user.id });
       onClose();
     } catch (err) {
       setError(err.message || 'Failed to upload picture');
