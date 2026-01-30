@@ -42,11 +42,14 @@ class CustomUserRepoImpl(CustomUserRepository):
                     })
         except Exception as e:
             print(f"Error occured while creating user:{repr(e)}")
-            return Response({'detail':f"{str(e)}"})
+            return Response({'detail':f"{str(e)}"}, status=500)
         
     def update_user(self, id: int, data: dict, organization:int, role:str) -> CustomUserEntity | None | Response:
         try:
-            user = CustomUser.objects.get(organization=organization, id=id)
+            user = CustomUser.objects.get(id=id)
+            member = Member.objects.filter(user=user, organization=organization).first()
+            if not member:
+                return Response({'detail':'You are not allowed!!'}, status=400)
 
             for key, value in data.items():
                 setattr(user, key, value)    
@@ -55,14 +58,15 @@ class CustomUserRepoImpl(CustomUserRepository):
             return self.to_user_entity(user)
         
         except Exception as e:
-            return Response({'detail':f'{str(e)}'}, status=400)
+            print(f'Error while updating user: {repr(e)}')
+            return Response({'detail':f'{str(e)}'}, status=500)
         
     def get_user_by_id(self, id: int, organization:int, role:str) -> CustomUserEntity | None | Response:
         try:
             user = CustomUser.objects.get(organization=organization, id=id)
             return self.to_user_entity(user)
         except Exception as e:
-            return Response({'detail':f'{str(e)}'}, status=400)
+            return Response({'detail':f'{str(e)}'}, status=500)
         
     def delete_user(self, id: int, organization:int, role:str) -> None | Response:
         try:
@@ -70,7 +74,7 @@ class CustomUserRepoImpl(CustomUserRepository):
             user.delete()
             return Response({'detail':'deleted successfully'})
         except Exception as e:
-            return Response({'detail':f'{str(e)}'}, status=400)
+            return Response({'detail':f'{str(e)}'}, status=500)
 
     def list_user(self, search_params: dict, organization:int, role:str) -> List[CustomUserEntity] | None | Response:
         try:
@@ -78,7 +82,7 @@ class CustomUserRepoImpl(CustomUserRepository):
             users = list(members.values_list('user', flat=True))
             return [self.to_user_entity(user) for user in users]
         except Exception as e:
-            return Response({'detail':f'{str(e)}'}, status=400)
+            return Response({'detail':f'{str(e)}'}, status=500)
     
     def to_token_entity(self, _dict):
         return TokenEntity(
@@ -87,9 +91,9 @@ class CustomUserRepoImpl(CustomUserRepository):
             user = _dict["user"],
         )
     
-    def to_user_entity(self, user):
+    def to_user_entity(self, user:CustomUser):
         return CustomUserEntity(
-            id=user.id,
+            id=user.id, # type: ignore
             email=user.email,
             username=user.username,
             password=user.password,
@@ -97,5 +101,6 @@ class CustomUserRepoImpl(CustomUserRepository):
             last_name=user.last_name,
             contact_number=user.contact_number,
             created_at=user.created_at,
-            updated_at=user.updated_at
+            updated_at=user.updated_at,
+            profile_picture=user.profile_picture
         )

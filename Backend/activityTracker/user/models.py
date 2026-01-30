@@ -34,6 +34,8 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     contact_number = models.CharField(max_length=64, blank=True, null=True)
 
+    profile_picture = models.FileField(upload_to='profile_picture/', blank=True, null=True)
+
     google_id = models.CharField(max_length=128, blank=True, null=True)
     apple_id = models.CharField(max_length=128, blank=True, null=True)
     

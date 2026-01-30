@@ -48,9 +48,17 @@ export const TopBar = () => {
             onClick={() => setShowUserMenu(!showUserMenu)}
             className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100"
           >
-            <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
-              {getInitials()}
-            </div>
+            {user?.profile_picture ? (
+              <img
+                src={user.profile_picture}
+                alt="Profile"
+                className="h-8 w-8 rounded-full object-cover"
+              />
+            ) : (
+              <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
+                {getInitials()}
+              </div>
+            )}
             <span className="text-sm font-medium text-gray-700 hidden sm:block">
               {getFullName()}
             </span>

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Card } from '../../../shared/components/Card';
-import { Button } from '../../../shared/components/Button';
 import { Camera, Mail, Calendar, Shield } from 'lucide-react';
 import { ProfilePictureModal } from './ProfilePictureModal';
+import { useAuthStore } from '../../../stores/authStore';
 
-export const ProfileHeader = ({ profile, onUploadPicture, onDeletePicture }) => {
+export const ProfileHeader = ({ onUploadPicture, onDeletePicture}) => {
+
+  const {user:profile} = useAuthStore();
   const [showPictureModal, setShowPictureModal] = useState(false);
 
   const getInitials = () => {

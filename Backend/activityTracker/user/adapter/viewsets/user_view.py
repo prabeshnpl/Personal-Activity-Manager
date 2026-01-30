@@ -7,7 +7,7 @@ from user.adapter.serializers.user_serializer import CustomUserSerializer
 from user.data.db.user_impl import CustomUserRepoImpl
 from user.domain.usecase.user_usecase import CreateCustomUserUseCase, DeleteCustomUserUsecase, GetCustomUserByIdUsecase, UpdateCustomUserUsecase
 from user.models import CustomUser
-from utils.tenantViewsets import BaseTenantAPIView, BaseTenantViewSet
+from utils.tenantViewsets import BaseTenantAPIView, BaseTenantModelViewSet
 from utils.pagniator import CustomPageNumberPagination
 
 
@@ -31,7 +31,7 @@ class CreateUserView(BaseTenantAPIView):
 
         return Response(LoginTokenSerializer(response, context={"timezone": request.headers.get("X-Timezone"), "request":request}).data, status=status.HTTP_201_CREATED)
 
-class CustomUserView(BaseTenantViewSet):
+class CustomUserView(BaseTenantModelViewSet):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
     repository = CustomUserRepoImpl 
     permission_classes = [IsAuthenticated]
@@ -46,12 +46,14 @@ class CustomUserView(BaseTenantViewSet):
             return entity
         return Response(CustomUserSerializer(entity, context={'request': request}).data)
 
-    def update(self, request):
+    def update(self, request, *args, **kwargs):
         # update user data
         try:
+            pk = kwargs.get('pk')
             data = request.data.copy()
+            print(data)
             usecase = UpdateCustomUserUsecase(repo=self.repository())
-            entity = usecase.execute(id=request.user.id, data=data, organization=request.organization, role=request.role)
+            entity = usecase.execute(id=pk, data=data, organization=request.organization, role=request.role) # type: ignore
 
             if isinstance(entity, Response):
                 return entity
@@ -60,7 +62,7 @@ class CustomUserView(BaseTenantViewSet):
         except Exception as e:
             return Response({'detail':str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    def destroy(self, request, pk=None):
+    def destroy(self, request, pk=None): # type: ignore
         if pk:
             usecase = DeleteCustomUserUsecase(repo=self.repository())
             response = usecase.execute(id=pk, organization=request.organization, role=request.role)

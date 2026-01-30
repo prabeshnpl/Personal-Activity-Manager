@@ -12,6 +12,7 @@ class CustomUserEntity:
         last_name: Optional[str] = None,
         contact_number: Optional[str] = None,
         google_id: Optional[str] = None,
+        profile_picture: Optional['FieldFile'] = None, # type: ignore
         apple_id: Optional[str] = None,
         is_deleted: Optional[bool] = False,
         is_disabled: Optional[bool] = False,
@@ -37,6 +38,7 @@ class CustomUserEntity:
         self.updated_at = updated_at
         self.is_superuser = is_superuser
         self.is_staff = is_staff
+        self.profile_picture = profile_picture
 
     def __str__(self):
         return self.email or self.username or f"User-{self.id}"
