@@ -29,10 +29,9 @@ class Task(models.Model):
         null=True
     )
 
-    assigned_to = models.ForeignKey(
+    assigned_to = models.ManyToManyField(
         CustomUser,
         related_name="assigned_tasks",
-        on_delete=models.SET_NULL,
         null=True,
         blank=True
     )

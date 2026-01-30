@@ -5,9 +5,9 @@ class TaskEntity:
     def __init__(
         self,
         id: int,
-        organization: int,
-        created_by: Optional[int] = None,
-        assigned_to: Optional[int] = None,
+        organization: Optional['Organization'], # type: ignore
+        created_by: Optional['CustomUser'] = None, # type: ignore
+        assigned_to: Optional['CustomUser'] = None, # type: ignore
         title: str = "",
         description: Optional[str] = None,
         status: str = "pending",

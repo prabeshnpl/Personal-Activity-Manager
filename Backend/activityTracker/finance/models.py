@@ -36,6 +36,8 @@ class Category(models.Model):
     CATEGORY_TYPE_CHOICES = (
         ('income', 'Income'),
         ('expense', 'Expense'),
+        ('loan-taken', 'LOAN-TAKEN'),
+        ('loan-given', 'LOAN-GIVEN')
     )
 
     organization = models.ForeignKey(

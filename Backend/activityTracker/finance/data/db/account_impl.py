@@ -16,7 +16,7 @@ class AccountRepositoryImpl(AccountRepository):
         
     def create_account(self, data: dict, organization:int, role:str) -> AccountEntity | Response:
         try:
-            if data.get('account_type') not in ['cash', 'bank', 'digital']:
+            if data.get('account_type') not in ['cash', 'bank', 'digital', 'e-sewa']:
                 return Response({'detail':"Invalid account_type"}, status=400)
             account = Account.objects.create(**data)
             
@@ -35,7 +35,7 @@ class AccountRepositoryImpl(AccountRepository):
                 if key in ['id', 'organization', 'created_at']:
                     continue
                 elif key=='account_type':
-                    if value not in ['cash', 'bank', 'digital']:
+                    if value not in ['cash', 'bank', 'digital', 'e-sewa']:
                         return Response({'detail':"Invalid account_type"}, status=400)
                 setattr(account, key, value)
 
