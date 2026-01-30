@@ -4,14 +4,12 @@ from finance.domain.entity.transaction_entity import TransactionEntity
 from finance.domain.repository.transaction_repo import TransactionRepository
 from finance.models import Transaction
 from django.db import transaction
-from datetime import datetime, time
-from datetime import timedelta
 from django.utils.dateparse import parse_datetime
 
 class TransactionRepositoryImpl(TransactionRepository):
     def list_transactions(self, search_params: dict, organization:int, role:str) -> List[TransactionEntity] | Response:
         try:
-            transactions = Transaction.objects.filter(organization=organization)
+            transactions = Transaction.objects.filter(organization=organization).order_by('-created_at')
 
             if transaction_type:=search_params.get("type"):
                 transactions = transactions.filter(transaction_type=transaction_type)
