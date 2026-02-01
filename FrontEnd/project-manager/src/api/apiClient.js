@@ -5,6 +5,12 @@ import { useOrganizationStore } from "../stores/organizationStore";
 
 const BASE_URL = "http://127.0.0.1:8000/api/v1";
 
+const AUTH_EXCLUDED_PATHS = [
+  "/auth/login/",
+  "/auth/token/refresh/",
+  "/auth/logout/",
+];
+
 /* ---------------------------------------
    Axios Instance
 --------------------------------------- */
@@ -14,6 +20,7 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true, // This automatically sets incoming response cookies and sends them on every requests
 });
 
 /* ---------------------------------------
@@ -21,29 +28,32 @@ const api = axios.create({
 --------------------------------------- */
 api.interceptors.request.use(
   (config) => {
-    const accessToken = useAuthStore.getState().accessToken;
-    const orgId = useOrganizationStore.getState().activeOrganization?.id 
+    const { accessToken } = useAuthStore.getState();
+    const orgId =
+      useOrganizationStore.getState().activeOrganization?.id;
 
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
+
     if (orgId) {
-      config.headers["X-ORG-ID"] = orgId ;
+      config.headers["X-ORG-ID"] = orgId;
     }
+
     return config;
   },
-  (error) => Promise.reject(error)
+  Promise.reject
 );
 
 /* ---------------------------------------
-   Refresh Token Queue
+   Refresh Queue Logic
 --------------------------------------- */
 let isRefreshing = false;
 let failedQueue = [];
 
-const processQueue = (error, token = null) => {
-  failedQueue.forEach((prom) => {
-    error ? prom.reject(error) : prom.resolve(token);
+const processQueue = (error, accessToken = null) => {
+  failedQueue.forEach(({ resolve, reject }) => {
+    error ? reject(error) : resolve(accessToken);
   });
   failedQueue = [];
 };
@@ -61,7 +71,7 @@ api.interceptors.response.use(
     const authStore = useAuthStore.getState();
     const errorStore = useErrorStore.getState();
 
-    /* Network Error */
+    /* Network error */
     if (!error.response) {
       errorStore.setError({
         message: "Network error. Please check your connection.",
@@ -71,13 +81,29 @@ api.interceptors.response.use(
     }
 
     /* ---------------------------------------
-       401 → Try Refresh Token
+       401 → Refresh Access Token
     --------------------------------------- */
-    if (
-      status === 401 &&
-      !originalRequest._retry &&
-      authStore.refreshToken
-    ) {
+    const AUTH_EXCLUDED_PATHS = [
+      "/login/",
+      "/token/refresh/",
+      "/logout/",
+    ];
+
+    if (status === 401 && !originalRequest._retry) {
+
+      const isAuthEndpoint = AUTH_EXCLUDED_PATHS.some((path) =>
+        originalRequest.url.includes(path)
+      );
+
+      if (!authStore.accessToken || isAuthEndpoint) {
+        authStore.logout();
+        errorStore.setError({
+          message: error.response?.data?.detail || "Access Denied",
+          status: 401,
+        });
+        return Promise.reject(error);
+      }
+
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -91,24 +117,16 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        console.log("trying refetching of access token")
-        const res = await axios.post(
-          `${BASE_URL}token/refresh/`,
-          { refresh: authStore.refreshToken }
-        );
-
+        const res = await api.post("/token/refresh/");
         const newAccessToken = res.data.access;
 
-        authStore.login({
-          access: newAccessToken,
-          refresh: authStore.refreshToken,
-          user: authStore.user,
-        });
+        authStore.setAccessToken(newAccessToken);
 
-        api.defaults.headers.Authorization = `Bearer ${newAccessToken}`;
         processQueue(null, newAccessToken);
 
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        originalRequest.headers.Authorization =
+          `Bearer ${newAccessToken}`;
+
         return api(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
@@ -128,6 +146,9 @@ api.interceptors.response.use(
       case 400:
         message = error.response?.data?.detail || "Bad request";
         break;
+      case 401:
+        console.log("yess")
+        message = error.response?.data?.detail || "Access Denied";
       case 403:
         message = "You do not have permission to perform this action.";
         break;

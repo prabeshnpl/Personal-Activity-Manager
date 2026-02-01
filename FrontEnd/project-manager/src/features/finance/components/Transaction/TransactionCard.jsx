@@ -7,19 +7,17 @@ export const TransactionCard = ({ transaction, onUpdate, onDelete }) => {
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'NPR',
     }).format(amount);
   };
 
   const formatDate = (dateString) => {
-    console.log(dateString)
     var date = new Date(dateString);
     date = date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
     });
-    console.log(date)
     return date
   };
 
