@@ -36,10 +36,9 @@ class CustomUserRepoImpl(CustomUserRepository):
                 refresh = RefreshToken.for_user(user) # type: ignore
 
                 return self.to_token_entity({
-                        "refresh": str(refresh),
                         "access": str(refresh.access_token),
                         "user": user,
-                    })
+                    }), refresh # type: ignore
         except Exception as e:
             print(f"Error occured while creating user:{repr(e)}")
             return Response({'detail':f"{str(e)}"}, status=500)
@@ -76,17 +75,29 @@ class CustomUserRepoImpl(CustomUserRepository):
         except Exception as e:
             return Response({'detail':f'{str(e)}'}, status=500)
 
-    def list_user(self, search_params: dict, organization:int, role:str) -> List[CustomUserEntity] | None | Response:
+    def list_user(self, organization:int, role:str, search_params: Optional[dict]=None) -> List[CustomUserEntity] | None | Response:
         try:
-            members = Member.objects.filter(organization=organization)
-            users = list(members.values_list('user', flat=True))
+            print(CustomUser.objects.all())
+            users = CustomUser.objects.\
+                filter(memberships__organization=organization).\
+                only(
+                    "id",
+                    "email",
+                    "username",
+                    "first_name",
+                    "last_name",
+                    "contact_number",
+                    "created_at",
+                    "updated_at",
+                    "profile_picture",
+                )
+            print(users)
             return [self.to_user_entity(user) for user in users]
         except Exception as e:
             return Response({'detail':f'{str(e)}'}, status=500)
     
     def to_token_entity(self, _dict):
         return TokenEntity(
-            refresh = _dict['refresh'],
             access = _dict["access"],
             user = _dict["user"],
         )
@@ -96,7 +107,6 @@ class CustomUserRepoImpl(CustomUserRepository):
             id=user.id, # type: ignore
             email=user.email,
             username=user.username,
-            password=user.password,
             first_name=user.first_name,
             last_name=user.last_name,
             contact_number=user.contact_number,

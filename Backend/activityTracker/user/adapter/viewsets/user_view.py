@@ -5,7 +5,13 @@ from rest_framework.permissions import IsAuthenticated
 from user.adapter.serializers.login_token_serializer import LoginTokenSerializer
 from user.adapter.serializers.user_serializer import CustomUserSerializer
 from user.data.db.user_impl import CustomUserRepoImpl
-from user.domain.usecase.user_usecase import CreateCustomUserUseCase, DeleteCustomUserUsecase, GetCustomUserByIdUsecase, UpdateCustomUserUsecase
+from user.domain.usecase.user_usecase import (
+    CreateCustomUserUseCase, 
+    DeleteCustomUserUsecase, 
+    GetCustomUserByIdUsecase, 
+    UpdateCustomUserUsecase,
+    ListCustomUserUsecase
+)
 from user.models import CustomUser
 from utils.tenantViewsets import BaseTenantAPIView, BaseTenantModelViewSet
 from utils.pagniator import CustomPageNumberPagination
@@ -25,17 +31,39 @@ class CreateUserView(BaseTenantAPIView):
 
         usecase = CreateCustomUserUseCase(repo=self.repository())
         data = serializer.validated_data
-        response = usecase.execute(data=data) # type: ignore
+        response = usecase.execute(data=data) 
         if isinstance(response, Response):
             return response 
+        
+        entity, refresh = response # type: ignore
+        
+        response = Response(LoginTokenSerializer(
+            entity, 
+            context={
+                "timezone": request.headers.get("X-Timezone"), 
+                "request":request
+            }
+        ).data, status=status.HTTP_201_CREATED)
 
-        return Response(LoginTokenSerializer(response, context={"timezone": request.headers.get("X-Timezone"), "request":request}).data, status=status.HTTP_201_CREATED)
+        response.set_cookie(
+            key="refresh_token",
+            value=str(refresh),
+            httponly=True, # JS cannot read   
+            secure=False,  # For https only      
+            samesite="None",  # Forbid cross site   
+            max_age=7 * 24 * 60 * 60, # 7 days
+            path="/",  # limit scope(important)
+        )
+
+        return response
 
 class CustomUserView(BaseTenantModelViewSet):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
     repository = CustomUserRepoImpl 
     permission_classes = [IsAuthenticated]
     require_organization = True
+    queryset = CustomUser.objects.none()
+    serializer_class = CustomUserSerializer
 
     def retrieve(self, request, *args, **kwargs):
         # get user by id
@@ -67,3 +95,21 @@ class CustomUserView(BaseTenantModelViewSet):
             usecase = DeleteCustomUserUsecase(repo=self.repository())
             response = usecase.execute(id=pk, organization=request.organization, role=request.role)
             return response
+
+    def list(self, request):
+        usecase = ListCustomUserUsecase(repo=self.repository())
+        organization = request.organization
+        role = request.role
+        entities = usecase.execute(organization = organization, role = role)
+        if isinstance(entities, Response):
+            return entities
+        
+        serializer = CustomUserSerializer(
+            entities, many=True,
+            context={
+                "timezone": request.headers.get("X-Timezone"), 
+                "request":request
+            })
+        
+        return Response(serializer.data)
+

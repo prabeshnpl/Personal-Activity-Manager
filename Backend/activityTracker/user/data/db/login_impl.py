@@ -28,7 +28,6 @@ class LoginImpl:
     
     def to_entity(self, _dict):
         return TokenEntity(
-            refresh = _dict['refresh'],
             access = _dict["access"],
             user = _dict["user"],
         )
