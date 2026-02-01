@@ -10,7 +10,6 @@ export const authService = {
     api.post("register/", data),
 
   logout: () => {
-    console.log("Yes")
     const refresh = useAuthStore.getState().refreshToken;
     api.post("logout/", {
       refresh,
