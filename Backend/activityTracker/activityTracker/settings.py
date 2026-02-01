@@ -158,11 +158,15 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5175",
 ]
 
+CORS_ALLOW_CREDENTIALS = True 
+
 CORS_ORIGIN_WHITELIST = CORS_ALLOWED_ORIGINS
 
 CORS_ALLOW_ALL_ORIGINS = False # Set True Only for development
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
+    "authorization",
+    "content-type",
     "X-CSRFToken",
     "X-ORG-ID"
 ]

@@ -23,7 +23,7 @@ class CustomUserRepository(ABC):
         pass
 
     @abstractmethod 
-    def list_user(self, search_params:dict, organization:int, role:str) -> Optional[List[CustomUserEntity]] | Optional[Response]:
+    def list_user(self, organization:int, role:str, search_params:Optional[dict]=None) -> Optional[List[CustomUserEntity]] | Optional[Response]:
         pass
 
 

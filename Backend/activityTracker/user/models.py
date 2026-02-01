@@ -31,7 +31,7 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager() # type: ignore
 
     username = models.CharField(max_length=128, blank=True, null=True)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, db_index=True)
     contact_number = models.CharField(max_length=64, blank=True, null=True)
 
     profile_picture = models.FileField(upload_to='profile_picture/', blank=True, null=True)

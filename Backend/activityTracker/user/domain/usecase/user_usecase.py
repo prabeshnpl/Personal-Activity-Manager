@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional
 from user.domain.entity.user_entity import CustomUserEntity
 from user.domain.repository.user_repo import CustomUserRepository
 from user.domain.entity.token_entity import TokenEntity
@@ -8,7 +8,7 @@ class CreateCustomUserUseCase:
     def __init__(self, repo: CustomUserRepository):
         self.repo = repo
 
-    def execute(self, data:dict) -> Optional[TokenEntity] | Optional[Response]:
+    def execute(self, data:Any) -> Optional[TokenEntity] | Optional[Response]:
         return self.repo.create_user(data=data)
 
 class GetCustomUserByIdUsecase:
@@ -36,6 +36,6 @@ class ListCustomUserUsecase:
     def __init__(self, repo: CustomUserRepository):
         self.repo = repo  
 
-    def execute(self, search_params:dict, organization:int, role:str):
+    def execute(self, organization:int, role:str, search_params:Optional[dict]=None):
         return self.repo.list_user(search_params=search_params, organization=organization, role=role)
         

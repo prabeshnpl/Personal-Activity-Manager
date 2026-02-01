@@ -28,7 +28,7 @@ class SummaryRepositoryImpl(SummaryRepository):
                 first_day_this_period = today.replace(day=1)
                 last_day_prev_period = first_day_this_period - timedelta(days=1)
                 first_day_last_period = last_day_prev_period.replace(day=1)
-
+                print(first_day_last_period, first_day_this_period)
             elif period == "yearly":
                 first_day_this_period = today.replace(month=1, day=1)
                 last_day_prev_period = first_day_this_period - timedelta(days=1)
