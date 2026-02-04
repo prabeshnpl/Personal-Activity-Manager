@@ -83,7 +83,7 @@ export const TaskDetailModal = (props) => {
           </div>
           <div>
             <p className="text-sm text-gray-600">Deadline</p>
-            <p className="font-medium text-gray-900">{formatDate(task.deadline)}</p>
+            <p className="font-medium text-gray-900">{formatDate(task.due_at)}</p>
           </div>
         </div>
 

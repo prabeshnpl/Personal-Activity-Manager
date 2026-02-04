@@ -1,14 +1,8 @@
 import { TaskCard } from './TaskCard';
-import { useTasks } from '../hooks/useTasks';
 import { Spinner } from '../../../shared/components/Spinner';
 import ErrorState from '../../../shared/components/Error/ErrorState';
 
-export const TaskKanban = ({onTaskClick }) => {
-  const {
-    getTasksByStatus,
-    updateTask: onUpdate,
-    deleteTask: onDelete,
-  } = useTasks();
+export const TaskKanban = ({ onTaskClick, getTasksByStatus, filters, updateTask: onUpdate, deleteTask: onDelete }) => {
 
   const columns = [
     { id: 'pending', title: 'To Do', color: 'gray' },
@@ -25,8 +19,8 @@ export const TaskKanban = ({onTaskClick }) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {columns.map((column) => {
-        const columnTasks = getTasksByStatus(column.id);
-        const {data, isLoading, error, refetch} = columnTasks;
+        const columnTasks = getTasksByStatus(column.id, filters);
+        const {data, isLoading, error, refetch} = columnTasks || {};
         return (
             <div key={column.id} className="flex flex-col">
               <div className={`bg-white rounded-lg shadow-md p-4 border-t-4 ${colorClasses[column.color]} mb-4`}>

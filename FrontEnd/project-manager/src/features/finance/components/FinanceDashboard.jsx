@@ -190,6 +190,7 @@ export const FinanceDashboard = () => {
           <div>
             <h4 className="text-sm font-semibold text-gray-700 mb-3">Income vs Expenses</h4>
             <div className="space-y-3">
+              {/* Income */}
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-sm text-gray-600">Income</span>
@@ -200,10 +201,20 @@ export const FinanceDashboard = () => {
                 <div className="w-full bg-gray-200 rounded-full h-3">
                   <div
                     className="bg-green-600 h-3 rounded-full"
-                    style={{ width: '100%' }}
+                    style={{
+                      width: `${
+                        summaryData
+                          ? (summaryData.income /
+                              Math.max(summaryData.income, summaryData.expenses)) *
+                            100
+                          : 0
+                      }%`,
+                    }}
                   ></div>
                 </div>
               </div>
+
+              {/* Expenses */}
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-sm text-gray-600">Expenses</span>
@@ -214,15 +225,21 @@ export const FinanceDashboard = () => {
                 <div className="w-full bg-gray-200 rounded-full h-3">
                   <div
                     className="bg-red-600 h-3 rounded-full"
-                    style={{ 
-                      width: `${summaryData?.income > 0 ? (summaryData.expenses / summaryData.income) * 100 : 0}%` 
+                    style={{
+                      width: `${
+                        summaryData
+                          ? (summaryData.expenses /
+                              Math.max(summaryData.income, summaryData.expenses)) *
+                            100
+                          : 0
+                      }%`,
                     }}
                   ></div>
                 </div>
               </div>
             </div>
           </div>
-
+          
           {/* Financial Insights */}
           <div>
             <h4 className="text-sm font-semibold text-gray-700 mb-3">Insights</h4>

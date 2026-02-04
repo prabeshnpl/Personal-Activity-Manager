@@ -19,13 +19,15 @@ const TasksPage = () => {
     createTask,
     updateTask,
     deleteTask,
+    tasks,
+    getTasksByStatus,
   } = useTasks();
   
   const [activeTab, setActiveTab] = useState('list');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
-
+  
   const tabs = [
     {
       id: 'list',
@@ -85,12 +87,23 @@ const TasksPage = () => {
         {/* Content */}
         <div className='mt-10'>
           <TabPanel isActive={activeTab === 'list'}>
-            <TasksList showFilters={showFilters} setShowFilters={setShowFilters} />
+            <TasksList
+              tasks={tasks}
+              createTask={createTask}
+              updateTask={updateTask}
+              deleteTask={deleteTask}
+              showFilters={showFilters}
+              setShowFilters={setShowFilters}
+            />
           </TabPanel>
 
           <TabPanel isActive={activeTab === 'kanban'}>
             <TaskKanban
-            onTaskClick={setSelectedTask}
+              onTaskClick={setSelectedTask}
+              getTasksByStatus={getTasksByStatus}
+              filters={filters}
+              updateTask={updateTask}
+              deleteTask={deleteTask}
             />
           </TabPanel>
         </div>

@@ -6,19 +6,11 @@ import { TaskCard } from './TaskCard';
 import { AddTaskModal } from './AddTaskModal';
 import { TaskDetailModal } from './TaskDetailModal';
 import { CheckSquare } from 'lucide-react';
-import { useTasks } from '../hooks/useTasks';
 
-export const TasksList = () => {
-  const {
-    tasks,
-    createTask,
-    updateTask,
-    deleteTask,
-  } = useTasks();
-
+export const TasksList = ({ tasks, createTask, updateTask, deleteTask }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  const {data, isLoading, error, refetch} = tasks;
+  const {data, isLoading, error, refetch} = tasks || {};
   
   if (isLoading) {
     return (

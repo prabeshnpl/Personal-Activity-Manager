@@ -144,12 +144,12 @@ export const TaskCard = ({ task, onUpdate, onDelete, onClick }) => {
           </span>
         )}
 
-        {task.deadline && (
+        {task.due_at && (
           <span className={`px-2 py-1 rounded text-xs ${
             isOverdue() ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-700'
           }`}>
             <Calendar className="h-3 w-3 inline mr-1" />
-            {formatDate(task.deadline)}
+            {formatDate(task.due_at)}
           </span>
         )}
 

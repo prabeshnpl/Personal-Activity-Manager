@@ -126,9 +126,9 @@ export const AddTaskModal = ({ onClose, onCreate, task }) => {
               Deadline
             </label>
             <input
-              type="datetime-local"
-              value={formData.due_at}
-              onChange={(e) => setFormData({ ...formData, due_at: `${e.target.value}:00Z` })}
+              type="date"
+              value={formData.due_at ? formData.due_at.split('T')[0] : ''}
+              onChange={(e) => setFormData({ ...formData, due_at: `${e.target.value}T00:00:00Z` })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
             />

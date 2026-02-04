@@ -8,14 +8,15 @@ export function useTasks() {
     status: null, // pending, in_progress, completed
     priority: null, // low, medium, high
     assignedTo: null,
-    search: '',
+    search: null,
     startDate: null,
     endDate: null,
   });
 
   // Queries
+  // Include `filters` in the queryKey so queries refetch when filters change
   const tasks = useQuery({
-    queryKey: ["tasks"],
+    queryKey: ["tasks", filters],
     queryFn: () => taskService.getTasks(filters),
   });
 
@@ -63,10 +64,14 @@ export function useTasks() {
   });
 
   // Helper functions
-  const getTasksByStatus = (status) => useQuery({
-    queryKey: ["tasks", status],
-    queryFn: () => taskService.getTasks({status}),
-  }); 
+  // Accept overrideFilters so callers can pass the current filters (e.g. search)
+  const getTasksByStatus = (status, overrideFilters = null) => {
+    const combinedFilters = { ...filters, ...(overrideFilters || {}), status };
+    return useQuery({
+      queryKey: ["tasks", status, combinedFilters],
+      queryFn: () => taskService.getTasks(combinedFilters),
+    });
+  };
 
   return {
     // Data
