@@ -32,7 +32,6 @@ class Task(models.Model):
     assigned_to = models.ManyToManyField(
         CustomUser,
         related_name="assigned_tasks",
-        null=True,
         blank=True
     )
 
