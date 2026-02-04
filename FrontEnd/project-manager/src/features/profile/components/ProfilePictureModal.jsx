@@ -3,7 +3,7 @@ import { Button } from '../../../shared/components/Button';
 import { X, Upload, Trash2 } from 'lucide-react';
 import { useAuthStore } from '../../../stores/authStore';
 
-export const ProfilePictureModal = ({ currentPicture, onClose, onUpload, onDelete }) => {
+export const ProfilePictureModal = ({ currentPicture, onClose, onUpdate }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -41,7 +41,7 @@ export const ProfilePictureModal = ({ currentPicture, onClose, onUpload, onDelet
     try {
       setLoading(true);
       setError(null);
-      await onUpload.mutateAsync({ file: selectedFile, userId: user.id });
+      await onUpdate.mutateAsync({ file: selectedFile, userId: user.id });
       onClose();
     } catch (err) {
       setError(err.message || 'Failed to upload picture');
@@ -54,7 +54,7 @@ export const ProfilePictureModal = ({ currentPicture, onClose, onUpload, onDelet
     if (window.confirm('Are you sure you want to delete your profile picture?')) {
       try {
         setLoading(true);
-        await onDelete.mutateAsync();
+        await onUpdate.mutateAsync({ file: null, userId: user.id });
         onClose();
       } catch (err) {
         setError(err.message || 'Failed to delete picture');

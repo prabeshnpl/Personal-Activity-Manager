@@ -12,11 +12,10 @@ export function useProfile() {
 
   // Mutations
   const updateProfile = useMutation({
-    mutationFn: profileService.updateProfile,
+    mutationFn: ({ data, userId }) => profileService.updateProfile(data, userId),
     onSuccess: (response) => {
       queryClient.invalidateQueries(["profile"]);
-      // Update user in auth store
-      useAuthStore.getState().updateUser(response.data);
+      useAuthStore.getState().updateUser(response);
     },
   });
 
@@ -24,14 +23,17 @@ export function useProfile() {
     mutationFn: ({file, userId}) => profileService.uploadProfilePicture(file, userId),
     onSuccess: (response) => {
       queryClient.invalidateQueries(["profile"]);
-      useAuthStore.getState().updateUser(response.data);
+      useAuthStore.getState().updateUser(response);
     },
   });
 
   const deleteProfilePicture = useMutation({
     mutationFn: profileService.deleteProfilePicture,
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries(["profile"]);
+      if (response) {
+        useAuthStore.getState().updateUser(response);
+      }
     },
   });
 

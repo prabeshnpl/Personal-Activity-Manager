@@ -44,8 +44,7 @@ export const ProfilePage = () => {
 
       {/* Profile Header */}
       <ProfileHeader
-        onUploadPicture={uploadProfilePicture}
-        onDeletePicture={deleteProfilePicture}
+        onUpdate={updateProfile}
       />
 
       {/* Tabs */}
@@ -55,7 +54,7 @@ export const ProfilePage = () => {
       <div>
         <TabPanel isActive={activeTab === 'personal'}>
           <PersonalInformation
-            onUpdate={updateProfile}
+            onUpdate={uploadProfilePicture}
           />
         </TabPanel>
 
