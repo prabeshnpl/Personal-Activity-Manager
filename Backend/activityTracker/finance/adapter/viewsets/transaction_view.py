@@ -46,7 +46,6 @@ class TransactionViewset(BaseTenantModelViewSet):
                 "request":request
             }
         )
-        # return Response(serializer.data)
         page = self.paginate_queryset(entities)
 
         serializer = self.get_serializer(
