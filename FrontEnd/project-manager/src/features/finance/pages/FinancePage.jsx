@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FinanceDashboard } from '../components/FinanceDashboard';
 import { TransactionsList } from '../components/Transaction/TransactionsList';
 import { Tabs, TabPanel } from '../../../shared/components/tabs/Tabs';

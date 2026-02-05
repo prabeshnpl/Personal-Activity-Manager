@@ -200,7 +200,13 @@ export const FinanceDashboard = () => {
                 <div className="w-full bg-gray-200 rounded-full h-3">
                   <div
                     className="bg-green-600 h-3 rounded-full"
-                    style={{ width: '100%' }}
+                    style={{
+                      width: `${
+                        summaryData?.income + summaryData?.expenses > 0
+                          ? (summaryData.income / (summaryData.income + summaryData.expenses)) * 100
+                          : 0
+                      }%`,
+                    }}
                   ></div>
                 </div>
               </div>
@@ -214,8 +220,12 @@ export const FinanceDashboard = () => {
                 <div className="w-full bg-gray-200 rounded-full h-3">
                   <div
                     className="bg-red-600 h-3 rounded-full"
-                    style={{ 
-                      width: `${summaryData?.income > 0 ? (summaryData.expenses / summaryData.income) * 100 : 0}%` 
+                    style={{
+                      width: `${
+                        summaryData?.income + summaryData?.expenses > 0
+                          ? (summaryData.expenses / (summaryData.income + summaryData.expenses)) * 100
+                          : 0
+                      }%`,
                     }}
                   ></div>
                 </div>

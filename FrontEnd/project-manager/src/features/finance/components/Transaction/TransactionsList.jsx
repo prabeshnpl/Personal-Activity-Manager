@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '../../../../shared/components/Card';
 import { Button } from '../../../../shared/components/Button';
 import { EmptyState } from '../../../../shared/components/EmptyState';
@@ -6,27 +6,58 @@ import { TransactionCard } from './TransactionCard';
 import { AddTransactionModal } from './AddTransactionModal';
 import { Plus, Download, Filter, Receipt } from 'lucide-react';
 import { Spinner } from '../../../../shared/components/Spinner';
-import { useTransaction } from '../../hooks/useTransaction';
 import FilterModal from './FilterModal';
 import ErrorState from '../../../../shared/components/Error/ErrorState';
 import SearchBar from '../../../../shared/components/Search/SearchBar';
+import { useTransaction } from '../../hooks/useTransaction';
 
 export const TransactionsList = () => {
+  const {
+    getInfiniteTransactions,
+    createTransaction,
+    updateTransaction,
+    deleteTransaction,
+    filters,
+    setFilters,
+    categories,
+    exportTransactions,
+  } = useTransaction();
+
+  const infiniteTransactions = getInfiniteTransactions();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  
-    const {
-      transactions,
-      categories,
-      filters,
-      setFilters,
-      createTransaction,
-      updateTransaction,
-      deleteTransaction,
-      exportTransactions,
-    } = useTransaction();
 
-  const {data, isLoading, error, refetch} = transactions;
+  const sentinelRef = useRef(null);
+
+  const { 
+    data: pages, 
+    isLoading, 
+    error, 
+    fetchNextPage, 
+    hasNextPage, 
+    isFetchingNextPage, 
+    refetch 
+  } = infiniteTransactions;
+
+  const data = pages?.pages ? pages.pages.flat() : [];
+
+  // Intersection observer to auto-fetch next page
+  useEffect(() => {
+    if (!fetchNextPage) return;
+    if (!hasNextPage) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }, { threshold: 1 });
+
+    const el = sentinelRef.current;
+    if (el) observer.observe(el);
+
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   if (isLoading){
     return <Spinner size="md" />;
@@ -81,7 +112,7 @@ export const TransactionsList = () => {
         />
 
         {/* Transactions List */}
-        { data.length === 0 ? (
+        { data?.length === 0 ? (
           <EmptyState
             icon={Receipt}
             title="No transactions yet"
@@ -100,6 +131,14 @@ export const TransactionsList = () => {
             ))}
           </div>
         )}
+        {/* Infinite sentinel */}
+        <div className="flex items-center justify-center mt-6">
+          <div ref={sentinelRef} className="h-6"></div>
+          {isFetchingNextPage && <Spinner />}
+          {!hasNextPage && (
+            <div className="text-sm text-gray-500 mt-2">No more transactions</div>
+          )}
+        </div>
       </Card>
 
       {showAddModal && (

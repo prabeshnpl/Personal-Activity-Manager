@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Spinner } from '../../../shared/components/Spinner';
 import { EmptyState } from '../../../shared/components/EmptyState';
 import ErrorState from '../../../shared/components/Error/ErrorState';
@@ -6,20 +6,44 @@ import { TaskCard } from './TaskCard';
 import { AddTaskModal } from './AddTaskModal';
 import { TaskDetailModal } from './TaskDetailModal';
 import { CheckSquare } from 'lucide-react';
-import { useTasks } from '../hooks/useTasks';
 
-export const TasksList = () => {
-  const {
-    tasks,
-    createTask,
-    updateTask,
-    deleteTask,
-  } = useTasks();
-
+export const TasksList = ({ infiniteTasks, createTask, updateTask, deleteTask, showFilters, setShowFilters }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  const {data, isLoading, error, refetch} = tasks;
+
+  const { 
+    data:pages, 
+    isLoading, 
+    error, 
+    fetchNextPage, 
+    hasNextPage, 
+    isFetchingNextPage, 
+    refetch 
+  } = infiniteTasks;
+
+  let data = pages?.pages ? pages.pages.flat() : [];
+
+  // Infinite scroll sentinel
+  const sentinelRef = useRef(null);
+  useEffect(() => {
+    if (!fetchNextPage) return;
+    if (!hasNextPage) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }, { threshold: 1 });
+
+    const el = sentinelRef.current;
+    if (el) observer.observe(el);
+
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
   
+
+  // Initial / fallback loading
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -56,6 +80,17 @@ export const TasksList = () => {
               onClick={() => setSelectedTask(task)}
             />
           ))}
+        </div>
+      )}
+
+      {/* Sentinel for infinite loading */}
+      {hasNextPage && (
+        <div className="flex items-center justify-center mt-6">
+          <div ref={sentinelRef} className="h-6"></div>
+          {isFetchingNextPage && <Spinner />}
+          {!hasNextPage && (
+            <div className="text-sm text-gray-500 mt-2">No more tasks</div>
+          )}
         </div>
       )}
 

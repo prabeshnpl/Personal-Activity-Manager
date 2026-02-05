@@ -21,18 +21,34 @@ export function useProfile() {
 
   const uploadProfilePicture = useMutation({
     mutationFn: ({file, userId}) => profileService.uploadProfilePicture(file, userId),
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       queryClient.invalidateQueries(["profile"]);
-      useAuthStore.getState().updateUser(response);
+      if (response && (response.id || response.email)) {
+        useAuthStore.getState().updateUser(response);
+      } else {
+        try {
+          const fresh = await profileService.getMe();
+          useAuthStore.getState().updateUser(fresh);
+        } catch (err) {
+          console.warn('Failed to refresh user after picture upload', err);
+        }
+      }
     },
   });
 
   const deleteProfilePicture = useMutation({
     mutationFn: profileService.deleteProfilePicture,
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       queryClient.invalidateQueries(["profile"]);
-      if (response) {
+      if (response && (response.id || response.email)) {
         useAuthStore.getState().updateUser(response);
+      } else {
+        try {
+          const fresh = await profileService.getMe();
+          useAuthStore.getState().updateUser(fresh);
+        } catch (err) {
+          console.warn('Failed to refresh user after deleteProfilePicture', err);
+        }
       }
     },
   });

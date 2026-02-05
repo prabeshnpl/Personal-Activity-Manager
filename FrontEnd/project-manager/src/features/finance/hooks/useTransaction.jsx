@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import useInfiniteList from '../../../shared/hooks/useInfiniteList';
 import { financeService } from "../services/financeService";
 import { useState } from "react";
 
@@ -14,11 +15,16 @@ export function useTransaction() {
   });
 
   // Queries
-  const transactions = useQuery({
-    queryKey: ["finance", "transactions", filters],
-    queryFn: () => financeService.getTransactions(filters),
-    retry: false
-  });
+
+  // Infinite loader for transactions
+  const getInfiniteTransactions = (overrideFilters = null) => {
+    const combined = { ...filters, ...(overrideFilters || {}) };
+    return useInfiniteList(
+      ["finance", "transactions", "infinite"], 
+      (params) => financeService.getTransactions({ ...combined, ...params, page_size:5 }), 
+      [combined]
+    );
+  };
 
   const categories = useQuery({
     queryKey: ["finance", "categories"],
@@ -73,9 +79,9 @@ export function useTransaction() {
 
   return {
     // Data
-    transactions: transactions,
     categories: categories,
     accounts: accounts,
+    getInfiniteTransactions,
 
     // Filters
     filters,

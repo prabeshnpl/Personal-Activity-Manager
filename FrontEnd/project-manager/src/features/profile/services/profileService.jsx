@@ -8,18 +8,17 @@ export const profileService = {
 
   uploadProfilePicture: (file, userId) => {
     const formData = new FormData();
-    formData.append('profile_picture', file);
-    return api.patch(`${ENDPOINTS.PROFILE}/${userId}/`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      }
-      }
-    )
+    // include filename to ensure correct form part metadata
+    formData.append('profile_picture', file, file?.name || 'profile.jpg');
+    // Let axios set Content-Type and boundary automatically
+    return api.patch(`${ENDPOINTS.PROFILE}/${userId}/`, formData);
   },
-  
 
   deleteProfilePicture: () =>
     api.delete(`${ENDPOINTS.PROFILE}/picture/`),
+
+  // Fetch current authenticated user
+  getMe: () => api.get(`${ENDPOINTS.ME}/`),
 
   // Password
   changePassword: (data) =>

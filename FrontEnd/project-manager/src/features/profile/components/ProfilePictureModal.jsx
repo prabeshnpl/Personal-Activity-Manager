@@ -36,8 +36,10 @@ export const ProfilePictureModal = ({ currentPicture, onClose, onUpdate }) => {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return;
-
+    if (!selectedFile) return;    if (!user?.id) {
+      setError('User not available. Please try again later.');
+      return;
+    }
     try {
       setLoading(true);
       setError(null);

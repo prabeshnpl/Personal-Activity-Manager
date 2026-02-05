@@ -2,14 +2,17 @@ import { TopBar } from './TopBar';
 import { Sidebar } from './SideBar';
 import { Outlet } from 'react-router-dom';
 import ErrorMessage from '../components/Error/ErrorMessage';
+import { useState } from 'react';
 
 export const AppLayout = () => {
+  const [showSidebar, setShowSidebar] = useState(false);
+
   return (
     <div className="h-screen flex flex-col">
-      <TopBar />
+      <TopBar onToggleSidebar={() => setShowSidebar((s) => !s)} />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
-        <main className="flex-1 overflow-y-auto bg-yellow-50">
+        <Sidebar isOpen={showSidebar} onClose={() => setShowSidebar(false)} />
+        <main className="flex-1 overflow-y-auto bg-yellow-50 min-h-0">
           <Outlet />
         </main>
       </div>
