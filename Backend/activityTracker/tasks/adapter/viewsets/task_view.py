@@ -46,18 +46,18 @@ class TaskView(BaseTenantModelViewSet):
                 "request":request
             }
         )
-        return Response(serializer.data)
-        # page = self.paginate_queryset(entities)
+        # return Response(serializer.data)
+        page = self.paginate_queryset(entities)
 
-        # serializer = self.get_serializer(
-        #     page, many=True,
-            # context={
-            #     "timezone": request.headers.get("X-Timezone"), 
-            #     "request":request
-            # }
-        # )
+        serializer = self.get_serializer(
+            page, many=True,
+            context={
+                "timezone": request.headers.get("X-Timezone"), 
+                "request":request
+            }
+        )
 
-        # return self.get_paginated_response(serializer.data)
+        return self.get_paginated_response(serializer.data)
        
     def destroy(self, request, pk):
         usecase = DeleteTaskUseCase(repo=self.repository())
