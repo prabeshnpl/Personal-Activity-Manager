@@ -65,39 +65,40 @@ export const TransactionsList = () => {
   if (error){
     return <ErrorState message="Failed to load transactions." onRetry={refetch} />;
   }
-
   return (
     <div className='mt-5 overflow-y-auto max-h-120'>
       <Card
-        title={`Transactions (${data?.length || 0})`}
+        title={`Transactions (${pages?.pages?.at(-1)?.meta?.total_count || 0})`}
         action={
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2 items-center">
             <SearchBar
-                placeholder="Search transactions..."
+                placeholder="Search..."
                 value={filters.search || ''}
                 onSubmit={(value) => setFilters({ ...filters, search: value || null })}
-                className="max-w-md"
+                className="flex-1 min-w-xs sm:max-w-md"
               />
 
             <Button
               size="sm"
               variant="ghost"
               onClick={() => setShowFilters(!showFilters)}
+              title="Filter"
             >
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
+              <Filter className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2">Filter</span>
             </Button>
             <Button
               size="sm"
               variant="ghost"
               onClick={exportTransactions}
+              title="Export"
             >
-              <Download className="h-4 w-4 mr-2" />
-              Export
+              <Download className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2">Export</span>
             </Button>
             <Button size="sm" onClick={() => setShowAddModal(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Transaction
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2">Add</span>
             </Button>
           </div>
         }

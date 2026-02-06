@@ -31,7 +31,6 @@ export const useAuthStore = create(
       },
 
       updateUser: (user) => {
-        console.log("updating user", user);
         set({ user })
       },
     }),

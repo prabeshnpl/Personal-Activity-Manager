@@ -36,23 +36,6 @@ export function useProfile() {
     },
   });
 
-  const deleteProfilePicture = useMutation({
-    mutationFn: profileService.deleteProfilePicture,
-    onSuccess: async (response) => {
-      queryClient.invalidateQueries(["profile"]);
-      if (response && (response.id || response.email)) {
-        useAuthStore.getState().updateUser(response);
-      } else {
-        try {
-          const fresh = await profileService.getMe();
-          useAuthStore.getState().updateUser(fresh);
-        } catch (err) {
-          console.warn('Failed to refresh user after deleteProfilePicture', err);
-        }
-      }
-    },
-  });
-
   const changePassword = useMutation({
     mutationFn: profileService.changePassword,
   });
@@ -77,7 +60,6 @@ export function useProfile() {
     // Mutations
     updateProfile,
     uploadProfilePicture,
-    deleteProfilePicture,
     changePassword,
     deleteAccount,
     revokeSession,

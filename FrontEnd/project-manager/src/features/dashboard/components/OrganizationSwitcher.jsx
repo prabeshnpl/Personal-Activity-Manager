@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { useOrganizationstore } from '../../organization/hooks/useOrganizationstore';
 import { ChevronDown, Building2, Plus } from 'lucide-react';
-import { useErrorStore } from '../../../stores/errorStore';
 
 export const OrganizationSwitcher = () => {
-  const { setError } = useErrorStore();
   const { 
     organizations, 
     activeOrganization, 
@@ -47,7 +45,7 @@ export const OrganizationSwitcher = () => {
   }
 
   return (
-    <div className="relative">
+    <div className="relative z-51 hidden sm:block">
       <button
         onClick={() => setIsOpen(!isOpen)}
         disabled={switching}

@@ -28,6 +28,7 @@ export default function useInfiniteList(key, fetcher, deps = []) {
           page_size: res.page_size,
           total_pages: res.total_pages,
           current_page: res.current_page,
+          total_count: res.total_count
         };
         return arr;
       }

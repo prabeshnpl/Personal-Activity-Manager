@@ -56,7 +56,7 @@ export const TaskKanban = ({ onTaskClick, getTasksByStatus, updateTask: onUpdate
                 <h3 className="font-semibold text-gray-900 flex items-center justify-between">
                   <span>{column.title}</span>
                   <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                    {data?.length}
+                    {pages?.pages?.at(-1)?.meta?.total_count || 0}
                   </span>
                 </h3>
               </div>

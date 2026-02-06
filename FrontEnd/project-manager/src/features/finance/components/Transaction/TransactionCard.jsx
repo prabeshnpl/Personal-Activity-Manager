@@ -72,7 +72,7 @@ export const TransactionCard = ({ transaction, onUpdate, onDelete }) => {
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-9999">
                 <button
                   onClick={() => {
-                    onUpdate(transaction);
+                    onUpdate?.mutateAsync?.({ id: transaction.id, data: transaction });
                     setShowMenu(false);
                   }}
                   className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
@@ -83,7 +83,7 @@ export const TransactionCard = ({ transaction, onUpdate, onDelete }) => {
                 <button
                   onClick={() => {
                     if (window.confirm('Delete this transaction?')) {
-                      onDelete.mutate(transaction.id);
+                      onDelete?.mutateAsync?.(transaction.id);
                     }
                     setShowMenu(false);
                   }}

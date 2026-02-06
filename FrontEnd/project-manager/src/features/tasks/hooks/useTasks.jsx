@@ -65,7 +65,6 @@ export function useTasks() {
 
   const getTasksByStatus = (status, overrideFilters = null) => {
     const combinedFilters = { ...filters, ...(overrideFilters || {}), status };
-    console.log(status, combinedFilters);
     return getInfiniteTasks(combinedFilters);
   };
 

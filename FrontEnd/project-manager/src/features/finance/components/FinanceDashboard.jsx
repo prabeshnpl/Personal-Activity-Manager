@@ -86,15 +86,15 @@ export const FinanceDashboard = () => {
       </div>
 
       {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.title} className="bg-white rounded-lg shadow-md p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <p className="text-sm text-gray-600 mb-1">{stat.title}</p>
-                  <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+            <div key={stat.title} className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs sm:text-sm text-gray-600 mb-1">{stat.title}</p>
+                  <p className="text-lg sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">{stat.value}</p>
                   {stat.trend && (
                     <div className="flex items-center mt-2">
                       {stat.trend.positive ? (
