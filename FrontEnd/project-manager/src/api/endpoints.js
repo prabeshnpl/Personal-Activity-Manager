@@ -30,4 +30,8 @@ export const ENDPOINTS = {
   // Profile
   PROFILE: '/user',
   CHANGE_PASSWORD: '/user/change-password',
+
+  // Roadmaps
+  ROADMAPS: '/roadmaps',
+  ROADMAP_NOTES: '/roadmap-notes',
 };
