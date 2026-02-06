@@ -23,6 +23,14 @@ const api = axios.create({
   withCredentials: true, // This automatically sets incoming response cookies and sends them on every requests
 });
 
+// Remove default Content-Type for FormData requests
+api.interceptors.request.use((config) => {
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
+  }
+  return config;
+});
+
 /* ---------------------------------------
    Request Interceptor
 --------------------------------------- */
@@ -147,7 +155,6 @@ api.interceptors.response.use(
         message = error.response?.data?.detail || "Bad request";
         break;
       case 401:
-        console.log("yess")
         message = error.response?.data?.detail || "Access Denied";
       case 403:
         message = "You do not have permission to perform this action.";

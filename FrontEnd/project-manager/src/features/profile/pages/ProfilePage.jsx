@@ -45,7 +45,6 @@ export const ProfilePage = () => {
       {/* Profile Header */}
       <ProfileHeader
         onUploadPicture={uploadProfilePicture}
-        onDeletePicture={deleteProfilePicture}
       />
 
       {/* Tabs */}

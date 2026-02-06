@@ -9,17 +9,11 @@ export const profileService = {
   uploadProfilePicture: (file, userId) => {
     const formData = new FormData();
     formData.append('profile_picture', file);
-    return api.patch(`${ENDPOINTS.PROFILE}/${userId}/`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      }
-      }
-    )
+    return api.patch(`${ENDPOINTS.PROFILE}/${userId}/`, formData);
   },
-  
 
-  deleteProfilePicture: () =>
-    api.delete(`${ENDPOINTS.PROFILE}/picture/`),
+  // Fetch current authenticated user
+  getMe: () => api.get(`${ENDPOINTS.ME}/`),
 
   // Password
   changePassword: (data) =>

@@ -4,7 +4,7 @@ import { Camera, Mail, Calendar, Shield } from 'lucide-react';
 import { ProfilePictureModal } from './ProfilePictureModal';
 import { useAuthStore } from '../../../stores/authStore';
 
-export const ProfileHeader = ({ onUploadPicture, onDeletePicture}) => {
+export const ProfileHeader = ({ onUploadPicture }) => {
 
   const {user:profile} = useAuthStore();
   const [showPictureModal, setShowPictureModal] = useState(false);
@@ -81,8 +81,7 @@ export const ProfileHeader = ({ onUploadPicture, onDeletePicture}) => {
         <ProfilePictureModal
           currentPicture={profile?.profile_picture}
           onClose={() => setShowPictureModal(false)}
-          onUpload={onUploadPicture}
-          onDelete={onDeletePicture}
+          onUpdate={onUploadPicture}
         />
       )}
     </>

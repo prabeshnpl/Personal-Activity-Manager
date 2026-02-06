@@ -13,7 +13,7 @@ export const PersonalInformation = ({ onUpdate }) => {
     first_name: '',
     last_name: '',
     email: '',
-    phone: '',
+    contact_number: '',
     bio: '',
   });
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ export const PersonalInformation = ({ onUpdate }) => {
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',
         email: profile.email || '',
-        phone: profile.phone || '',
+        contact_number: profile.contact_number || '',
         bio: profile.bio || '',
       });
     }
@@ -55,7 +55,7 @@ export const PersonalInformation = ({ onUpdate }) => {
       first_name: profile.first_name || '',
       last_name: profile.last_name || '',
       email: profile.email || '',
-      phone: profile.phone || '',
+      contact_number: profile.contact_number || '',
       bio: profile.bio || '',
     });
     setIsEditing(false);
@@ -129,12 +129,12 @@ export const PersonalInformation = ({ onUpdate }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Phone
+              Contact Number
             </label>
             <input
               type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              value={formData.contact_number}
+              onChange={(e) => setFormData({ ...formData, contact_number: e.target.value })}
               disabled={!isEditing || loading}
               placeholder="Optional"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500"

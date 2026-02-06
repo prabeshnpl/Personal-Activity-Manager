@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import useInfiniteList from '../../../shared/hooks/useInfiniteList';
 import { taskService } from "../services/taskService";
 import { useState } from "react";
 
@@ -62,11 +63,19 @@ export function useTasks() {
     },
   });
 
-  // Helper functions
-  const getTasksByStatus = (status) => useQuery({
-    queryKey: ["tasks", status],
-    queryFn: () => taskService.getTasks({status}),
-  }); 
+  const getTasksByStatus = (status, overrideFilters = null) => {
+    const combinedFilters = { ...filters, ...(overrideFilters || {}), status };
+    return getInfiniteTasks(combinedFilters);
+  };
+
+  // Infinite list helper for tasks
+  const getInfiniteTasks = (overrideFilters = null) => {
+    const combined = { ...filters, ...(overrideFilters || {}) };
+    return useInfiniteList(
+      ["tasks", "infinite"], 
+      (params) => taskService.getTasks({ ...combined, ...params, page_size:10 }), 
+      [combined]);
+  };
 
   return {
     // Data
@@ -86,5 +95,6 @@ export function useTasks() {
 
     // Helpers
     getTasksByStatus,
+    getInfiniteTasks
   };
 }

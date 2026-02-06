@@ -51,7 +51,12 @@ class CustomUserRepoImpl(CustomUserRepository):
                 return Response({'detail':'You are not allowed!!'}, status=400)
 
             for key, value in data.items():
-                setattr(user, key, value)    
+                if key in ['first_name', 'last_name', 'contact_number', 'profile_picture']:
+                    setattr(user, key, value)    
+                else:
+                    return Response({'detail':f'Invalid key: {key}'})
+                print(key, value)
+            print("done")
             user.save()
         
             return self.to_user_entity(user)

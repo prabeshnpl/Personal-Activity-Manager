@@ -19,7 +19,12 @@ const TasksPage = () => {
     createTask,
     updateTask,
     deleteTask,
+    getInfiniteTasks,
+    getTasksByStatus,
   } = useTasks();
+
+  // Infinite tasks query for list view
+  const infiniteTasks = getInfiniteTasks();
   
   const [activeTab, setActiveTab] = useState('list');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -85,12 +90,22 @@ const TasksPage = () => {
         {/* Content */}
         <div className='mt-10'>
           <TabPanel isActive={activeTab === 'list'}>
-            <TasksList showFilters={showFilters} setShowFilters={setShowFilters} />
+            <TasksList
+              infiniteTasks={infiniteTasks}
+              createTask={createTask}
+              updateTask={updateTask}
+              deleteTask={deleteTask}
+              showFilters={showFilters}
+              setShowFilters={setShowFilters}
+            />
           </TabPanel>
 
           <TabPanel isActive={activeTab === 'kanban'}>
             <TaskKanban
-            onTaskClick={setSelectedTask}
+              onTaskClick={setSelectedTask}
+              getTasksByStatus={getTasksByStatus}
+              updateTask={updateTask}
+              deleteTask={deleteTask}
             />
           </TabPanel>
         </div>

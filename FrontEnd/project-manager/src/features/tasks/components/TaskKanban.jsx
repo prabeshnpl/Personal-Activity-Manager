@@ -1,14 +1,9 @@
+import React, { useEffect, useRef } from 'react';
 import { TaskCard } from './TaskCard';
-import { useTasks } from '../hooks/useTasks';
 import { Spinner } from '../../../shared/components/Spinner';
 import ErrorState from '../../../shared/components/Error/ErrorState';
 
-export const TaskKanban = ({onTaskClick }) => {
-  const {
-    getTasksByStatus,
-    updateTask: onUpdate,
-    deleteTask: onDelete,
-  } = useTasks();
+export const TaskKanban = ({ onTaskClick, getTasksByStatus, updateTask: onUpdate, deleteTask: onDelete }) => {
 
   const columns = [
     { id: 'pending', title: 'To Do', color: 'gray' },
@@ -25,15 +20,43 @@ export const TaskKanban = ({onTaskClick }) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {columns.map((column) => {
-        const columnTasks = getTasksByStatus(column.id);
-        const {data, isLoading, error, refetch} = columnTasks;
+        const { 
+          data:pages, 
+          isLoading, 
+          error, 
+          fetchNextPage, 
+          hasNextPage, 
+          isFetchingNextPage, 
+          refetch 
+        } = getTasksByStatus(column.id);
+
+        let data = pages?.pages ? pages.pages.flat() : [];
+
+        const sentinelRef = useRef(null);
+        useEffect(() => {
+          if (!fetchNextPage) return;
+          if (!hasNextPage) return;
+      
+          const observer = new IntersectionObserver((entries) => {
+            const entry = entries[0];
+            if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+              fetchNextPage();
+            }
+          }, { threshold: 1 });
+      
+          const el = sentinelRef.current;
+          if (el) observer.observe(el);
+      
+          return () => observer.disconnect();
+        }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
         return (
             <div key={column.id} className="flex flex-col">
               <div className={`bg-white rounded-lg shadow-md p-4 border-t-4 ${colorClasses[column.color]} mb-4`}>
                 <h3 className="font-semibold text-gray-900 flex items-center justify-between">
                   <span>{column.title}</span>
                   <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                    {data?.length}
+                    {pages?.pages?.at(-1)?.meta?.total_count || 0}
                   </span>
                 </h3>
               </div>
