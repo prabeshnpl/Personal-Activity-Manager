@@ -63,11 +63,11 @@ class SummaryRepositoryImpl(SummaryRepository):
             # --- Percentage Change ---
             income_pct_change = (
                 (income_this - income_last) / income_last * 100
-                if income_last != 0 else 0
+                if income_last != 0 else (100 if (income_this - income_last) else 0)
             )
             expense_pct_change = (
                 (expense_this - expense_last) / expense_last * 100
-                if expense_last != 0 else 0
+                if expense_last != 0 else (100 if (expense_this - expense_last) else 0)
             )
 
             # Ratio and avg

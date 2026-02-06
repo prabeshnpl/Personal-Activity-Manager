@@ -46,6 +46,8 @@ class TaskView(BaseTenantModelViewSet):
                 "request":request
             }
         )
+        total_count = len(entities)
+
         page = self.paginate_queryset(entities)
 
         serializer = self.get_serializer(
@@ -56,7 +58,9 @@ class TaskView(BaseTenantModelViewSet):
             }
         )
 
-        return self.get_paginated_response(serializer.data)
+        response = self.get_paginated_response(serializer.data)
+        response.data['total_count'] = total_count
+        return response
        
     def destroy(self, request, pk):
         usecase = DeleteTaskUseCase(repo=self.repository())
