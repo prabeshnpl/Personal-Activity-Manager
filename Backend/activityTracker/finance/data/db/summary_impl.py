@@ -71,8 +71,9 @@ class SummaryRepositoryImpl(SummaryRepository):
             )
 
             # Ratio and avg
-            savings_ratio = balance / income_this * 100 if income_this!=0 else 0
+            # savings_ratio = balance / income_this * 100 if income_this!=0 else 0
             expense_ratio = expense_this / income_this * 100 if income_this!=0 else 0
+            savings_ratio = 100 - expense_ratio
 
             total_days = 1 if period == 'daily' else (30 if period == 'monthly' else 365)
             avg_daily_expense = expense_this / total_days
