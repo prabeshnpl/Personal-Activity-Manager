@@ -1,19 +1,24 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useInfiniteList from '../../../shared/hooks/useInfiniteList';
 import { roadmapService } from "../services/roadmapService";
 
 export function useMilestone(roadmapId) {
   const queryClient = useQueryClient();
 
-  const milestones = useQuery({
-    queryKey: ["roadmaps", roadmapId, "milestones"],
-    queryFn: () => roadmapService.getMilestones(roadmapId),
-    enabled: !!roadmapId,
-  });
+  const getInfiniteMilestones = () =>
+    useInfiniteList(
+      ["roadmaps", roadmapId, "milestones", "infinite"],
+      (params) => {
+        if (!roadmapId) return [];
+        return roadmapService.getMilestones(roadmapId, { ...params, page_size: 10 });
+      },
+      [roadmapId]
+    );
 
   const createMilestone = useMutation({
     mutationFn: ({ roadmapId: id, data }) => roadmapService.createMilestone(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(["roadmaps", roadmapId, "milestones"]);
+      queryClient.invalidateQueries(["roadmaps", roadmapId, "milestones", "infinite"]);
       queryClient.invalidateQueries(["roadmaps"]);
     },
   });
@@ -22,35 +27,34 @@ export function useMilestone(roadmapId) {
     mutationFn: ({ roadmapId: id, milestoneId, data }) =>
       roadmapService.updateMilestone(id, milestoneId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(["roadmaps", roadmapId, "milestones"]);
+      queryClient.invalidateQueries(["roadmaps", roadmapId, "milestones", "infinite"]);
       queryClient.invalidateQueries(["roadmaps"]);
     },
   });
 
   const deleteMilestone = useMutation({
-    mutationFn: ({ roadmapId: id, milestoneId }) =>
-      roadmapService.deleteMilestone(id, milestoneId),
+    mutationFn: ({ milestoneId }) =>
+      roadmapService.deleteMilestone(milestoneId),
     onSuccess: () => {
-      queryClient.invalidateQueries(["roadmaps", roadmapId, "milestones"]);
+      queryClient.invalidateQueries(["roadmaps", roadmapId, "milestones", "infinite"]);
       queryClient.invalidateQueries(["roadmaps"]);
     },
   });
 
   const toggleMilestone = useMutation({
-    mutationFn: ({ roadmapId: id, milestoneId }) =>
-      roadmapService.toggleMilestoneStatus(id, milestoneId),
+    mutationFn: ({ milestoneId, isCompleted }) =>
+      roadmapService.toggleMilestoneStatus(milestoneId, isCompleted),
     onSuccess: () => {
-      queryClient.invalidateQueries(["roadmaps", roadmapId, "milestones"]);
+      queryClient.invalidateQueries(["roadmaps", roadmapId, "milestones", "infinite"]);
       queryClient.invalidateQueries(["roadmaps"]);
     },
   });
 
   return {
-    milestones: milestones.data?.data || [],
-    isLoadingMilestones: milestones.isLoading,
     createMilestone,
     updateMilestone,
     deleteMilestone,
     toggleMilestone,
+    getInfiniteMilestones,
   };
 }

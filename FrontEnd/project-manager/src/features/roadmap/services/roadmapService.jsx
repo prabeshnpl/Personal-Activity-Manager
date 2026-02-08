@@ -19,20 +19,20 @@ export const roadmapService = {
     api.get(`${ENDPOINTS.ROADMAPS}/${id}/`),
 
   // Milestones
-  getMilestones: (roadmapId) =>
-    api.get(`${ENDPOINTS.ROADMAPS}/${roadmapId}/milestones/`),
+  getMilestones: (roadmapId, params) =>
+    api.get(`${ENDPOINTS.MILESTONE}/`, { params: { roadmap: roadmapId, ...(params || {}) } }),
 
   createMilestone: (roadmapId, data) =>
-    api.post(`${ENDPOINTS.ROADMAPS}/${roadmapId}/milestones/`, data),
+    api.post(`${ENDPOINTS.MILESTONE}/`, { ...data, roadmap: roadmapId }),
 
   updateMilestone: (roadmapId, milestoneId, data) =>
-    api.put(`${ENDPOINTS.ROADMAPS}/${roadmapId}/milestones/${milestoneId}/`, data),
+    api.put(`${ENDPOINTS.MILESTONE}/${milestoneId}/`, { ...data, roadmap: roadmapId }),
 
-  deleteMilestone: (roadmapId, milestoneId) =>
-    api.delete(`${ENDPOINTS.ROADMAPS}/${roadmapId}/milestones/${milestoneId}/`),
+  deleteMilestone: (milestoneId) =>
+    api.delete(`${ENDPOINTS.MILESTONE}/${milestoneId}/`),
 
-  toggleMilestoneStatus: (roadmapId, milestoneId) =>
-    api.patch(`${ENDPOINTS.ROADMAPS}/${roadmapId}/milestones/${milestoneId}/toggle/`),
+  toggleMilestoneStatus: (milestoneId, status) =>
+    api.patch(`${ENDPOINTS.MILESTONE}/${milestoneId}/`, { is_completed: !status }),
 
   // Notes/Learnings
   getNotes: (params) =>

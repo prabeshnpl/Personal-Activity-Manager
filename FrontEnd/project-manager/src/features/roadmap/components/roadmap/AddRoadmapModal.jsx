@@ -11,7 +11,7 @@ export const AddRoadmapModal = ({ onClose, onCreate, onUpdate, roadmap }) => {
     start_date: roadmap?.start_date ? roadmap.start_date.split('T')[0] : '',
     end_date: roadmap?.end_date ? roadmap.end_date.split('T')[0] : '',
     target_hours: roadmap?.target_hours || '',
-    category: roadmap?.category || 'skill_development',
+    category: roadmap?.category || 'others',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -123,7 +123,7 @@ export const AddRoadmapModal = ({ onClose, onCreate, onUpdate, roadmap }) => {
                 <option value="career">Career</option>
                 <option value="personal">Personal</option>
                 <option value="health">Health</option>
-                <option value="other">Other</option>
+                <option value="others">Other</option>
               </select>
             </div>
           </div>

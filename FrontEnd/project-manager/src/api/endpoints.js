@@ -34,4 +34,7 @@ export const ENDPOINTS = {
   // Roadmaps
   ROADMAPS: '/roadmaps',
   ROADMAP_NOTES: '/roadmap-notes',
+
+  //MILESTONE
+  MILESTONE: '/milestone',
 };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { X } from 'lucide-react';
 import { Tabs, TabPanel } from '../../../../shared/components/tabs/Tabs';
 import { ProgressTracker } from '../progress/ProgressTracker';
@@ -14,10 +14,29 @@ export const RoadmapDetailModal = ({
   onClose,
 }) => {
   const [activeTab, setActiveTab] = useState('progress');
-  const { milestones, createMilestone, updateMilestone, deleteMilestone, toggleMilestone } =
-    useMilestone(roadmap?.id);
-  const { notes, createNote, updateNote, deleteNote } = useRoadmapNotes(roadmap?.id);
+  const { 
+    createMilestone, 
+    updateMilestone, 
+    deleteMilestone, 
+    toggleMilestone, 
+    getInfiniteMilestones 
+  } = useMilestone(roadmap?.id);
+  
+  const { createNote, updateNote, deleteNote, getInfiniteNotes } = useRoadmapNotes(roadmap?.id);
   const { progress } = useRoadmapProgress(roadmap?.id);
+
+  const infiniteMilestones = getInfiniteMilestones();
+  const infiniteNotes = getInfiniteNotes();
+
+  const milestones = useMemo(() => {
+    const pages = infiniteMilestones?.data?.pages || [];
+    return pages.flat();
+  }, [infiniteMilestones?.data?.pages]);
+
+  const notes = useMemo(() => {
+    const pages = infiniteNotes?.data?.pages || [];
+    return pages.flat();
+  }, [infiniteNotes?.data?.pages]);
 
   const tabs = [
     {
@@ -74,18 +93,18 @@ export const RoadmapDetailModal = ({
 
           <TabPanel isActive={activeTab === 'milestones'}>
             <MilestonesList
-              milestones={milestones}
+              infiniteMilestones={infiniteMilestones}
               roadmapId={roadmap.id}
               onCreate={createMilestone}
               onUpdate={updateMilestone}
-              onDelete={deleteMilestone}
-              onToggle={toggleMilestone}
+              onDelete={deleteMilestone.mutate}
+              onToggle={toggleMilestone.mutate}
             />
           </TabPanel>
 
           <TabPanel isActive={activeTab === 'notes'}>
             <NotesSection
-              notes={notes}
+              infiniteNotes={infiniteNotes}
               roadmapId={roadmap.id}
               onCreate={createNote}
               onUpdate={updateNote}

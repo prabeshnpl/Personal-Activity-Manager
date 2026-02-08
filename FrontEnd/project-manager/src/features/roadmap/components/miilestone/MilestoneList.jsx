@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card } from '../../../../shared/components/Card';
 import { Button } from '../../../../shared/components/Button';
 import { EmptyState } from '../../../../shared/components/EmptyState';
 import { AddMilestoneModal } from './AddMilestoneModal';
 import { Plus, CheckCircle2, Circle, Calendar, Clock, Trash2 } from 'lucide-react';
+import { Spinner } from '../../../../shared/components/Spinner';
+import ErrorState from '../../../../shared/components/Error/ErrorState';
 
 export const MilestonesList = ({
-  milestones,
+  infiniteMilestones,
   roadmapId,
   onCreate,
   onUpdate,
@@ -14,6 +16,35 @@ export const MilestonesList = ({
   onToggle,
 }) => {
   const [showAddModal, setShowAddModal] = useState(false);
+  const {
+    data: pages,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+  } = infiniteMilestones;
+
+  const milestones = pages?.pages ? pages.pages.flat() : [];
+
+  const sentinelRef = useRef(null);
+  useEffect(() => {
+    if (!fetchNextPage) return;
+    if (!hasNextPage) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }, { threshold: 1 });
+
+    const el = sentinelRef.current;
+    if (el) observer.observe(el);
+
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const formatDate = (dateString) => {
     if (!dateString) return 'No deadline';
@@ -40,17 +71,17 @@ export const MilestonesList = ({
           </Button>
         }
       >
-        {milestones.length === 0 ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <Spinner size="lg" />
+          </div>
+        ) : error ? (
+          <ErrorState message="Failed to load milestones." onRetry={refetch} />
+        ) : milestones.length === 0 ? (
           <EmptyState
             icon={CheckCircle2}
             title="No milestones yet"
             description="Break down your roadmap into milestones"
-            action={
-              <Button onClick={() => setShowAddModal(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Milestone
-              </Button>
-            }
           />
         ) : (
           <div className="space-y-3">
@@ -67,7 +98,7 @@ export const MilestonesList = ({
               >
                 <div className="flex items-start space-x-3">
                   <button
-                    onClick={() => onToggle({ roadmapId, milestoneId: milestone.id })}
+                    onClick={() => onToggle({ milestoneId: milestone.id, isCompleted: milestone.is_completed })}
                     className="mt-1 shrink-0"
                   >
                     {milestone.is_completed ? (
@@ -115,7 +146,7 @@ export const MilestonesList = ({
                   </div>
 
                   <button
-                    onClick={() => onDelete({ roadmapId, milestoneId: milestone.id })}
+                    onClick={() => onDelete({ milestoneId: milestone.id })}
                     className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -123,6 +154,16 @@ export const MilestonesList = ({
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {hasNextPage && (
+          <div className="flex items-center justify-center mt-6">
+            <div ref={sentinelRef} className="h-6"></div>
+            {isFetchingNextPage && <Spinner />}
+            {!hasNextPage && (
+              <div className="text-sm text-gray-500 mt-2">No more milestones</div>
+            )}
           </div>
         )}
       </Card>
