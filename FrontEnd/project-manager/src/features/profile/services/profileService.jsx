@@ -7,6 +7,11 @@ export const profileService = {
     api.patch(`${ENDPOINTS.PROFILE}/${userId}/`, data),
 
   uploadProfilePicture: (file, userId) => {
+    if (!file) {
+      return api.patch(`${ENDPOINTS.PROFILE}/${userId}/`, {
+        profile_picture: null,
+      });
+    }
     const formData = new FormData();
     formData.append('profile_picture', file);
     return api.patch(`${ENDPOINTS.PROFILE}/${userId}/`, formData);

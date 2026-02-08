@@ -11,7 +11,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 
-export const RoadmapCard = ({ roadmap, onUpdate, onDelete, onClick }) => {
+export const RoadmapCard = ({ roadmap, onDelete, onClick, onEdit }) => {
   const [showMenu, setShowMenu] = useState(false);
 
   const typeColors = {
@@ -89,7 +89,7 @@ export const RoadmapCard = ({ roadmap, onUpdate, onDelete, onClick }) => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    onClick();
+                    onEdit?.(roadmap);
                     setShowMenu(false);
                   }}
                   className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"

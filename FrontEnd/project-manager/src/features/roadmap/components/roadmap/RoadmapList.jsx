@@ -1,39 +1,97 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card } from '../../../../shared/components/Card';
 import { Button } from '../../../../shared/components/Button';
 import { EmptyState } from '../../../../shared/components/EmptyState';
 import { RoadmapCard } from './RoadmapCard';
 import { AddRoadmapModal } from './AddRoadmapModal';
 import { Plus, Filter, Target } from 'lucide-react';
+import { Spinner } from '../../../../shared/components/Spinner';
+import ErrorState from '../../../../shared/components/Error/ErrorState';
+import FilterModal from './FilterModal';
+import SearchBar from '../../../../shared/components/Search/SearchBar';
 
 export const RoadmapList = ({
-  roadmaps,
+  infiniteRoadmaps,
   filters,
-  onFilterChange,
+  setFilters,
   onCreate,
   onUpdate,
   onDelete,
   onSelect,
 }) => {
+  const {
+    data: pages,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+  } = infiniteRoadmaps;
+
+  const data = pages?.pages ? pages.pages.flat() : [];
+
+  // Infinite scroll sentinel
+  const sentinelRef = useRef(null);
+  useEffect(() => {
+    if (!fetchNextPage) return;
+    if (!hasNextPage) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }, { threshold: 1 });
+
+    const el = sentinelRef.current;
+    if (el) observer.observe(el);
+
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+  
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingRoadmap, setEditingRoadmap] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
 
   return (
     <>
       <Card
-        title={`My Roadmaps (${roadmaps.length})`}
+        title={`My Roadmaps (${data.length})`}
         action={
           <div className="flex flex-wrap gap-2">
             <Button
               size="sm"
               variant="ghost"
               onClick={() => setShowFilters(!showFilters)}
-              className="hidden sm:flex"
+              disabled={!!error}
             >
               <Filter className="h-4 w-4 mr-2" />
               Filter
             </Button>
-            <Button size="sm" onClick={() => setShowAddModal(true)}>
+
+            {/* Filters */}
+            <FilterModal
+              show={showFilters}
+              onClose={() => setShowFilters(false)}
+              filters={filters}
+              setFilters={setFilters}
+            />
+
+            <SearchBar
+              placeholder="Search roadmaps..."
+              value={filters.search || ''}
+              onSubmit={(value) => setFilters({ ...filters, search: value || null })}
+              className="max-w-md h-10"
+            />
+            <Button
+              size="sm"
+              onClick={() => {
+                setEditingRoadmap(null);
+                setShowAddModal(true);
+              }}
+              disabled={!!error}
+            >
               <Plus className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">New Roadmap</span>
               <span className="sm:hidden">New</span>
@@ -41,96 +99,58 @@ export const RoadmapList = ({
           </div>
         }
       >
-        {/* Filters */}
-        {showFilters && (
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Type
-                </label>
-                <select
-                  value={filters.type || ''}
-                  onChange={(e) => onFilterChange({ ...filters, type: e.target.value || null })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">All</option>
-                  <option value="daily">Daily</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
-                </select>
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Status
-                </label>
-                <select
-                  value={filters.status || ''}
-                  onChange={(e) => onFilterChange({ ...filters, status: e.target.value || null })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                    <option value="">All</option>
-                    <option value="active">Active</option>
-                    <option value="completed">Completed</option>
-                    <option value="paused">Paused</option>
-                    </select>
-                    </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Category
-                                </label>
-                                <select
-                                value={filters.category || ''}
-                                onChange={(e) => onFilterChange({ ...filters, category: e.target.value || null })}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                >
-                                <option value="">All</option>
-                                <option value="skill_development">Skill Development</option>
-                                <option value="career">Career</option>
-                                <option value="personal">Personal</option>
-                                <option value="health">Health</option>
-                                <option value="other">Other</option>
-                                </select>
-                            </div>
-                            </div>
-                        </div>
-                        )}
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <Spinner size="lg" />
+          </div>
+        ) : error ? (
+          <ErrorState message="Failed to load Roadmaps data." onRetry={refetch} />
+        ) : data.length === 0 ? (
+          <EmptyState
+            icon={Target}
+            title="No roadmaps found"
+            description="Create your first roadmap to start tracking your progress"
+          />
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {data.map((roadmap) => (
+              <RoadmapCard
+                key={roadmap.id}
+                roadmap={roadmap}
+                onDelete={onDelete}
+                onClick={() => onSelect(roadmap.id)}
+                onEdit={(item) => {
+                  setEditingRoadmap(item);
+                  setShowAddModal(true);
+                }}
+              />
+            ))}
+          </div>
+        )}
 
-                        {/* Roadmaps Grid */}
-                        {roadmaps.length === 0 ? (
-                        <EmptyState
-                            icon={Target}
-                            title="No roadmaps found"
-                            description="Create your first roadmap to start tracking your progress"
-                            action={
-                            <Button onClick={() => setShowAddModal(true)}>
-                                <Plus className="h-4 w-4 mr-2" />
-                                Create Roadmap
-                            </Button>
-                            }
-                        />
-                        ) : (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {roadmaps.map((roadmap) => (
-                            <RoadmapCard
-                                key={roadmap.id}
-                                roadmap={roadmap}
-                                onUpdate={onUpdate}
-                                onDelete={onDelete}
-                                onClick={() => onSelect(roadmap.id)}
-                            />
-                            ))}
-                        </div>
-                        )}
-                    </Card>
+        {hasNextPage && (
+          <div className="flex items-center justify-center mt-6">
+            <div ref={sentinelRef} className="h-6"></div>
+            {isFetchingNextPage && <Spinner />}
+            {!hasNextPage && (
+              <div className="text-sm text-gray-500 mt-2">No more roadmaps</div>
+            )}
+          </div>
+        )}
+      </Card>
 
-                    {showAddModal && (
-                        <AddRoadmapModal
-                        onClose={() => setShowAddModal(false)}
-                        onCreate={onCreate}
-                        />
-                    )}
-                    </>
-                    );
-                    };
+      {showAddModal && (
+        <AddRoadmapModal
+          roadmap={editingRoadmap}
+          onClose={() => {
+            setShowAddModal(false);
+            setEditingRoadmap(null);
+          }}
+          onCreate={onCreate}
+          onUpdate={onUpdate}
+        />
+      )}
+    </>
+  );
+};

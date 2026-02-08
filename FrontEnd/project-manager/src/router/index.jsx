@@ -9,6 +9,7 @@ import { OrganizationPage } from "../features/organization/pages/OrganizationPag
 import { FinancePage } from "../features/finance/pages/FinancePage";
 import TasksPage from "../features/tasks/pages/TaskPage";
 import { ProfilePage } from "../features/profile/pages/ProfilePage";
+import RoadmapPage from "../features/roadmap/pages/RoadmapPage";
 
 export const router = createBrowserRouter([
   {
@@ -20,7 +21,7 @@ export const router = createBrowserRouter([
       { index: true, element: <Dashboard /> },
       { path: "dashboard", element: <Dashboard /> },
       { path: "tasks", element: <TasksPage /> },
-      { path: "roadmaps", element: <div className="p-6">Roadmaps Module</div> },
+      { path: "roadmaps", element: <RoadmapPage /> },
       { path: "finance", element: <FinancePage /> },
       { path: "profile", element: <ProfilePage /> },
       { path: "organization", element: <OrganizationPage /> },

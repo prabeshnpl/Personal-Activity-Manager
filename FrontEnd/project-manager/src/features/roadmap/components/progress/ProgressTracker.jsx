@@ -1,6 +1,5 @@
-import React from 'react';
-import { Card } from '../../../shared/components/Card';
-import { TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Clock, Target } from 'lucide-react';
+import { Card } from '../../../../shared/components/Card';
+import { TrendingUp, TrendingDown, CheckCircle2, Clock, Target } from 'lucide-react';
 
 export const ProgressTracker = ({ progress, roadmap }) => {
   if (!progress || !roadmap) return null;

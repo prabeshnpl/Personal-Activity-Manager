@@ -1,4 +1,7 @@
 import { Card } from '../../../shared/components/Card';
+import { useFinance } from '../hooks/useFinanceDashboard';
+import { Spinner } from '../../../shared/components/Spinner';
+import ErrorState from '../../../shared/components/Error/ErrorState';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -10,9 +13,6 @@ import {
   Activity,
   AlertCircle
 } from 'lucide-react';
-import { useFinance } from '../hooks/useFinanceDashboard';
-import { Spinner } from '../../../shared/components/Spinner';
-import ErrorState from '../../../shared/components/Error/ErrorState';
 
 export const FinanceDashboard = () => {
   const formatCurrency = (amount) => {
