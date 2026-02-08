@@ -20,8 +20,20 @@ class Roadmap(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
 
-    start_date = models.DateField()
-    end_date = models.DateField()
+    type = models.CharField(max_length=12, choices=(
+        ('daily','DAILY'),
+        ('weekly','WEEKLY'),
+        ('monthly','MONTHLY'),
+    ), default='daily')
+
+    target_hours = models.IntegerField(blank=True, null=True)
+
+    category = models.CharField(max_length=16, choices=(
+        ('others','OTHERS'),
+    ), default='others')
+
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
 
     created_by = models.ForeignKey(
         CustomUser,

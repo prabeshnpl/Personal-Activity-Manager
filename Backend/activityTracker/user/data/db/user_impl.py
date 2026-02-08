@@ -52,6 +52,8 @@ class CustomUserRepoImpl(CustomUserRepository):
 
             for key, value in data.items():
                 if key in ['first_name', 'last_name', 'contact_number', 'profile_picture']:
+                    if key=='profile_picture' and not value:
+                        setattr(user, key, None)    
                     setattr(user, key, value)    
                 else:
                     return Response({'detail':f'Invalid key: {key}'})
