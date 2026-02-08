@@ -1,29 +1,23 @@
 from rest_framework.permissions import IsAuthenticated
-from roadmap.adapter.serializers.roadmap_serializer import RoadmapSerializer
-from roadmap.data.db.roadmap_impl import RoadmapRepositoryImpl
-from roadmap.domain.usecase.roadmap_usecase import (
-    CreateRoadmapUseCase, DeleteRoadmapUseCase, 
-    GetRoadmapByIdUseCase, RoadmapProgressUseCase, 
-    UpdateRoadmapUseCase, ListRoadmapsUseCase
-)
+from roadmap.adapter.serializers.roadmap_serializer import RoadmapProgressSerializer
+from roadmap.data.db.roadmap_impl import RoadmapProgressRepositoryImpl
+from roadmap.domain.usecase.roadmap_usecase import CreateRoadmapProgressUseCase, DeleteRoadmapProgressUseCase, GetRoadmapProgressByIdUseCase, UpdateRoadmapProgressUseCase, ListRoadmapProgresssUseCase
 from utils.pagniator import CustomPageNumberPagination
 from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
 from rest_framework.response import Response
 from utils.tenantViewsets import BaseTenantModelViewSet
-from rest_framework.decorators import action
 
-
-class RoadmapView(BaseTenantModelViewSet):
+class RoadmapProgressView(BaseTenantModelViewSet):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
-    repository = RoadmapRepositoryImpl
+    repository = RoadmapProgressRepositoryImpl
     permission_classes = [IsAuthenticated]
-    serializer_class = RoadmapSerializer
+    serializer_class = RoadmapProgressSerializer
     pagination_class = CustomPageNumberPagination
 
     require_organization = True
 
     def retrieve(self, request, pk:int):
-        usecase = GetRoadmapByIdUseCase(repo=self.repository())
+        usecase = GetRoadmapProgressByIdUseCase(repo=self.repository())
         response = usecase.execute(id=pk, organization=request.organization,role=request.role)
         if isinstance(response, Response):
             return response
@@ -37,7 +31,7 @@ class RoadmapView(BaseTenantModelViewSet):
         return Response(response)
 
     def list(self, request, *args, **kwargs):
-        usecase = ListRoadmapsUseCase(repo=self.repository())
+        usecase = ListRoadmapProgresssUseCase(repo=self.repository())
         search_params = {k: v[0] if isinstance(v, list) else v for k, v in request.query_params.items()}
         search_params['user'] = request.user
         entities = usecase.execute(search_params=search_params, organization=request.organization,role=request.role)
@@ -67,14 +61,14 @@ class RoadmapView(BaseTenantModelViewSet):
         return response
        
     def destroy(self, request, pk):
-        usecase = DeleteRoadmapUseCase(repo=self.repository())
+        usecase = DeleteRoadmapProgressUseCase(repo=self.repository())
         response = usecase.execute(id=pk, organization=request.organization,role=request.role)
         if isinstance(response, Response):
             return response
         return Response({'detail':"Deleted successfully"})
     
     def create(self, request, *args, **kwargs):
-        usecase = CreateRoadmapUseCase(repo=self.repository())
+        usecase = CreateRoadmapProgressUseCase(repo=self.repository())
         data = request.data
         data['organization'] = request.organization.id
         data['created_by'] = request.user.id
@@ -106,7 +100,7 @@ class RoadmapView(BaseTenantModelViewSet):
         serializer = self.get_serializer(data=data, partial=partial)
         # serializer.is_valid(raise_exception=True)
 
-        usecase = UpdateRoadmapUseCase(repo=self.repository())
+        usecase = UpdateRoadmapProgressUseCase(repo=self.repository())
         entity = usecase.execute(id=pk, data=serializer.initial_data, organization=request.organization, role=request.role) # type: ignore
 
         if isinstance(entity, Response):
@@ -121,15 +115,3 @@ class RoadmapView(BaseTenantModelViewSet):
         )
 
         return Response(serializer.data)
-        
-    @action(detail=True, methods=["get"])
-    def progress(self, request, *args, **kwargs):
-        usecase = RoadmapProgressUseCase(repo=self.repository())
-        response = usecase.execute(
-            id=kwargs.get("pk"), # type: ignore
-            organization=request.organization,
-            role=request.role
-        )
-        return response
-
-        

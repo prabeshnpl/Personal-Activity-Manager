@@ -41,3 +41,10 @@ class ListRoadmapsUseCase:
 
     def execute(self, search_params: dict, organization:int, role:str) -> List[RoadmapEntity] | Response:
         return self.repo.list_roadmaps(search_params=search_params, organization=organization, role=role)
+
+class RoadmapProgressUseCase:
+    def __init__(self, repo: RoadmapRepository):
+        self.repo = repo
+
+    def execute(self, id: int, organization:int, role:str) -> Response:
+        return self.repo.roadmap_progress(id=id, organization=organization, role=role)

@@ -6,6 +6,10 @@ from roadmap.domain.entity.roadmap_entity import RoadmapEntity
 from roadmap.domain.repository.roadmap_repo import RoadmapRepository
 from roadmap.models import Roadmap
 from django.db.models import Q
+from django.utils import timezone
+from django.db.models import Sum
+import math
+from rest_framework.response import Response
 
 class RoadmapRepositoryImpl(RoadmapRepository):
     def list_roadmaps(self, search_params: dict, organization:int, role:str) -> List[RoadmapEntity] | Response:
@@ -22,7 +26,18 @@ class RoadmapRepositoryImpl(RoadmapRepository):
                     | Q(status__icontains = search)
                     | Q(created_by__email__icontains = search)
                 )
+            if type:=search_params.get("type"):
+                roadmap = roadmap.filter(type=type)
 
+            if category:=search_params.get("category"):
+                roadmap = roadmap.filter(category=category)
+
+            if start_date:=search_params.get("start_date"):
+                roadmap = roadmap.filter(start_date=start_date)
+
+            if end_date:=search_params.get("end_date"):
+                roadmap = roadmap.filter(end_date=end_date)
+            
             return [self.to_entity(roadmap) for roadmap in roadmap]
         except Exception as e:
             print(f"Error occured in fetching roadmap:{repr(e)}")
@@ -73,6 +88,88 @@ class RoadmapRepositoryImpl(RoadmapRepository):
             return Response({'detail':"Deleted successfully"})
         return Response({'detail':"Not found"}, status=400)
     
+    def roadmap_progress(self, id:int, organization:int, role:str):
+        try:
+            roadmap = Roadmap.objects.filter(organization=organization, id=id).first()
+            if not roadmap:
+                return Response({'detail':'Invalid roadmap'}, status=400)
+
+            # Milestones
+            milestones_total = roadmap.milestones.count() # type: ignore
+            milestones_completed = roadmap.milestones.filter(status='completed').count() # type: ignore
+
+            # Hours logged from notes
+            hours_logged = roadmap.notes.aggregate(total=Sum('hours_spent')).get('total') or 0 # type: ignore
+
+            target_hours = roadmap.target_hours or 0
+
+            # Progress percentage (prefer hours if target provided, else milestone completion percent)
+            if target_hours and target_hours > 0:
+                progress_percentage = round(min((hours_logged / target_hours) * 100, 100))
+            else:
+                progress_percentage = round((milestones_completed / milestones_total) * 100) if milestones_total else 0
+
+            # Dates and timeline
+            today = timezone.now().date()
+            start_date = roadmap.start_date
+            end_date = roadmap.end_date
+
+            days_elapsed = 0
+            days_total = None
+            days_remaining = 0
+            if start_date:
+                days_elapsed = (today - start_date).days
+                if days_elapsed < 0:
+                    days_elapsed = 0
+            if start_date and end_date:
+                days_total = (end_date - start_date).days
+                days_remaining = (end_date - today).days
+                if days_remaining < 0:
+                    days_remaining = 0
+
+            # Velocity: hours per day
+            velocity = round((hours_logged / days_elapsed), 2) if days_elapsed > 0 else round(hours_logged, 2)
+
+            # Expected completion percent by time elapsed
+            expected_percent = None
+            if days_total and days_total > 0:
+                expected_percent = (days_elapsed / days_total) * 100
+
+            # Status determination
+            status = 'on_track'
+            if expected_percent is not None:
+                if progress_percentage < expected_percent - 5:
+                    status = 'delayed'
+                elif progress_percentage > expected_percent + 5:
+                    status = 'ahead'
+
+            # Estimated completion date based on velocity and remaining hours
+            estimated_completion_date = None
+            if target_hours and velocity and velocity > 0:
+                remaining_hours = max(target_hours - hours_logged, 0)
+                days_needed = math.ceil(remaining_hours / velocity) if remaining_hours > 0 else 0
+                est_date = today + timezone.timedelta(days=days_needed)
+                estimated_completion_date = est_date.isoformat()
+
+            data = {
+                'roadmap_id': id,
+                'progress_percentage': int(progress_percentage),
+                'milestones_completed': milestones_completed,
+                'milestones_total': milestones_total,
+                'hours_logged': float(hours_logged),
+                'target_hours': target_hours,
+                'days_elapsed': int(days_elapsed),
+                'days_remaining': int(days_remaining),
+                'status': status,
+                'velocity': float(velocity),
+                'estimated_completion_date': estimated_completion_date
+            }
+
+            return Response({'data': data})
+        except Exception as e:
+            print(f"Error occured while calculating progress: {str(e)}")
+            return Response({'detail':f'{str(e)}'}, status=500)
+
     def to_entity(self, obj: Roadmap) -> RoadmapEntity:
         return RoadmapEntity(
             id=obj.id,  # type: ignore

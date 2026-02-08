@@ -1,5 +1,6 @@
 from django.db import models
 from organization.models import Organization
+import roadmap
 from user.models import CustomUser
 from tasks.models import Task
 
@@ -67,6 +68,7 @@ class Milestone(models.Model):
     )
 
     title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
 
     start_date = models.DateField()
     due_date = models.DateField()
@@ -109,4 +111,15 @@ class ProgressSnapshot(models.Model):
     class Meta:
         unique_together = ('roadmap', 'snapshot_date')
 
+class RoadmapNotes(models.Model):
+    roadmap = models.ForeignKey(Roadmap, on_delete=models.CASCADE, related_name="notes")
+    title = models.CharField(max_length=1024)
+    content = models.TextField(blank=True, null=True)
+    hours_spent = models.FloatField(blank=True, null=True)
+    # tags = models.
 
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+    

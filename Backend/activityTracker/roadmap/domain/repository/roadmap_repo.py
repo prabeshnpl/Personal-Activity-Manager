@@ -24,3 +24,7 @@ class RoadmapRepository(ABC):
     @abstractmethod
     def list_roadmaps(self, search_params: dict, organization:int, role:str) -> List[RoadmapEntity] | Response:
         pass
+
+    @abstractmethod
+    def roadmap_progress(self, id:int, organization:int, role:str) -> Response:
+        pass
