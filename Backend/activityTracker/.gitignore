@@ -26,8 +26,6 @@ venv/
 env/
 .vscode/
 .idea/
-*.sqlite3
 .DS_Store
 media/
 staticfiles/
-db.sqlite3

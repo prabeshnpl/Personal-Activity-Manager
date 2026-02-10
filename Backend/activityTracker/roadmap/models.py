@@ -1,6 +1,5 @@
 from django.db import models
 from organization.models import Organization
-import roadmap
 from user.models import CustomUser
 from tasks.models import Task
 
