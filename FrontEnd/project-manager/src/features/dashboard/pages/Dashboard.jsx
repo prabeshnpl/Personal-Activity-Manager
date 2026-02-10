@@ -29,7 +29,7 @@ export const Dashboard = () => {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Dashboard (This page is static)</h1>
         <p className="text-gray-600 mt-1">Welcome back! Here's what's happening.</p>
       </div>
 

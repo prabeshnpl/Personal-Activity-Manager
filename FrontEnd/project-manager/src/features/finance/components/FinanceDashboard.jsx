@@ -85,6 +85,7 @@ export const FinanceDashboard = () => {
         </select>
       </div>
 
+      <div className="max-h-120 overflow-y-auto space-y-6">
       {/* Main Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {stats.map((stat) => {
@@ -347,6 +348,7 @@ export const FinanceDashboard = () => {
           </div>
         </Card>
       )}
+      </div>
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { ProgressTracker } from '../progress/ProgressTracker';
 import { MilestonesList } from '../miilestone/MilestoneList';
 import { NotesSection } from '../note/NotesSection';
 import { Target, CheckCircle2, BookOpen } from 'lucide-react';
+import { MarkdownContent } from '../../../../shared/components/MarkdownContent';
 import { useMilestone } from '../../hooks/useMilestone';
 import { useRoadmapNotes } from '../../hooks/useRoadmapNotes';
 import { useRoadmapProgress } from '../../hooks/useRoadmapProgress';
@@ -60,7 +61,7 @@ export const RoadmapDetailModal = ({
 
   return (
     <div 
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" 
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4" 
       onClick={onClose}
     >
       <div 
@@ -74,7 +75,7 @@ export const RoadmapDetailModal = ({
           <div>
             <h2 className="text-2xl font-bold text-gray-900">{roadmap.title}</h2>
             {roadmap.description && (
-              <p className="text-gray-600 mt-1">{roadmap.description}</p>
+              <MarkdownContent content={roadmap.description} className="mt-1" />
             )}
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
@@ -116,3 +117,4 @@ export const RoadmapDetailModal = ({
     </div>
   );
 };
+

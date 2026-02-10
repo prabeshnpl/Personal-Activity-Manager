@@ -6,6 +6,7 @@ import { AddMilestoneModal } from './AddMilestoneModal';
 import { Plus, CheckCircle2, Circle, Calendar, Clock, Trash2 } from 'lucide-react';
 import { Spinner } from '../../../../shared/components/Spinner';
 import ErrorState from '../../../../shared/components/Error/ErrorState';
+import { MarkdownContent } from '../../../../shared/components/MarkdownContent';
 
 export const MilestonesList = ({
   infiniteMilestones,
@@ -117,7 +118,7 @@ export const MilestonesList = ({
                       {milestone.title}
                     </h4>
                     {milestone.description && (
-                      <p className="text-sm text-gray-600 mt-1">{milestone.description}</p>
+                      <MarkdownContent content={milestone.description} className="mt-1 text-sm" />
                     )}
 
                     <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-600">

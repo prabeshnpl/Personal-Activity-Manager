@@ -6,6 +6,7 @@ import { AddNoteModal } from '../note/AddNoteModal';
 import { Plus, BookOpen, Calendar, Clock, Edit2, Trash2, Tag } from 'lucide-react';
 import { Spinner } from '../../../../shared/components/Spinner';
 import ErrorState from '../../../../shared/components/Error/ErrorState';
+import { MarkdownContent } from '../../../../shared/components/MarkdownContent';
 
 export const NotesSection = ({
   infiniteNotes,
@@ -126,7 +127,7 @@ export const NotesSection = ({
                   </div>
                 </div>
 
-                <p className="text-gray-700 whitespace-pre-wrap mb-3">{note.content}</p>
+                <MarkdownContent content={note.content} className="mb-3" />
 
                 {note.tags && note.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">

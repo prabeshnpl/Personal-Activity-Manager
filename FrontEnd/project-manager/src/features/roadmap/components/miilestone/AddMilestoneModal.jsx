@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '../../../../shared/components/Button';
 import { X } from 'lucide-react';
+import { DescriptionField } from '../../../../shared/components/DescriptionField';
 
 export const AddMilestoneModal = ({ roadmapId, onClose, onCreate }) => {
   const [formData, setFormData] = useState({
@@ -64,15 +65,13 @@ export const AddMilestoneModal = ({ roadmapId, onClose, onCreate }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Description
-            </label>
-            <textarea
+            <DescriptionField
+              id="milestone-description"
+              label="Description"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(value) => setFormData({ ...formData, description: value })}
               placeholder="Details about this milestone..."
-              rows="3"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows={4}
               disabled={loading}
             />
           </div>

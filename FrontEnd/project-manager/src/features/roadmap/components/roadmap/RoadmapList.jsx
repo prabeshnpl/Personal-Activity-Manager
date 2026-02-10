@@ -99,45 +99,46 @@ export const RoadmapList = ({
           </div>
         }
       >
+        <div className="max-h-120 overflow-y-auto">
+          {isLoading ? (
+            <div className="flex items-center justify-center h-full">
+              <Spinner size="lg" />
+            </div>
+          ) : error ? (
+            <ErrorState message="Failed to load Roadmaps data." onRetry={refetch} />
+          ) : data.length === 0 ? (
+            <EmptyState
+              icon={Target}
+              title="No roadmaps found"
+              description="Create your first roadmap to start tracking your progress"
+            />
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {data.map((roadmap) => (
+                <RoadmapCard
+                  key={roadmap.id}
+                  roadmap={roadmap}
+                  onDelete={onDelete}
+                  onClick={() => onSelect(roadmap.id)}
+                  onEdit={(item) => {
+                    setEditingRoadmap(item);
+                    setShowAddModal(true);
+                  }}
+                />
+              ))}
+            </div>
+          )}
 
-        {isLoading ? (
-          <div className="flex items-center justify-center h-full">
-            <Spinner size="lg" />
-          </div>
-        ) : error ? (
-          <ErrorState message="Failed to load Roadmaps data." onRetry={refetch} />
-        ) : data.length === 0 ? (
-          <EmptyState
-            icon={Target}
-            title="No roadmaps found"
-            description="Create your first roadmap to start tracking your progress"
-          />
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {data.map((roadmap) => (
-              <RoadmapCard
-                key={roadmap.id}
-                roadmap={roadmap}
-                onDelete={onDelete}
-                onClick={() => onSelect(roadmap.id)}
-                onEdit={(item) => {
-                  setEditingRoadmap(item);
-                  setShowAddModal(true);
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        {hasNextPage && (
-          <div className="flex items-center justify-center mt-6">
-            <div ref={sentinelRef} className="h-6"></div>
-            {isFetchingNextPage && <Spinner />}
-            {!hasNextPage && (
-              <div className="text-sm text-gray-500 mt-2">No more roadmaps</div>
-            )}
-          </div>
-        )}
+          {hasNextPage && (
+            <div className="flex items-center justify-center mt-6">
+              <div ref={sentinelRef} className="h-6"></div>
+              {isFetchingNextPage && <Spinner />}
+              {!hasNextPage && (
+                <div className="text-sm text-gray-500 mt-2">No more roadmaps</div>
+              )}
+            </div>
+          )}
+        </div>
       </Card>
 
       {showAddModal && (
