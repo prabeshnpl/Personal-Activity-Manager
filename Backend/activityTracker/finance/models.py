@@ -37,7 +37,8 @@ class Category(models.Model):
         ('income', 'Income'),
         ('expense', 'Expense'),
         ('loan-taken', 'LOAN-TAKEN'),
-        ('loan-given', 'LOAN-GIVEN')
+        ('loan-given', 'LOAN-GIVEN'),
+        ('transfer', 'Transfer'),
     )
 
     organization = models.ForeignKey(

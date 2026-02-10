@@ -7,14 +7,22 @@ from roadmap.domain.repository.roadmap_repo import RoadmapRepository
 from roadmap.models import Roadmap
 from django.db.models import Q
 from django.utils import timezone
-from django.db.models import Sum
-import math
+from django.db.models import Sum, Count, Q, Value, IntegerField
+from django.db.models.functions import Coalesce
+
 from rest_framework.response import Response
 
 class RoadmapRepositoryImpl(RoadmapRepository):
     def list_roadmaps(self, search_params: dict, organization:int, role:str) -> List[RoadmapEntity] | Response:
         try:
-            roadmap = Roadmap.objects.filter(organization=organization)
+            roadmap = Roadmap.objects.\
+                annotate(
+                    completed_hours=Coalesce(Sum('notes__hours_spent'), Value(0), output_field=IntegerField()),
+                    milestones_count=Count('milestones', distinct=True),
+                    completed_milestones_count=Count('milestones', filter=Q(milestones__status='completed'), distinct=True)
+                ).\
+                filter(organization=organization).\
+                order_by('-created_at')
 
             if status:=search_params.get("status"):
                 roadmap = roadmap.filter(status=status)
@@ -47,8 +55,14 @@ class RoadmapRepositoryImpl(RoadmapRepository):
         try:
             with transaction.atomic(): # type: ignore
                 roadmap = Roadmap.objects.create(**data)
+                # Refresh from database with annotations
+                roadmap = Roadmap.objects.filter(id=roadmap.id).annotate( # type: ignore
+                    completed_hours=Sum('notes__hours_spent'),
+                    milestones_count=Count('milestones'),
+                    completed_milestones_count=Count('milestones', filter=Q(milestones__status='completed'))
+                ).first()
                     
-                return self.to_entity(roadmap)
+                return self.to_entity(roadmap) # type: ignore
         except Exception as e:
             print(f"Error occured while creating roadmap:{repr(e)}")
             return Response({"detail":f"str{e}"}, status=500)
@@ -67,6 +81,13 @@ class RoadmapRepositoryImpl(RoadmapRepository):
             
             roadmap.save()
 
+            # Refresh with annotations
+            roadmap = Roadmap.objects.filter(organization=organization, id=id).annotate(
+                completed_hours=Sum('notes__hours_spent'),
+                milestones_count=Count('milestones'),
+                completed_milestones_count=Count('milestones', filter=Q(milestones__status='completed'))
+            ).first()
+
             return self.to_entity(roadmap) # type: ignore
             
         except Exception as e:
@@ -75,7 +96,11 @@ class RoadmapRepositoryImpl(RoadmapRepository):
     
     def get_roadmap_by_id(self, id: int, organization:int, role:str) -> RoadmapEntity | Response:
         try:
-            roadmap = Roadmap.objects.filter(organization=organization, id=id).first()
+            roadmap = Roadmap.objects.filter(organization=organization, id=id).annotate(
+                completed_hours=Sum('notes__hours_spent'),
+                milestones_count=Count('milestones'),
+                completed_milestones_count=Count('milestones', filter=Q(milestones__status='completed'))
+            ).first()
             return self.to_entity(roadmap) # type: ignore
         except Exception as e:
             print(f"Error occured while getting roadmap:{repr(e)}")
@@ -138,18 +163,11 @@ class RoadmapRepositoryImpl(RoadmapRepository):
             # Status determination
             status = 'on_track'
             if expected_percent is not None:
+                print(progress_percentage, expected_percent)
                 if progress_percentage < expected_percent - 5:
                     status = 'delayed'
                 elif progress_percentage > expected_percent + 5:
                     status = 'ahead'
-
-            # Estimated completion date based on velocity and remaining hours
-            estimated_completion_date = None
-            if target_hours and velocity and velocity > 0:
-                remaining_hours = max(target_hours - hours_logged, 0)
-                days_needed = math.ceil(remaining_hours / velocity) if remaining_hours > 0 else 0
-                est_date = today + timezone.timedelta(days=days_needed)
-                estimated_completion_date = est_date.isoformat()
 
             data = {
                 'roadmap_id': id,
@@ -162,7 +180,7 @@ class RoadmapRepositoryImpl(RoadmapRepository):
                 'days_remaining': int(days_remaining),
                 'status': status,
                 'velocity': float(velocity),
-                'estimated_completion_date': estimated_completion_date
+                'estimated_completion_date': end_date
             }
 
             return Response({'data': data})
@@ -174,7 +192,6 @@ class RoadmapRepositoryImpl(RoadmapRepository):
         return RoadmapEntity(
             id=obj.id,  # type: ignore
             organization=obj.organization,
-            category=obj.category,
             type=obj.type,
             target_hours=obj.target_hours,
             created_by=obj.created_by,
@@ -183,5 +200,8 @@ class RoadmapRepositoryImpl(RoadmapRepository):
             status=obj.status,
             created_at=obj.created_at,
             start_date=obj.start_date,
-            end_date=obj.start_date
+            end_date=obj.start_date,
+            milestones_count=getattr(obj, 'milestones_count', 0),
+            completed_milestones_count=getattr(obj, 'completed_milestones_count', 0),
+            completed_hours=getattr(obj, 'completed_hours', 0),
         )

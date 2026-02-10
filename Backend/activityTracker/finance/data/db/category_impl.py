@@ -8,7 +8,7 @@ from django.db.models import Sum
 class CategoryRepositoryImpl(CategoryRepository):
     def list_categories(self, search_params: dict, organization:int, role:str) -> List[CategoryEntity] | Response:
         try:
-            categories = Category.objects.filter(organization=organization)
+            categories = Category.objects.filter(organization=organization).order_by('-created_at')
 
             return [self.to_entity(category) for category in categories]
         except Exception as e:
@@ -17,7 +17,7 @@ class CategoryRepositoryImpl(CategoryRepository):
         
     def create_category(self, data: dict, organization:int, role:str) -> CategoryEntity | Response:
         try:
-            if data.get('category_type') not in ['income', 'expense']:
+            if data.get('category_type') not in ['income', 'expense', 'loan_given', 'loan_taken', 'transfer']:
                 return Response({'detail':"Invalid category_type"}, status=400)
             
             category = Category.objects.create(**data)
@@ -36,7 +36,7 @@ class CategoryRepositoryImpl(CategoryRepository):
                 if key in ['id', 'organization', 'created_at']:
                     continue
                 elif key=='category_type':
-                    if value not in ['income', 'expense']:
+                    if value not in ['income', 'expense', 'loan_given', 'loan_taken', 'transfer']:
                         return Response({'detail':"Invalid category_type"}, status=400)
                 setattr(category, key, value)
             category.save()

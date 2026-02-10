@@ -28,7 +28,6 @@ class SummaryRepositoryImpl(SummaryRepository):
                 first_day_this_period = today.replace(day=1)
                 last_day_prev_period = first_day_this_period - timedelta(days=1)
                 first_day_last_period = last_day_prev_period.replace(day=1)
-                print(first_day_last_period, first_day_this_period)
             elif period == "yearly":
                 first_day_this_period = today.replace(month=1, day=1)
                 last_day_prev_period = first_day_this_period - timedelta(days=1)
@@ -70,14 +69,6 @@ class SummaryRepositoryImpl(SummaryRepository):
                 if expense_last != 0 else 0
             )
 
-            # Ratio and avg
-            # savings_ratio = balance / income_this * 100 if income_this!=0 else 0
-            expense_ratio = expense_this / income_this * 100 if income_this!=0 else 0
-            savings_ratio = 100 - expense_ratio
-
-            total_days = 1 if period == 'daily' else (30 if period == 'monthly' else 365)
-            avg_daily_expense = expense_this / total_days
-
             # --- Trend Flags ---
             income_positive = income_pct_change >= 0
             expense_positive = expense_pct_change >= 0
@@ -94,26 +85,19 @@ class SummaryRepositoryImpl(SummaryRepository):
                     "positive": expense_positive,
                     "value": f"{'+' if expense_positive else ''}{expense_pct_change:.2f}%"
                 },
-                "savings_ratio": savings_ratio,
-                "expense_ratio" : expense_ratio,
-                "avg_daily_expense": avg_daily_expense
             }
-
 
             entity = self.to_entity(data=data)
             return entity
 
         except Exception as e:
             print(f"Error occured while calculating summary: {repr(e)}")
-            return Response({'detail':f'{str(e)}'}, status=500)
+            return Response({'detail':f'{repr(e)}'}, status=500)
 
     def to_entity(self, data:dict) -> SummaryEntity:
         return SummaryEntity(
             income=data['income'],
             expenses=data['expenses'],
-            savings_ratio=data['savings_ratio'],
-            expense_ratio=data['expense_ratio'],
-            avg_daily_expense=data['avg_daily_expense'],
             balance=data['balance'],
             income_trend=data['income_trend'],
             expenses_trend=data['expenses_trend']

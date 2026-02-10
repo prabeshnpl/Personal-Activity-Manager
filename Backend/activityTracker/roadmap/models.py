@@ -28,10 +28,6 @@ class Roadmap(models.Model):
 
     target_hours = models.IntegerField(blank=True, null=True)
 
-    category = models.CharField(max_length=16, choices=(
-        ('others','OTHERS'),
-    ), default='others')
-
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
 

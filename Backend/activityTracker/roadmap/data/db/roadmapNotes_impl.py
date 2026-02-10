@@ -17,6 +17,8 @@ class RoadmapNotesRepositoryImpl(RoadmapNotesRepository):
                     Q(content__icontains = search)
                     | Q(title__icontains = search)
                 )
+            if roadmap:=search_params.get("roadmap"):
+                roadmap_notes = roadmap_notes.filter(roadmap=roadmap)
             
             return [self.to_entity(roadmap_notes) for roadmap_notes in roadmap_notes]
         except Exception as e:
