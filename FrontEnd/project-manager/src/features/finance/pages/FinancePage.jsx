@@ -34,12 +34,12 @@ export const FinancePage = () => {
   ];
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 h-[90vh] overflow-hidden">
 
-      <div className='bg-white h-full px-8 py-4 rounded-lg shadow'>
+      <div className='bg-white h-full px-8 py-4 rounded-lg shadow-md flex flex-col'>
         <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
-        <div>
+        <div className='overflow-y-auto'>
           <TabPanel isActive={activeTab === 'dashboard'}>
             <FinanceDashboard/>
           </TabPanel>

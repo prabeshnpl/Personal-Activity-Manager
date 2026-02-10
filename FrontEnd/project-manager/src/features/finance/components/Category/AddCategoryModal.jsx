@@ -62,7 +62,7 @@ export const AddCategoryModal = ({ category, onClose, onCreate, onUpdate }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-bold text-gray-900">
@@ -107,6 +107,9 @@ export const AddCategoryModal = ({ category, onClose, onCreate, onUpdate }) => {
               <option value="">None</option>
               <option value="income">Income Only</option>
               <option value="expense">Expense Only</option>
+              <option value="loan_given">Loan Given</option>
+              <option value="loan_taken">Loan Received</option>
+              <option value="transfer">Transfer</option>
             </select>
           </div>
 

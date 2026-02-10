@@ -18,9 +18,9 @@ const FinanceSettings = () => {
         }
     ];
     return (
-        <>
+        <div>            
             <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
-            <div className='mt-4 overflow-y-auto h-full'>
+            <div className='mt-4 h-full'>
                 <TabPanel isActive={activeTab === 'category'}>
                     <CategoryManager/>
                 </TabPanel>
@@ -29,7 +29,7 @@ const FinanceSettings = () => {
                     <AccountManager/>
                 </TabPanel>
             </div>
-        </>
+        </div>
     )
 };
 export default FinanceSettings;

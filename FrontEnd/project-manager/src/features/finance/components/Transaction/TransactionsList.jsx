@@ -66,7 +66,7 @@ export const TransactionsList = () => {
     return <ErrorState message="Failed to load transactions." onRetry={refetch} />;
   }
   return (
-    <div className='mt-5 overflow-y-auto max-h-120'>
+    <div className='mt-5 max-h-120'>
       <Card
         title={`Transactions (${pages?.pages?.at(-1)?.meta?.total_count || 0})`}
         action={

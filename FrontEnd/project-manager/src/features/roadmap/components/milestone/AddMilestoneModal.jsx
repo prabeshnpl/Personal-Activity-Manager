@@ -7,7 +7,8 @@ export const AddMilestoneModal = ({ roadmapId, onClose, onCreate }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    target_date: '',
+    start_date: '',
+    due_date: '',
     estimated_hours: '',
   });
   const [loading, setLoading] = useState(false);
@@ -34,8 +35,8 @@ export const AddMilestoneModal = ({ roadmapId, onClose, onCreate }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-bold text-gray-900">Add Milestone</h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
@@ -78,12 +79,25 @@ export const AddMilestoneModal = ({ roadmapId, onClose, onCreate }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Target Date
+              Start Date
             </label>
             <input
               type="date"
-              value={formData.target_date}
-              onChange={(e) => setFormData({ ...formData, target_date: e.target.value })}
+              value={formData.start_date}
+              onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={loading}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Completion Date
+            </label>
+            <input
+              type="date"
+              value={formData.due_date}
+              onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
             />

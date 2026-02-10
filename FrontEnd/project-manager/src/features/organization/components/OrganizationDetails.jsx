@@ -3,6 +3,7 @@ import { Card } from '../../../shared/components/Card';
 import { Button } from '../../../shared/components/Button';
 import { Building2, Edit2, Calendar, User } from 'lucide-react';
 import { EditOrganizationModal } from './EditOrganizationModal';
+import { formatDate } from '../../../shared/utils/formatDate';
 
 export const OrganizationDetails = ({ organization, canEdit, onUpdate }) => {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -23,14 +24,6 @@ export const OrganizationDetails = ({ organization, canEdit, onUpdate }) => {
       business: 'bg-purple-100 text-purple-800',
     };
     return colors[type] || 'bg-gray-100 text-gray-800';
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
   };
 
   return (

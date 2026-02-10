@@ -1,5 +1,6 @@
 import { Card } from '../../../../shared/components/Card';
 import { TrendingUp, TrendingDown, CheckCircle2, Clock, Target } from 'lucide-react';
+import { formatDate } from '../../../../shared/utils/formatDate';
 
 export const ProgressTracker = ({ progress, roadmap }) => {
   if (!progress || !roadmap) return null;
@@ -46,11 +47,7 @@ export const ProgressTracker = ({ progress, roadmap }) => {
           <div>
             <p className="font-semibold">{getStatusText()}</p>
             <p className="text-sm">
-              Estimated completion: {new Date(progress.estimated_completion_date).toLocaleDateString('en-US', {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
+              Estimated completion: {formatDate(progress.estimated_completion_date)}
             </p>
           </div>
         </div>

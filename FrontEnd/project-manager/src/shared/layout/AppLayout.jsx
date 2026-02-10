@@ -12,7 +12,7 @@ export const AppLayout = () => {
       <TopBar onToggleSidebar={() => setShowSidebar((s) => !s)} />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar isOpen={showSidebar} onClose={() => setShowSidebar(false)} />
-        <main className="flex-1 overflow-y-auto bg-yellow-50 min-h-0">
+        <main className="flex-1 bg-yellow-50 min-h-0">
           <Outlet />
         </main>
       </div>

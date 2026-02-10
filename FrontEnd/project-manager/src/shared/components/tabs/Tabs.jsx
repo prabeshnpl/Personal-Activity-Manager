@@ -11,7 +11,8 @@ export const Tabs = ({ tabs, activeTab, onChange }) => {
               key={tab.id}
               onClick={() => onChange(tab.id)}
               className={`
-                flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors
+                flex items-center space-x-2 py-4 px-1 border-b-2 
+                font-medium text-sm transition-colors cursor-pointer
                 ${
                   isActive
                     ? 'border-blue-500 text-blue-600'

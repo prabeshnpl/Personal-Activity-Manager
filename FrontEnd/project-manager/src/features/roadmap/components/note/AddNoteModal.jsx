@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Button } from '../../../../shared/components/Button';
+import { Button } from '@/shared/components/Button';
 import { X } from 'lucide-react';
-import { DescriptionField } from '../../../../shared/components/DescriptionField';
+import { DescriptionField } from '@/shared/components/DescriptionField';
 
 export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) => {
   const isEditing = !!note;
@@ -67,7 +67,7 @@ export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) =
 
   return (
     <div 
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4" 
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4" 
       onClick={onClose}
     >
       <div 

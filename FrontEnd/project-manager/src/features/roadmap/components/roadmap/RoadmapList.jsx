@@ -57,9 +57,9 @@ export const RoadmapList = ({
   return (
     <>
       <Card
-        title={`My Roadmaps (${data.length})`}
+        title={`My Roadmaps (${pages?.pages?.at(-1)?.meta?.total_count || 0})`}
         action={
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             <Button
               size="sm"
               variant="ghost"
@@ -91,6 +91,7 @@ export const RoadmapList = ({
                 setShowAddModal(true);
               }}
               disabled={!!error}
+              className='w-35 h-10 flex justify-center items-center'
             >
               <Plus className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">New Roadmap</span>

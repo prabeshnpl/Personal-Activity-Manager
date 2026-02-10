@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { formatDate } from "@/shared/utils/formatDate";
 import { 
   MoreVertical, 
   Edit2, 
@@ -27,15 +28,6 @@ export const RoadmapCard = ({ roadmap, onDelete, onClick, onEdit }) => {
     cancelled: 'bg-red-100 text-red-800',
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
   const getProgressColor = () => {
     const progress = roadmap.progress_percentage || 0;
     if (progress >= 75) return 'bg-green-500';
@@ -46,7 +38,7 @@ export const RoadmapCard = ({ roadmap, onDelete, onClick, onEdit }) => {
 
   return (
     <div
-      className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
+      className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer border-2"
       onClick={onClick}
     >
       <div className="flex items-start justify-between mb-4">
@@ -136,34 +128,32 @@ export const RoadmapCard = ({ roadmap, onDelete, onClick, onEdit }) => {
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <Calendar className="h-4 w-4" />
-          <span>{formatDate(roadmap.start_date)} - {formatDate(roadmap.end_date)}</span>
+          <span>{formatDate(roadmap.start_date, "No start date")} - {formatDate(roadmap.end_date, "No end date")}</span>
         </div>
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <Clock className="h-4 w-4" />
-          <span>{roadmap.actual_hours || 0} / {roadmap.target_hours || 0} hrs</span>
+          <span>{roadmap.completed_hours || 0} / {roadmap.target_hours || 0} hrs</span>
         </div>
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <Target className="h-4 w-4" />
-          <span>{roadmap.completed_milestones || 0} / {roadmap.milestones_count || 0} milestones</span>
+          <span>{roadmap.completed_milestones_count || 0} / {roadmap.milestones_count || 0} milestones</span>
         </div>
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <CheckCircle2 className="h-4 w-4" />
           <span className={`px-2 py-0.5 rounded-full text-xs ${statusColors[roadmap.status]}`}>
             {roadmap.status?.toUpperCase()}
           </span>
+          <div className='ml-6'>
+            <span className={`px-2 py-1 rounded text-xs font-medium border ${typeColors[roadmap.type]}`}>
+              {roadmap.type?.toUpperCase()}
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Tags */}
       <div className="flex flex-wrap gap-2">
-        <span className={`px-2 py-1 rounded text-xs font-medium border ${typeColors[roadmap.type]}`}>
-          {roadmap.type?.toUpperCase()}
-        </span>
-        {roadmap.category && (
-          <span className="px-2 py-1 rounded text-xs bg-gray-100 text-gray-700">
-            {roadmap.category.replace('_', ' ').toUpperCase()}
-          </span>
-        )}
+        
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { Card } from '../../../shared/components/Card';
 import { Button } from '../../../shared/components/Button';
 import { Lock, Trash2, AlertTriangle, Monitor } from 'lucide-react';
 import { ChangePasswordModal } from './ChangePasswordModal';
+import { formatDate } from "@/shared/utils/formatDate";
 
 export const SecuritySettings = ({ 
   sessions, 
@@ -21,16 +22,6 @@ export const SecuritySettings = ({
         alert('Failed to delete account');
       }
     }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
   };
 
   return (

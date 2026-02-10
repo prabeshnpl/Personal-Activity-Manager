@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { MoreVertical, Edit2, Trash2, TrendingUp, TrendingDown } from 'lucide-react';
+import { formatDate } from '@/shared/utils/formatDate';
 
 export const TransactionCard = ({ transaction, onUpdate, onDelete }) => {
   const [showMenu, setShowMenu] = useState(false);
@@ -9,16 +10,6 @@ export const TransactionCard = ({ transaction, onUpdate, onDelete }) => {
       style: 'currency',
       currency: 'NPR',
     }).format(amount);
-  };
-
-  const formatDate = (dateString) => {
-    var date = new Date(dateString);
-    date = date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-    return date
   };
 
   const isIncome = transaction.transaction_type === 'income';

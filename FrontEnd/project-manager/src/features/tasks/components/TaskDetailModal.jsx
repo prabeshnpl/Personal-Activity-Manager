@@ -1,4 +1,5 @@
 import { Button } from '../../../shared/components/Button';
+import { formatDate } from "@/shared/utils/formatDate";
 import { 
   X, 
   Calendar, 
@@ -26,15 +27,6 @@ export const TaskDetailModal = (props) => {
     completed: 'bg-green-100 text-green-800',
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return 'No deadline';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
   const handleStatusChange = async (newStatus) => {
     await updateTask.mutateAsync({ id: task.id, data: { status: newStatus } });
   };
@@ -48,7 +40,7 @@ export const TaskDetailModal = (props) => {
 
   return (
     <div 
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4" 
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4" 
       onClick={onClose}
     >
       <div 
@@ -83,7 +75,7 @@ export const TaskDetailModal = (props) => {
           </div>
           <div>
             <p className="text-sm text-gray-600">Deadline</p>
-            <p className="font-medium text-gray-900">{formatDate(task.deadline)}</p>
+            <p className="font-medium text-gray-900">{formatDate(task.deadline, "No deadline found.")}</p>
           </div>
         </div>
 

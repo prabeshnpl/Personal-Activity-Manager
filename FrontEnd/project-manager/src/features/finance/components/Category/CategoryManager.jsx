@@ -77,7 +77,11 @@ export const CategoryManager = () => {
             {categoryData.map((category) => (
               <div
                 key={category.id}
-                className={`flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors ${getCategoryColor(category.color)}`}
+                className={`
+                  flex items-center justify-between 
+                  p-4 bg-gray-50 rounded-lg hover:bg-gray-100 
+                  transition-colors ${getCategoryColor(category.color)}
+                `}
               >
                 <div className="flex items-center space-x-4">
                   <div className="p-3 bg-blue-100 rounded-lg">

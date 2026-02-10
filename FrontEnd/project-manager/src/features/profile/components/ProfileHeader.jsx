@@ -3,6 +3,7 @@ import { Card } from '../../../shared/components/Card';
 import { Camera, Mail, Calendar, Shield } from 'lucide-react';
 import { ProfilePictureModal } from './ProfilePictureModal';
 import { useAuthStore } from '../../../stores/authStore';
+import { formatDate } from "@/shared/utils/formatDate";
 
 export const ProfileHeader = ({ onUploadPicture }) => {
 
@@ -14,15 +15,6 @@ export const ProfileHeader = ({ onUploadPicture }) => {
       return `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase();
     }
     return profile?.email?.substring(0, 2).toUpperCase() || 'U';
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
   };
 
   return (
