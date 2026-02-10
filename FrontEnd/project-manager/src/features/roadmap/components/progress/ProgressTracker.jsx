@@ -39,7 +39,7 @@ export const ProgressTracker = ({ progress, roadmap }) => {
   };
 
   return (
-    <Card title="Progress Tracker">
+    <Card>
       <div className="space-y-6">
         {/* Status Banner */}
         <div className={`p-4 rounded-lg border-2 flex items-center space-x-3 ${getStatusColor()}`}>

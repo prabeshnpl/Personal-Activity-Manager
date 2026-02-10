@@ -1,22 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { Card } from '../../../../shared/components/Card';
-import { Button } from '../../../../shared/components/Button';
 import { EmptyState } from '../../../../shared/components/EmptyState';
-import { AddNoteModal } from '../note/AddNoteModal';
-import { Plus, BookOpen} from 'lucide-react';
+import { BookOpen} from 'lucide-react';
 import { Spinner } from '../../../../shared/components/Spinner';
 import ErrorState from '../../../../shared/components/Error/ErrorState';
 import NotesList from './NotesList';
+import { NoteDetailModal } from './NoteDetailModal';
 
 export const NotesSection = ({
   infiniteNotes,
-  roadmapId,
-  onCreate,
-  onUpdate,
   onDelete,
+  onEditNote,
+  showTitle = true,
 }) => {
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [editingNote, setEditingNote] = useState(null);
+  const [selectedNote, setSelectedNote] = useState(null);
   const {
     data: pages,
     isLoading,
@@ -47,24 +44,18 @@ export const NotesSection = ({
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  const handleEdit = (note) => {
-    setEditingNote(note);
-    setShowAddModal(true);
+  const handleOpenDetail = (note) => {
+    setSelectedNote(note);
   };
 
   const totalCount = Number(pages?.pages?.at(-1)?.meta?.total_count ?? notes.length ?? 0);
   const titleText = totalCount > 0 ? `Learning Notes (${totalCount})` : 'Learning Notes';
+  const cardTitle = showTitle ? titleText : undefined;
   
   return (
     <>
       <Card
-        title={titleText}
-        action={
-          <Button size="sm" onClick={() => setShowAddModal(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Note
-          </Button>
-        }
+        title={cardTitle}
       >
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
@@ -81,7 +72,13 @@ export const NotesSection = ({
         ) : (
           <div className="space-y-4">
             {notes.map((note) => (
-              <NotesList key={note.id} note={note} onEdit={handleEdit} onDelete={onDelete} />
+              <NotesList
+                key={note.id}
+                note={note}
+                onEdit={onEditNote}
+                onDelete={onDelete}
+                onOpen={handleOpenDetail}
+              />
             ))}
           </div>
         )}
@@ -97,16 +94,15 @@ export const NotesSection = ({
         )}
       </Card>
 
-      {showAddModal && (
-        <AddNoteModal
-          roadmapId={roadmapId}
-          note={editingNote}
-          onClose={() => {
-            setShowAddModal(false);
-            setEditingNote(null);
+      {selectedNote && (
+        <NoteDetailModal
+          note={selectedNote}
+          onClose={() => setSelectedNote(null)}
+          onEdit={(note) => {
+            setSelectedNote(null);
+            onEditNote?.(note);
           }}
-          onCreate={onCreate}
-          onUpdate={onUpdate}
+          onDelete={onDelete}
         />
       )}
     </>

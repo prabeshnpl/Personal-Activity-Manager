@@ -1,23 +1,28 @@
 import { useMemo, useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Plus } from 'lucide-react';
 import { Tabs, TabPanel } from '../../../../shared/components/tabs/Tabs';
 import { ProgressTracker } from '../progress/ProgressTracker';
 import { MilestonesList } from '../milestone/MilestoneList';
 import { NotesSection } from '../note/NotesSection';
 import { Target, CheckCircle2, BookOpen } from 'lucide-react';
+import { Button } from '../../../../shared/components/Button';
 import { MarkdownContent } from '../../../../shared/components/MarkdownContent';
 import { useMilestone } from '../../hooks/useMilestone';
 import { useRoadmapNotes } from '../../hooks/useRoadmapNotes';
 import { useRoadmapProgress } from '../../hooks/useRoadmapProgress';
+import { AddMilestoneModal } from '../milestone/AddMilestoneModal';
+import { AddNoteModal } from '../note/AddNoteModal';
 
 export const RoadmapDetailModal = ({
   roadmap,
   onClose,
 }) => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [showAddMilestone, setShowAddMilestone] = useState(false);
+  const [showAddNote, setShowAddNote] = useState(false);
+  const [editingNote, setEditingNote] = useState(null);
   const { 
     createMilestone, 
-    updateMilestone, 
     deleteMilestone, 
     toggleMilestone, 
     getInfiniteMilestones 
@@ -64,6 +69,22 @@ export const RoadmapDetailModal = ({
     },
   ];
 
+  const handleAddClick = () => {
+    if (activeTab === 'milestones') {
+      setShowAddMilestone(true);
+    }
+
+    if (activeTab === 'notes') {
+      setEditingNote(null);
+      setShowAddNote(true);
+    }
+  };
+
+  const showGlobalAdd =
+    activeTab === 'milestones' || activeTab === 'notes';
+
+  const addButtonLabel = activeTab === 'milestones' ? 'Add Milestone' : 'Add Note';
+
   return (
     <div 
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4" 
@@ -86,7 +107,15 @@ export const RoadmapDetailModal = ({
         </div>
 
         <div className="px-6 border-b border-gray-200">
-          <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+          <div className="flex items-center justify-between gap-4">
+            <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+            {showGlobalAdd && (
+              <Button size="sm" onClick={handleAddClick}>
+                <Plus className="h-4 w-4 mr-2" />
+                {addButtonLabel}
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
@@ -108,24 +137,45 @@ export const RoadmapDetailModal = ({
           <TabPanel isActive={activeTab === 'milestones'}>
             <MilestonesList
               infiniteMilestones={infiniteMilestones}
-              roadmapId={roadmap.id}
-              onCreate={createMilestone}
-              onUpdate={updateMilestone}
               onDelete={deleteMilestone.mutate}
               onToggle={toggleMilestone.mutate}
+              showTitle={false}
             />
           </TabPanel>
 
           <TabPanel isActive={activeTab === 'notes'}>
             <NotesSection
               infiniteNotes={infiniteNotes}
-              roadmapId={roadmap.id}
-              onCreate={createNote}
-              onUpdate={updateNote}
               onDelete={deleteNote}
+              onEditNote={(note) => {
+                setEditingNote(note);
+                setShowAddNote(true);
+              }}
+              showTitle={false}
             />
           </TabPanel>
         </div>
+
+        {showAddMilestone && (
+          <AddMilestoneModal
+            roadmapId={roadmap.id}
+            onClose={() => setShowAddMilestone(false)}
+            onCreate={createMilestone}
+          />
+        )}
+
+        {showAddNote && (
+          <AddNoteModal
+            roadmapId={roadmap.id}
+            note={editingNote}
+            onClose={() => {
+              setShowAddNote(false);
+              setEditingNote(null);
+            }}
+            onCreate={createNote}
+            onUpdate={updateNote}
+          />
+        )}
       </div>
     </div>
   );

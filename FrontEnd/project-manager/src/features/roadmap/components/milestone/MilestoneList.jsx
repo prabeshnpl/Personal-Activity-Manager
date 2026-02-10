@@ -1,22 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { Card } from '../../../../shared/components/Card';
-import { Button } from '../../../../shared/components/Button';
 import { EmptyState } from '../../../../shared/components/EmptyState';
-import { AddMilestoneModal } from './AddMilestoneModal';
-import { Plus, CheckCircle2} from 'lucide-react';
+import { CheckCircle2} from 'lucide-react';
 import { Spinner } from '../../../../shared/components/Spinner';
 import ErrorState from '../../../../shared/components/Error/ErrorState';
 import { MilestoneCard } from './MilestoneCard';
+import { MilestoneDetailModal } from './MilestoneDetailModal';
 
 export const MilestonesList = ({
   infiniteMilestones,
-  roadmapId,
-  onCreate,
-  onUpdate,
   onDelete,
   onToggle,
+  showTitle = true,
 }) => {
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedMilestone, setSelectedMilestone] = useState(null);
   const {
     data: pages,
     isLoading,
@@ -30,6 +27,7 @@ export const MilestonesList = ({
   const milestones = pages?.pages ? pages.pages.flat() : [];
   const totalCount = Number(pages?.pages?.at(-1)?.meta?.total_count ?? milestones.length ?? 0);
   const titleText = totalCount > 0 ? `Milestones (${totalCount})` : 'Milestones';
+  const cardTitle = showTitle ? titleText : undefined;
 
   const sentinelRef = useRef(null);
   useEffect(() => {
@@ -52,13 +50,7 @@ export const MilestonesList = ({
   return (
     <>
       <Card
-        title={titleText}
-        action={
-          <Button size="sm" onClick={() => setShowAddModal(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Milestone
-          </Button>
-        }
+        title={cardTitle}
       >
         <div>
           {isLoading ? (
@@ -79,9 +71,9 @@ export const MilestonesList = ({
                 <MilestoneCard 
                   key={milestone.id} 
                   milestone={milestone} 
-                  onUpdate={onUpdate} 
                   onDelete={onDelete} 
                   onToggle={onToggle} 
+                  onOpen={setSelectedMilestone}
                 />
               ))}
             </div>
@@ -99,11 +91,12 @@ export const MilestonesList = ({
         </div>
       </Card>
 
-      {showAddModal && (
-        <AddMilestoneModal
-          roadmapId={roadmapId}
-          onClose={() => setShowAddModal(false)}
-          onCreate={onCreate}
+      {selectedMilestone && (
+        <MilestoneDetailModal
+          milestone={selectedMilestone}
+          onClose={() => setSelectedMilestone(null)}
+          onDelete={onDelete}
+          onToggle={onToggle}
         />
       )}
     </>

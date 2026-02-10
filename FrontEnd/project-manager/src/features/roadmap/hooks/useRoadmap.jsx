@@ -44,7 +44,7 @@ export function useRoadmap() {
     const combined = { ...filters, ...(overrideFilters || {}) };
     return useInfiniteList(
       ["roadmaps", "infinite"],
-      (params) => roadmapService.getRoadmaps({ ...combined, ...params, page_size: 10 }),
+      (params) => roadmapService.getRoadmaps({ ...combined, ...params, page_size: 5 }),
       [combined]
     );
   };
