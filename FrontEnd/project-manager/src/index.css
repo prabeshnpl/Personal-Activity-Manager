@@ -48,6 +48,10 @@ body {
   font-family: Comic Sans MS, Comic Sans, cursive; 
 }
 
+.react-mde-embedded .mde-header {
+  position: static;
+}
+
 @theme inline {
     --radius-sm:calc(var(--radius) - 4px);
     --radius-md:calc(var(--radius) - 2px);

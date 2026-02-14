@@ -6,17 +6,21 @@ export const useAuthStore = create(
   persist(
     (set) => ({
       accessToken: null,
-      refreshToken: null,
       user: null,
       isAuthenticated: false,
 
       login: (response) =>
         set({
           accessToken: response?.access,
-          refreshToken: response?.refresh,
           user: response?.user,
           isAuthenticated: true,
         }),
+
+      setAccessToken: (accessToken) =>
+        set((state) => ({
+          accessToken,
+          isAuthenticated: !!accessToken || state.isAuthenticated,
+        })),
 
       logout: () => {
         // Clear organization store on logout
@@ -24,7 +28,6 @@ export const useAuthStore = create(
         
         set({
           accessToken: null,
-          refreshToken: null,
           user: null,
           isAuthenticated: false,
         });
@@ -38,7 +41,6 @@ export const useAuthStore = create(
       name: "auth-storage",
       partialize: (state) => ({
         accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),

@@ -90,6 +90,7 @@ export const DescriptionField = ({
       <Label htmlFor={id}>{label}</Label>
       <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-2">
         <ReactMdeComponent
+          className="react-mde-embedded z-10cd"
           value={value || ""}
           onChange={(val) => onChange(val)}
           selectedTab={selectedTab}

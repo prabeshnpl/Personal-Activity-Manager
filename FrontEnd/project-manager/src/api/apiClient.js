@@ -3,13 +3,9 @@ import { useAuthStore } from "../stores/authStore";
 import { useErrorStore } from "../stores/errorStore";
 import { useOrganizationStore } from "../stores/organizationStore";
 
-const BASE_URL = "http://127.0.0.1:8000/api/v1";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api/v1";
 
-const AUTH_EXCLUDED_PATHS = [
-  "/auth/login/",
-  "/auth/token/refresh/",
-  "/auth/logout/",
-];
+const AUTH_EXCLUDED_PATHS = ["/login/", "/register/", "/token/refresh/", "/logout/"];
 
 /* ---------------------------------------
    Axios Instance
@@ -39,8 +35,12 @@ api.interceptors.request.use(
     const { accessToken } = useAuthStore.getState();
     const orgId =
       useOrganizationStore.getState().activeOrganization?.id;
+    const isAuthEndpoint = AUTH_EXCLUDED_PATHS.some((path) =>
+      config.url?.includes(path)
+    );
+    const shouldSkipAuth = config.skipAuth === true;
 
-    if (accessToken) {
+    if (accessToken && !isAuthEndpoint && !shouldSkipAuth) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
@@ -91,13 +91,7 @@ api.interceptors.response.use(
     /* ---------------------------------------
        401 → Refresh Access Token
     --------------------------------------- */
-    const AUTH_EXCLUDED_PATHS = [
-      "/login/",
-      "/token/refresh/",
-      "/logout/",
-    ];
-
-    if (status === 401 && !originalRequest._retry) {
+    if (status === 401 && !originalRequest._retry && !originalRequest.skipRefreshRetry) {
 
       const isAuthEndpoint = AUTH_EXCLUDED_PATHS.some((path) =>
         originalRequest.url.includes(path)
@@ -125,8 +119,16 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const res = await api.post("/token/refresh/");
-        const newAccessToken = res.data.access;
+        const res = await api.post("token/refresh/", null, {
+          withCredentials: true,
+          skipAuth: true,
+          skipRefreshRetry: true,
+        });
+        const newAccessToken = res?.access;
+
+        if (!newAccessToken) {
+          throw new Error("Refresh response missing access token");
+        }
 
         authStore.setAccessToken(newAccessToken);
 
@@ -156,6 +158,7 @@ api.interceptors.response.use(
         break;
       case 401:
         message = error.response?.data?.detail || "Access Denied";
+        break;
       case 403:
         message = "You do not have permission to perform this action.";
         break;
