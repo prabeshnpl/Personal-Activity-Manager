@@ -19,11 +19,16 @@ export const financeService = {
     api.get(`${ENDPOINTS.FINANCE_TRANSACTIONS}/${id}/`),
 
   // Summary & Reports
-  getSummary: (period) =>
-    api.get(`${ENDPOINTS.FINANCE_SUMMARY}/`, { params: { period } }),
+  getSummary: (params) =>
+    api.get(`${ENDPOINTS.FINANCE_SUMMARY}/`, { params }),
 
   getReports: (params) =>
     api.get(`${ENDPOINTS.FINANCE_REPORTS}/`, { params }),
+
+  getIncomeExpenseTrend: (params) =>
+    api.get(`${ENDPOINTS.FINANCE_REPORTS}/income-expense-trend/`, {
+      params,
+    }),
 
   getCategoryBreakdown: (params) =>
     api.get(`${ENDPOINTS.FINANCE_CATEGORY_BREAKDOWN}/`, { params }),

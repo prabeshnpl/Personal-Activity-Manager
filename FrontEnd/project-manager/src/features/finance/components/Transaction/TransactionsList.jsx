@@ -20,6 +20,7 @@ export const TransactionsList = () => {
     filters,
     setFilters,
     categories,
+    accounts,
     exportTransactions,
   } = useTransaction();
 
@@ -109,6 +110,7 @@ export const TransactionsList = () => {
           onClose={() => setShowFilters(false)}
           filters={filters}
           setFilters={setFilters}
+          accounts={accounts?.data || []}
           categories={categories?.data || []}
         />
 

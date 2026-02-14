@@ -1,14 +1,14 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Card } from '../../../../shared/components/Card';
-import { Button } from '../../../../shared/components/Button';
 import { Spinner } from '../../../../shared/components/Spinner';
 import { EmptyState } from '../../../../shared/components/EmptyState';
 import { AddAccountModal } from './AddAccountModal';
-import { Tag, Plus, Edit2, Trash2, Wallet, CreditCard, Building2, MoreVertical } from 'lucide-react';
+import { Tag, Edit2, Trash2, Wallet, CreditCard, Building2, MoreVertical } from 'lucide-react';
 import { useAccount } from '../../hooks/useAccount';
 import ErrorState from '../../../../shared/components/Error/ErrorState';
+import {formatCurrency} from '@/shared/utils/formatCurrency';
 
-export const AccountManager = () => {
+export const AccountManager = ({ addActionRef }) => {
 
   const { 
     accounts:accountData, 
@@ -22,6 +22,19 @@ export const AccountManager = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingAccount, setEditingAccount] = useState(null);
   const [menuOpen, setMenuOpen] = useState(null);
+  const openAddAccountModal = useCallback(() => {
+    setEditingAccount(null);
+    setShowAddModal(true);
+  }, []);
+
+  useEffect(() => {
+    if (!addActionRef) return;
+    addActionRef.current = openAddAccountModal;
+
+    return () => {
+      addActionRef.current = null;
+    };
+  }, [addActionRef, openAddAccountModal]);
 
   const handleEdit = (account) => {
     setEditingAccount(account);
@@ -52,13 +65,6 @@ export const AccountManager = () => {
     }
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
-
   if (isLoading){
     return <Spinner size="md" />;
   }
@@ -70,23 +76,17 @@ export const AccountManager = () => {
   return (
     <>
       <Card
-        title={`Accounts (${accounts.length})`}
-        action={
-          <Button size="sm" onClick={() => setShowAddModal(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Account
-          </Button>
-        }
+        // title={`Accounts (${accounts.length})`}
       > 
         {accounts?.length===0 ? 
         <EmptyState
           icon={Tag}
           iconClassNames='h-8 w-8 text-gray-400'
-          title="No categories yet"
-          description="Create categories to organize your transactions"
+          title="No accounts yet"
+          description="Create accounts to track balances"
           classNames = "text-center"
         /> : 
-          <div className="space-y-3 h-full">
+          <div className="space-y-3 h-full overflow-y-auto">
             {accounts.map((account) => {
               const Icon = getAccountIcon(account.account_type);
               return (

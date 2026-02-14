@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FinanceDashboard } from '../components/FinanceDashboard';
+import { FinanceDashboard } from '../components/Dashboard/FinanceDashboard';
 import { TransactionsList } from '../components/Transaction/TransactionsList';
 import { Tabs, TabPanel } from '../../../shared/components/tabs/Tabs';
 import { BarChart3, List, PieChart, Settings } from 'lucide-react';

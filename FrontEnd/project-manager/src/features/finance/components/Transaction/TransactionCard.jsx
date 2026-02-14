@@ -16,7 +16,7 @@ export const TransactionCard = ({ transaction, onUpdate, onDelete }) => {
 
   return (
     <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4 max-w-[80%]">
         <div className={`p-3 rounded-full ${isIncome ? 'bg-green-100' : 'bg-red-100'}`}>
           {isIncome ? (
             <TrendingUp className="h-5 w-5 text-green-600" />
@@ -26,12 +26,17 @@ export const TransactionCard = ({ transaction, onUpdate, onDelete }) => {
         </div>
 
         <div>
-          <p className="font-medium text-gray-900">{transaction.description}</p>
+          <p className="font-medium text-gray-900 p-1">{transaction.description}</p>
           <div className="flex items-center space-x-4 mt-1">
             <span className="text-sm text-gray-600">{formatDate(transaction.occurred_at)}</span>
             {transaction.category && (
               <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full">
                 {transaction.category.name}
+              </span>
+            )}
+            {transaction.account && (
+              <span className="px-2 py-0.5 bg-blue-100 text-green-800 text-xs rounded-full">
+                {transaction.account.name}
               </span>
             )}
           </div>

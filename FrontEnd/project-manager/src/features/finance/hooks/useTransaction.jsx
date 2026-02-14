@@ -8,6 +8,7 @@ export function useTransaction() {
   const [filters, setFilters] = useState({
     type: null, // income, expense
     category: null,
+    account: null,
     startDate: null,
     endDate: null,
     member: null,

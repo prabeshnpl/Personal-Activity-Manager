@@ -1,20 +1,35 @@
-import { useState } from 'react';
-import { Card } from '../../../../shared/components/Card';
-import { Spinner } from '../../../../shared/components/Spinner';
-import { Button } from '../../../../shared/components/Button';
-import { EmptyState } from '../../../../shared/components/EmptyState';
+import { useCallback, useEffect, useState } from 'react';
+import { Card } from '@/shared/components/Card';
+import { Spinner } from '@/shared/components/Spinner';
+import { EmptyState } from '@/shared/components/EmptyState';
 import { AddCategoryModal } from './AddCategoryModal';
-import { Plus, Edit2, Trash2, Tag, MoreVertical } from 'lucide-react';
+import { Edit2, Trash2, Tag, MoreVertical } from 'lucide-react';
 import { useCategory } from '../../hooks/useCategory';
-import ErrorState from '../../../../shared/components/Error/ErrorState';
+import ErrorState from '@/shared/components/Error/ErrorState';
+import {formatCurrency} from '@/shared/utils/formatCurrency';
 
-export const CategoryManager = () => {
-  const { categories, createCategory, updateCategory, deleteCategory } = useCategory();
-  const {data:categoryData, isLoading: categoryLoading, error:categoryError, refetch} = categories;
+export const CategoryManager = ({ addActionRef }) => {
+  const { categories, createCategory, updateCategory, deleteCategory, categoryBreakdown } = useCategory();
+  const {data:categoryData, isLoading: categoryLoading, error:categoryError, refetch} = categoryBreakdown;
+  // const {data:categoryBreakdownData, isLoading: categoryBreakdownLoading, error:categoryBreakdownError} = categoryBreakdown;
+
   
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [menuOpen, setMenuOpen] = useState(null);
+  const openAddCategoryModal = useCallback(() => {
+    setEditingCategory(null);
+    setShowAddModal(true);
+  }, []);
+
+  useEffect(() => {
+    if (!addActionRef) return;
+    addActionRef.current = openAddCategoryModal;
+
+    return () => {
+      addActionRef.current = null;
+    };
+  }, [addActionRef, openAddCategoryModal]);
 
   const handleEdit = (category) => {
     setEditingCategory(category);
@@ -57,13 +72,7 @@ export const CategoryManager = () => {
   return (
     <>
       <Card
-        title={`Categories (${categoryData.length})`}
-        action={
-          <Button size="sm" onClick={() => setShowAddModal(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Category
-          </Button>
-        }
+        // title={`Categories (${categoryData.length})`}
       >
         {categoryData?.length===0 ? 
           <EmptyState
@@ -73,7 +82,7 @@ export const CategoryManager = () => {
             description="Create categories to organize your transactions"
             classNames = "text-center"
           /> : 
-          <div className="space-y-3">
+          <div className="space-y-3 h-full overflow-y-auto">
             {categoryData.map((category) => (
               <div
                 key={category.id}
@@ -95,7 +104,13 @@ export const CategoryManager = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-4">                
+                <div className="flex items-center space-x-4">
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-gray-900">
+                      {formatCurrency(category.total || 0)}
+                    </p>
+                    <p className="text-xs text-gray-500">Current Balance</p>
+                  </div>
                   <div className="relative">
                     <button
                       onClick={() => setMenuOpen(menuOpen === category.id ? null : category.id)}

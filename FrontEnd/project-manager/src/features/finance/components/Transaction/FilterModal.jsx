@@ -5,6 +5,7 @@ const FilterModal = ({
   filters,
   setFilters,
   categories,
+  accounts,
 }) => {
   if (!show) return null;
 
@@ -27,6 +28,27 @@ const FilterModal = ({
               <option value="">All</option>
               <option value="income">Income</option>
               <option value="expense">Expense</option>
+            </select>
+          </div>
+
+          {/* Category */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Account
+            </label>
+            <select
+              value={filters.account || ""}
+              onChange={(e) =>
+                setFilters({ ...filters, account: e.target.value || null })
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Accounts</option>
+              {accounts.map((account) => (
+                <option key={account.id} value={account.id}>
+                  {account.name}
+                </option>
+              ))}
             </select>
           </div>
 
