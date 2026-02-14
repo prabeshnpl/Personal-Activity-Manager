@@ -30,8 +30,10 @@ class TransactionRepositoryImpl(TransactionRepository):
                 transactions = transactions.filter(occurred_at__lt=dt)
 
             if search:=search_params.get("search"):
-                print(search)
                 transactions = transactions.filter(description__icontains = search)
+            
+            if account:=search_params.get("account"):
+                transactions = transactions.filter(account=account)
 
             return [self.to_entity(transaction) for transaction in transactions]
         except Exception as e:

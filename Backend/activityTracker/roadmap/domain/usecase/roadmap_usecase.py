@@ -48,3 +48,10 @@ class RoadmapProgressUseCase:
 
     def execute(self, id: int, organization:int, role:str) -> Response:
         return self.repo.roadmap_progress(id=id, organization=organization, role=role)
+
+class RoadmapStatsUseCase:
+    def __init__(self, repo: RoadmapRepository):
+        self.repo = repo
+
+    def execute(self, id: int, organization:int, role:str) -> Response:
+        return self.repo.roadmap_stats(id=id, organization=organization, role=role)

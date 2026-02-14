@@ -12,6 +12,12 @@ class SummaryRepositoryImpl(SummaryRepository):
 
             transactions = Transaction.objects.filter(organization=organization)
 
+            if account:=search_params.get("account"):
+                transactions = transactions.filter(account=account)
+
+            if category:=search_params.get("category"):
+                transactions = transactions.filter(category=category)
+
             balance = Account.objects.filter(
                 organization=organization
             ).aggregate(total=Sum('balance'))['total'] 
@@ -19,15 +25,16 @@ class SummaryRepositoryImpl(SummaryRepository):
             data = {}
             today = date.today()
 
-            if period == "daily":
-                first_day_this_period = today
-                first_day_last_period = today - timedelta(days=1)
-                last_day_prev_period = today - timedelta(days=1)
+            if period == "weekly":
+                first_day_this_period = today - timedelta(days=6)  # Last 7 days
+                last_day_prev_period = first_day_this_period - timedelta(days=1)  # Day before current period
+                first_day_last_period = last_day_prev_period - timedelta(days=6)  # 7 days before current period
 
             elif period == "monthly":
                 first_day_this_period = today.replace(day=1)
                 last_day_prev_period = first_day_this_period - timedelta(days=1)
                 first_day_last_period = last_day_prev_period.replace(day=1)
+
             elif period == "yearly":
                 first_day_this_period = today.replace(month=1, day=1)
                 last_day_prev_period = first_day_this_period - timedelta(days=1)
@@ -50,13 +57,13 @@ class SummaryRepositoryImpl(SummaryRepository):
             income_last = transactions.filter(
                 transaction_type="income",
                 occurred_at__gte=first_day_last_period,
-                occurred_at__lte=first_day_this_period
+                occurred_at__lte=last_day_prev_period
             ).aggregate(total=Sum("amount"))["total"] or 0
 
             expense_last = transactions.filter(
                 transaction_type="expense",
                 occurred_at__gte=first_day_last_period,
-                occurred_at__lte=first_day_this_period
+                occurred_at__lte=last_day_prev_period
             ).aggregate(total=Sum("amount"))["total"] or 0
 
             # --- Percentage Change ---

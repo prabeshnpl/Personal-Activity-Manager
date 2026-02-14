@@ -188,6 +188,21 @@ class RoadmapRepositoryImpl(RoadmapRepository):
             print(f"Error occured while calculating progress: {str(e)}")
             return Response({'detail':f'{str(e)}'}, status=500)
 
+    def roadmap_stats(self, id: int, organization: int, role: str) -> Response:
+        try:
+            total = Roadmap.objects.filter(organization=organization).count()
+            completed = Roadmap.objects.filter(organization=organization, status='completed').count()
+            active = Roadmap.objects.filter(organization=organization, status='active').count()
+            
+            return Response({
+                'total': total,
+                'completed': completed,
+                'active': active
+            })
+        except Exception as e:
+            print(f"Error occured while calculatinf roadmap stats: {e}")
+            return Response({'detail':f'{str(e)}'}, status=500)
+
     def to_entity(self, obj: Roadmap) -> RoadmapEntity:
         return RoadmapEntity(
             id=obj.id,  # type: ignore

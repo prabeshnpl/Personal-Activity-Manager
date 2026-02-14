@@ -63,7 +63,7 @@ class CategoryRepositoryImpl(CategoryRepository):
 
     def breakdown_categories(self, search_params: dict, organization:int, role:str) -> List[CategoryEntity] | Response:
         try:
-            categories = Category.objects.filter(organization=organization)
+            categories = Category.objects.filter(organization=organization).order_by('-created_at')
             categories = categories.annotate(
                 total=Sum('transactions__amount')
             )

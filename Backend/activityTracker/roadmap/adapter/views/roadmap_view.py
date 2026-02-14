@@ -3,7 +3,7 @@ from roadmap.adapter.serializers.roadmap_serializer import RoadmapSerializer
 from roadmap.data.db.roadmap_impl import RoadmapRepositoryImpl
 from roadmap.domain.usecase.roadmap_usecase import (
     CreateRoadmapUseCase, DeleteRoadmapUseCase, 
-    GetRoadmapByIdUseCase, RoadmapProgressUseCase, 
+    GetRoadmapByIdUseCase, RoadmapProgressUseCase, RoadmapStatsUseCase, 
     UpdateRoadmapUseCase, ListRoadmapsUseCase
 )
 from utils.pagniator import CustomPageNumberPagination
@@ -125,6 +125,16 @@ class RoadmapView(BaseTenantModelViewSet):
     @action(detail=True, methods=["get"])
     def progress(self, request, *args, **kwargs):
         usecase = RoadmapProgressUseCase(repo=self.repository())
+        response = usecase.execute(
+            id=kwargs.get("pk"), # type: ignore
+            organization=request.organization,
+            role=request.role
+        )
+        return response
+
+    @action(detail=False, methods=["get"])
+    def stats(self, request, *args, **kwargs):
+        usecase = RoadmapStatsUseCase(repo=self.repository())
         response = usecase.execute(
             id=kwargs.get("pk"), # type: ignore
             organization=request.organization,
