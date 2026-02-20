@@ -39,7 +39,7 @@ export const DashboardRecentActivity = ({
   }
 
   return (
-    <Card title="Recent Activity" className="max-h-100 overflow-y-auto">
+    <Card title="Recent Activity" className="pb-2 max-h-100 overflow-y-auto">
       {items.length === 0 ? (
         <div className="py-10 text-center text-sm text-gray-500">
           No activity found for this organization yet.
@@ -53,7 +53,10 @@ export const DashboardRecentActivity = ({
             return (
               <div
                 key={item.id}
-                className="flex items-center justify-between rounded-lg border border-gray-100 px-3 py-2"
+                className="
+                  flex items-center justify-between rounded-lg 
+                  border border-gray-100 px-3 py-2
+                "
               >
                 <div className="flex items-center gap-3">
                   <div className={`rounded-lg p-2 ${iconColor}`}>

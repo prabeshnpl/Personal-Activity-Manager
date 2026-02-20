@@ -7,6 +7,20 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api/v1";
 
 const AUTH_EXCLUDED_PATHS = ["/login/", "/register/", "/token/refresh/", "/logout/"];
 
+const normalizePath = (path = "") => path.replace(/^\/+|\/+$/g, "");
+const isAuthPath = (url = "") => {
+  const normalizedUrl = normalizePath(url);
+  return AUTH_EXCLUDED_PATHS.some((path) =>
+    normalizedUrl.includes(normalizePath(path))
+  );
+};
+
+const redirectToLogin = () => {
+  if (window.location.pathname !== "/login") {
+    window.location.assign("/login");
+  }
+};
+
 /* ---------------------------------------
    Axios Instance
 --------------------------------------- */
@@ -35,9 +49,7 @@ api.interceptors.request.use(
     const { accessToken } = useAuthStore.getState();
     const orgId =
       useOrganizationStore.getState().activeOrganization?.id;
-    const isAuthEndpoint = AUTH_EXCLUDED_PATHS.some((path) =>
-      config.url?.includes(path)
-    );
+    const isAuthEndpoint = isAuthPath(config.url);
     const shouldSkipAuth = config.skipAuth === true;
 
     if (accessToken && !isAuthEndpoint && !shouldSkipAuth) {
@@ -93,9 +105,7 @@ api.interceptors.response.use(
     --------------------------------------- */
     if (status === 401 && !originalRequest._retry && !originalRequest.skipRefreshRetry) {
 
-      const isAuthEndpoint = AUTH_EXCLUDED_PATHS.some((path) =>
-        originalRequest.url.includes(path)
-      );
+      const isAuthEndpoint = isAuthPath(originalRequest.url);
 
       if (!authStore.accessToken || isAuthEndpoint) {
         authStore.logout();
@@ -103,6 +113,7 @@ api.interceptors.response.use(
           message: error.response?.data?.detail || "Access Denied",
           status: 401,
         });
+        redirectToLogin();
         return Promise.reject(error);
       }
 
@@ -141,6 +152,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         authStore.logout();
+        redirectToLogin();
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

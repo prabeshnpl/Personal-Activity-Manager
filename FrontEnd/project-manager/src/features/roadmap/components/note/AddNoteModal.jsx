@@ -67,8 +67,13 @@ export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) =
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4" >
-      <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white">
+      <div className="bg-white rounded-lg shadow-xl max-w-7xl w-full max-h-[90vh] overflow-y-auto">
+        <div 
+          className="
+            flex items-center justify-between 
+            px-6 py-2 border-b border-gray-200 
+            sticky top-0 bg-white z-10
+          ">
           <h2 className="text-xl font-bold text-gray-900">
             {isEditing ? 'Edit Note' : 'Add Learning Note'}
           </h2>
@@ -85,7 +90,7 @@ export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) =
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-lg font-medium text-gray-900 mb-2">
               Title *
             </label>
             <input
@@ -113,19 +118,6 @@ export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) =
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date
-              </label>
-              <input
-                type="date"
-                value={formData.date}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                disabled={loading}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Hours Spent
               </label>
               <input
@@ -139,22 +131,24 @@ export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) =
                 disabled={loading}
               />
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tags (comma-separated)
+              </label>
+              <input
+                type="text"
+                value={formData.tags}
+                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                placeholder="e.g., react, hooks, javascript"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={loading}
+              />
+              <p className="text-xs text-gray-500 mt-1">Separate tags with commas</p>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tags (comma-separated)
-            </label>
-            <input
-              type="text"
-              value={formData.tags}
-              onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              placeholder="e.g., react, hooks, javascript"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={loading}
-            />
-            <p className="text-xs text-gray-500 mt-1">Separate tags with commas</p>
-          </div>
+          
 
           <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
             <Button

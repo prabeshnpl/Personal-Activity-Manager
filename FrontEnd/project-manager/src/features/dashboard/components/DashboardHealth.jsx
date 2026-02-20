@@ -50,7 +50,7 @@ export const DashboardHealth = ({
 
   return (
     <Card title="Workspace Health">
-      <div className="flex flex-col space-y-5 justify-center gap-4">
+      <div className="flex flex-col space-y-5 justify-center gap-3">
         <ProgressRow
           label="Task completion"
           value={tasks.completionRate}

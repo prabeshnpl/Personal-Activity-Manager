@@ -12,13 +12,13 @@ export const NoteDetailModal = ({ note, onClose, onEdit, onDelete }) => {
         className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-start justify-between p-6 border-b border-gray-200">
+        <div className="flex items-start justify-between p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
           <div className="flex-1 min-w-0">
             <h2 className="text-xl font-bold text-gray-900">{note.title}</h2>
             <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-gray-600">
               <div className="flex items-center space-x-1">
                 <Calendar className="h-4 w-4" />
-                <span>{formatDate(note.date)}</span>
+                <span>{formatDate(note.created_at)}</span>
               </div>
               {note.hours_spent && (
                 <div className="flex items-center space-x-1">

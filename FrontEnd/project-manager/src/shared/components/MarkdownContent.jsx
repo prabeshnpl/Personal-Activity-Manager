@@ -1,6 +1,7 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { normalizeMarkdownForRender } from "@/shared/utils/markdown";
 
 const baseStyles = {
   p: ({ children }) => <p className="text-gray-700 whitespace-pre-wrap">{children}</p>,
@@ -16,7 +17,7 @@ export const MarkdownContent = ({ content, className = "" }) => {
   return (
     <div className={`space-y-2 ${className}`}>
       <ReactMarkdown remarkPlugins={[remarkGfm]} components={baseStyles}>
-        {content}
+        {normalizeMarkdownForRender(content)}
       </ReactMarkdown>
     </div>
   );

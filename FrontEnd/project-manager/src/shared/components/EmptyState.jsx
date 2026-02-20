@@ -5,11 +5,11 @@ export const EmptyState = ({
   title, 
   description, 
   action, 
-  classNames = "text-center py-12", 
+  classNames = "", 
   iconClassNames = "h-16 w-16 text-gray-400"
 }) => {
   return (
-    <div className={classNames}>
+    <div className={`${classNames} text-center py-12`}>
       {Icon && (
         <div className="flex justify-center mb-4">
           <Icon className={ iconClassNames }/>

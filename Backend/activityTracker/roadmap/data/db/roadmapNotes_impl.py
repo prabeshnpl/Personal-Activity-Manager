@@ -1,6 +1,5 @@
 from typing import List
 from rest_framework.response import Response
-import roadmap
 from roadmap.domain.entity.roadmapNotes_entity import RoadmapNotesEntity
 from roadmap.domain.repository.roadmapNotes_repo import RoadmapNotesRepository
 from roadmap.models import RoadmapNotes
@@ -45,7 +44,7 @@ class RoadmapNotesRepositoryImpl(RoadmapNotesRepository):
                 return Response({'detail':'Invalid roadmap_notes'}, status=400)
 
             for key, value in data.items():
-                if key in ['id', 'organization', 'created_at']:
+                if key in ['id', 'organization', 'created_at', 'roadmap']:
                     continue
                 setattr(roadmap_notes, key, value)
             

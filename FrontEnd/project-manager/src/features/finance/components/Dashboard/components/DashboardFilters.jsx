@@ -15,7 +15,7 @@ export const DashboardFilters = ({
         <select
           value={period}
           onChange={(e) => setPeriod(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          className="px-3 py-2 border cursor-pointer border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
         >
           <option value="weekly">Weekly</option>
           <option value="monthly">Monthly</option>
@@ -25,7 +25,7 @@ export const DashboardFilters = ({
         <select
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          className="px-3 py-2 border border-gray-300 rounded-lg cursor-pointer text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
         >
           <option value="all">All Categories</option>
           {(categoriesData || []).map((category) => (
@@ -38,7 +38,7 @@ export const DashboardFilters = ({
         <select
           value={accountId}
           onChange={(e) => setAccountId(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          className="px-3 py-2 border border-gray-300 rounded-lg cursor-pointer text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
         >
           <option value="all">All Accounts</option>
           {(accountsData || []).map((account) => (

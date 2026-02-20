@@ -8,7 +8,6 @@ import {
   Building2, 
   Bell,
   Settings, 
-  Network,
   X
 } from 'lucide-react';
 
@@ -51,7 +50,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
               <button
                 key={item.path}
                 onClick={() => { navigate(item.path); onClose?.(); }}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors cursor-pointer ${
                   isActive
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-700 hover:bg-gray-200'

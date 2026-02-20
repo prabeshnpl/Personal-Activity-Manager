@@ -69,7 +69,6 @@ class RoadmapRepositoryImpl(RoadmapRepository):
 
     def update_roadmap(self, id: int, data: dict, organization:int, role:str) -> RoadmapEntity | Response:
         try:
-            print(data)
             roadmap = Roadmap.objects.filter(organization=organization, id=id).first()
             if not roadmap:
                 return Response({'detail':'Invalid roadmap'}, status=400)
@@ -163,7 +162,6 @@ class RoadmapRepositoryImpl(RoadmapRepository):
             # Status determination
             status = 'on_track'
             if expected_percent is not None:
-                print(progress_percentage, expected_percent)
                 if progress_percentage < expected_percent - 5:
                     status = 'delayed'
                 elif progress_percentage > expected_percent + 5:

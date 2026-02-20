@@ -1,12 +1,10 @@
 from typing import List
 from rest_framework.response import Response
-import roadmap
 from roadmap.models import Milestone
 from django.db import transaction
 from roadmap.domain.entity.milestone_entity import MilestoneEntity
 from roadmap.domain.repository.milestone_repo import MilestoneRepository
 from roadmap.models import Milestone
-from django.db.models import Q
 
 class MilestoneRepositoryImpl(MilestoneRepository):
     def list_milestones(self, search_params: dict, organization:int, role:str) -> List[MilestoneEntity] | Response:
@@ -24,7 +22,6 @@ class MilestoneRepositoryImpl(MilestoneRepository):
     def create_milestone(self, data: dict, organization:int, role:str) -> MilestoneEntity | Response:
         try:
             with transaction.atomic(): # type: ignore
-                print(data)
                 milestone = Milestone.objects.create(**data)
                     
                 return self.to_entity(milestone)

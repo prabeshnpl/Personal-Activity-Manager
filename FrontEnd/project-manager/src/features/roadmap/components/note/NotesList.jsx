@@ -19,7 +19,7 @@ export default function NotesList({ note, onEdit, onDelete, onOpen }) {
           <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-gray-600">
             <div className="flex items-center space-x-1">
               <Calendar className="h-3.5 w-3.5" />
-              <span>{formatDate(note.date)}</span>
+              <span>{formatDate(note.created_at)}</span>
             </div>
             {note.hours_spent && (
               <div className="flex items-center space-x-1">
@@ -43,7 +43,7 @@ export default function NotesList({ note, onEdit, onDelete, onOpen }) {
             }}
             className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-100 rounded"
           >
-            <Edit2 className="h-4 w-4" />
+            <Edit2 className="h-4 w-4 text-black" />
           </button>
           <button
             onClick={(event) => {
@@ -56,7 +56,7 @@ export default function NotesList({ note, onEdit, onDelete, onOpen }) {
                 }
               }
             }}
-            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-100 rounded"
+            className="p-2 text-red-400 hover:text-red-600 hover:bg-red-100 rounded"
           >
             <Trash2 className="h-4 w-4" />
           </button>

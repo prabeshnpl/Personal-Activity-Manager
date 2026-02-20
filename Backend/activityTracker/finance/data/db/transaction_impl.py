@@ -9,7 +9,10 @@ from django.utils.dateparse import parse_datetime
 class TransactionRepositoryImpl(TransactionRepository):
     def list_transactions(self, search_params: dict, organization:int, role:str) -> List[TransactionEntity] | Response:
         try:
-            transactions = Transaction.objects.filter(organization=organization).order_by('-occurred_at')
+            transactions = Transaction.objects.\
+                select_related("category", "account").\
+                filter(organization=organization).\
+                order_by('-occurred_at')
 
             if transaction_type:=search_params.get("type"):
                 transactions = transactions.filter(transaction_type=transaction_type)

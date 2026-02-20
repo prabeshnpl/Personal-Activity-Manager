@@ -65,6 +65,7 @@ export const NotesSection = ({
           <ErrorState message="Failed to load notes." onRetry={refetch} />
         ) : notes.length === 0 ? (
           <EmptyState
+            classNames='h-full'
             icon={BookOpen}
             title="No notes yet"
             description="Document your learnings and progress"

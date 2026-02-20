@@ -29,7 +29,7 @@ export const QuickActions = () => {
             <button
               key={action.label}
               onClick={action.action}
-              className="flex items-center space-x-3 rounded-lg border border-gray-200 p-4 text-left transition-all hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-sm"
+              className="flex items-center space-x-3 rounded-lg cursor-pointer border border-gray-200 p-4 text-left transition-all hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-sm"
             >
               <div className={`rounded-lg p-2 ${colorClasses[action.color]}`}>
                 <Icon className="h-5 w-5" />
