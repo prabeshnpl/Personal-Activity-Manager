@@ -40,7 +40,7 @@ export const MemberCard = ({
       setUpdatingRole(true);
       onUpdate.mutate(member.id, data);
       setShowMenu(false);
-    } catch (error) {
+    } catch {
       alert('Failed to update role');
     } finally {
       setUpdatingRole(false);
@@ -51,7 +51,7 @@ export const MemberCard = ({
     if (window.confirm(`Remove ${member.user.email} from this organization?`)) {
       try {
         onRemove.mutate(member.id);
-      } catch (error) {
+      } catch {
         alert('Failed to remove member');
       }
     }

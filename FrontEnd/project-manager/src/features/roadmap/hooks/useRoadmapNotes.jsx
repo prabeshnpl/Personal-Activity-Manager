@@ -5,7 +5,7 @@ import { roadmapService } from "../services/roadmapService";
 export function useRoadmapNotes(roadmapId) {
   const queryClient = useQueryClient();
 
-  const getInfiniteNotes = () =>
+  const useInfiniteNotes = () =>
     useInfiniteList(
       ["roadmap-notes", roadmapId, "infinite"],
       (params) => {
@@ -41,6 +41,6 @@ export function useRoadmapNotes(roadmapId) {
     createNote,
     updateNote,
     deleteNote,
-    getInfiniteNotes,
+    useInfiniteNotes,
   };
 }

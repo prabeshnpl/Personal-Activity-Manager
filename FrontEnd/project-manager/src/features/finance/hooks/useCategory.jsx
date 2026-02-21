@@ -1,17 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { financeService } from "../services/financeService";
-import { useState } from "react";
 
 export function useCategory() {
 
   const queryClient = useQueryClient();
-  const [filters, setFilters] = useState({
-      type: null, // income, expense
-      category: null,
-      startDate: null,
-      endDate: null,
-      member: null,
-    });
+  const filters = {
+    type: null, // income, expense
+    category: null,
+    startDate: null,
+    endDate: null,
+    member: null,
+  };
     
   const categories = useQuery({
     queryKey: ["finance", "categories"],

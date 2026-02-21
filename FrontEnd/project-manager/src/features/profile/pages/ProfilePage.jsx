@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useProfile } from '../hooks/useProfile';
 import { ProfileHeader } from '../components/ProfileHeader';
 import { PersonalInformation } from '../components/PersonalInformation';
-import { SecuritySettings } from '../components/SecuritySettings';
 import { Tabs, TabPanel } from '../../../shared/components/tabs/Tabs';
 import { User, Shield } from 'lucide-react';
 
@@ -11,10 +10,6 @@ export const ProfilePage = () => {
     // sessions,
     updateProfile,
     uploadProfilePicture,
-    deleteProfilePicture,
-    changePassword,
-    deleteAccount,
-    revokeSession
   } = useProfile();
 
   const [activeTab, setActiveTab] = useState('personal');

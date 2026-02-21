@@ -16,6 +16,7 @@ export const MembersList = ({
   onUpdate,
   onRemove,
 }) => {
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
   const {data, isLoading, error, refetch} = members;
 
@@ -30,8 +31,6 @@ export const MembersList = ({
   if (error){
     return <ErrorState message="Failed to load accounts." onRetry={refetch} />;
   }
-
-  const [showInviteModal, setShowInviteModal] = useState(false);
 
   return (
     <>

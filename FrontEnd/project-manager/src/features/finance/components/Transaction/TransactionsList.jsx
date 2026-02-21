@@ -13,7 +13,7 @@ import { useTransaction } from '../../hooks/useTransaction';
 
 export const TransactionsList = () => {
   const {
-    getInfiniteTransactions,
+    useInfiniteTransactions,
     createTransaction,
     updateTransaction,
     deleteTransaction,
@@ -24,7 +24,7 @@ export const TransactionsList = () => {
     exportTransactions,
   } = useTransaction();
 
-  const infiniteTransactions = getInfiniteTransactions();
+  const infiniteTransactions = useInfiniteTransactions();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
 

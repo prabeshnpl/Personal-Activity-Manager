@@ -12,13 +12,12 @@ export const SecuritySettings = ({
   onRevokeSession 
 }) => {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleDeleteAccount = async () => {
     if (window.confirm('Are you absolutely sure? This action cannot be undone.')) {
       try {
         await onDeleteAccount.mutateAsync();
-      } catch (error) {
+      } catch {
         alert('Failed to delete account');
       }
     }

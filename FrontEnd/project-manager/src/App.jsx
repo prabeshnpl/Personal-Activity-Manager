@@ -5,10 +5,10 @@ import { useOrganizationstore } from './features/organization/hooks/useOrganizat
 import { Spinner } from './shared/components/Spinner';
 
 function App() {
-  const { loadOrganizations, loading, organizations } = useOrganizationstore();
+  const { loadOrganizations, loading } = useOrganizationstore();
   useEffect(() => {
     loadOrganizations();
-  }, []);
+  }, [loadOrganizations]);
 
   if (loading) {
     return (

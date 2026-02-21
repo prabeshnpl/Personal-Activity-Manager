@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { profileService } from "../services/profileService";
 import { useAuthStore } from "../../../stores/authStore";
 

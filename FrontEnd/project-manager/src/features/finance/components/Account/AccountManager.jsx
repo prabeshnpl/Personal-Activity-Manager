@@ -46,7 +46,7 @@ export const AccountManager = ({ addActionRef }) => {
     if (window.confirm('Delete this account? Transactions linked to this account will remain.')) {
       try {
         await onDelete.mutateAsync(accountId);
-      } catch (error) {
+      } catch {
         alert('Failed to delete account');
       }
     }

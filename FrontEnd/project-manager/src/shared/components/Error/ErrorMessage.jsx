@@ -1,29 +1,24 @@
 // src/components/GlobalError.jsx
 import { useErrorStore } from "../../../stores/errorStore";
 import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const ErrorMessage = () => {
   const { error, clearError } = useErrorStore();
   const location = useLocation();
-  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     clearError();
-  }, [location.pathname]);
+  }, [location.pathname, clearError]);
 
   useEffect(() => {
-    if (error) {
-      setVisible(true);
+    if (!error) return;
 
-      const timer = setTimeout(() => {
-        setVisible(false);
-        // clear after fade-out finishes
-        setTimeout(() => clearError(), 500);
-      }, 3500); // 3.5s visible
+    const timer = setTimeout(() => {
+      clearError();
+    }, 3500);
 
-      return () => clearTimeout(timer);
-    }
+    return () => clearTimeout(timer);
   }, [error, clearError]);
 
   if (!error) return null;
@@ -35,7 +30,7 @@ const ErrorMessage = () => {
                   duration-500 ease-in-out flex justify-center items-center
                   mb-4 bg-red-100 border w-1/6 z-70
                   border-red-400 text-red-700 rounded-lg
-                  ${visible ? "opacity-100" : "opacity-0"}`}
+                  opacity-100`}
     >
       
       <p>{error.message}</p>

@@ -10,6 +10,10 @@ const SearchBar = ({
 }) => {
 
   const [barValue, setBarValue] = useState(value || '');
+  const handleChange = (nextValue) => {
+    setBarValue(nextValue);
+    onChange?.(nextValue);
+  };
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && onSubmit) {
@@ -25,7 +29,7 @@ const SearchBar = ({
       <input
         type="text"
         value={barValue}
-        onChange={(e) => setBarValue(e.target.value)}
+        onChange={(e) => handleChange(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         className="w-full focus:outline-none focus:ring-0 text-sm"

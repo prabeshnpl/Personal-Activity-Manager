@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useOrganizationStore } from '../../../stores/organizationStore';
 import {organizationService} from '../services/organizationService';
 import { useErrorStore } from '../../../stores/errorStore';
@@ -14,7 +14,7 @@ export const useOrganizationstore = () => {
     addOrganization
   } = useOrganizationStore();
 
-  const loadOrganizations = async () => {
+  const loadOrganizations = useCallback(async () => {
     try {
       console.log('Loading organizations...');
       setLoading(true);
@@ -28,7 +28,7 @@ export const useOrganizationstore = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setError, setOrganizations]);
 
   const handleSwitchOrganization = async (orgId) => {
     try {

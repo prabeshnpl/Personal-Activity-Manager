@@ -24,7 +24,7 @@ export const OrganizationSwitcher = () => {
       setIsOpen(false);
       // Optionally reload the page to refresh all data
       window.location.reload();
-    } catch (error) {
+    } catch {
       alert('Failed to switch organization');
     } finally {
       setSwitching(false);

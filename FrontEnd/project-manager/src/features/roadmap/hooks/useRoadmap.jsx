@@ -40,7 +40,7 @@ export function useRoadmap() {
     },
   });
 
-  const getInfiniteRoadmaps = (overrideFilters = null) => {
+  const useInfiniteRoadmaps = (overrideFilters = null) => {
     const combined = { ...filters, ...(overrideFilters || {}) };
     return useInfiniteList(
       ["roadmaps", "infinite"],
@@ -56,6 +56,6 @@ export function useRoadmap() {
     createRoadmap,
     updateRoadmap,
     deleteRoadmap,
-    getInfiniteRoadmaps,
+    useInfiniteRoadmaps,
   };
 }

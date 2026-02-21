@@ -25,14 +25,14 @@ export const RoadmapDetailModal = ({
     createMilestone, 
     deleteMilestone, 
     toggleMilestone, 
-    getInfiniteMilestones 
+    useInfiniteMilestones 
   } = useMilestone(roadmap?.id);
   
-  const { createNote, updateNote, deleteNote, getInfiniteNotes } = useRoadmapNotes(roadmap?.id);
+  const { createNote, updateNote, deleteNote, useInfiniteNotes } = useRoadmapNotes(roadmap?.id);
   const { progress } = useRoadmapProgress(roadmap?.id);
 
-  const infiniteMilestones = getInfiniteMilestones();
-  const infiniteNotes = getInfiniteNotes();
+  const infiniteMilestones = useInfiniteMilestones();
+  const infiniteNotes = useInfiniteNotes();
 
   const milestones = useMemo(() => {
     const pages = infiniteMilestones?.data?.pages || [];

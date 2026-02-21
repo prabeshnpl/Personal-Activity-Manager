@@ -7,7 +7,7 @@ import { AddTaskModal } from './AddTaskModal';
 import { TaskDetailModal } from './TaskDetailModal';
 import { CheckSquare } from 'lucide-react';
 
-export const TasksList = ({ infiniteTasks, createTask, updateTask, deleteTask, showFilters, setShowFilters }) => {
+export const TasksList = ({ infiniteTasks, createTask, updateTask, deleteTask }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
 

@@ -63,13 +63,8 @@ export function useTasks() {
     },
   });
 
-  const getTasksByStatus = (status, overrideFilters = null) => {
-    const combinedFilters = { ...filters, ...(overrideFilters || {}), status };
-    return getInfiniteTasks(combinedFilters);
-  };
-
   // Infinite list helper for tasks
-  const getInfiniteTasks = (overrideFilters = null) => {
+  const useInfiniteTasks = (overrideFilters = null) => {
     const combined = { ...filters, ...(overrideFilters || {}) };
     return useInfiniteList(
       ["tasks", "infinite"], 
@@ -94,7 +89,6 @@ export function useTasks() {
     bulkDelete,
 
     // Helpers
-    getTasksByStatus,
-    getInfiniteTasks
+    useInfiniteTasks
   };
 }

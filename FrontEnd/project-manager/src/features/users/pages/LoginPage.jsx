@@ -67,7 +67,7 @@ const LoginPage = () => {
             useAuthStore.getState().login(response);
             navigate('/');
             setLoading(false);
-        } catch (error){
+        } catch {
             setLoading(false);
             return;
         }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRoadmap } from '../hooks/useRoadmap';
 import { RoadmapList } from '../components/roadmap/RoadmapList';
 import { RoadmapDetailModal } from '../components/roadmap/RoadmapDetailModal';
@@ -10,11 +10,11 @@ const RoadmapPage = () => {
     createRoadmap,
     updateRoadmap,
     deleteRoadmap,
-    getInfiniteRoadmaps,
+    useInfiniteRoadmaps,
   } = useRoadmap();
   const [selectedRoadmap, setSelectedRoadmap] = useState(null);
 
-  const infiniteRoadmaps = getInfiniteRoadmaps();
+  const infiniteRoadmaps = useInfiniteRoadmaps();
 
   const roadmaps = useMemo(() => {
     const pages = infiniteRoadmaps?.data?.pages || [];
@@ -25,12 +25,6 @@ const RoadmapPage = () => {
     () => roadmaps.find((roadmap) => roadmap.id === selectedRoadmap) || null,
     [roadmaps, selectedRoadmap]
   );
-
-  useEffect(() => {
-    if (selectedRoadmap && !activeRoadmap) {
-      setSelectedRoadmap(null);
-    }
-  }, [selectedRoadmap, activeRoadmap, setSelectedRoadmap]);
 
   return (
     <div className="p-4 sm:p-6 space-y-6">

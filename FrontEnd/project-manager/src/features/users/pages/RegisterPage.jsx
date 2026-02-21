@@ -88,7 +88,7 @@ const RegisterPage = () => {
         try{
         const response = await authService.register(formData);
         useAuthStore.getState().login(response);
-        } catch (error){
+        } catch {
             setLoading(false);
             return;
         }

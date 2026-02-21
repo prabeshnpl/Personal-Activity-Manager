@@ -5,7 +5,7 @@ import { roadmapService } from "../services/roadmapService";
 export function useMilestone(roadmapId) {
   const queryClient = useQueryClient();
 
-  const getInfiniteMilestones = () =>
+  const useInfiniteMilestones = () =>
     useInfiniteList(
       ["roadmaps", roadmapId, "milestones", "infinite"],
       (params) => {
@@ -55,6 +55,6 @@ export function useMilestone(roadmapId) {
     updateMilestone,
     deleteMilestone,
     toggleMilestone,
-    getInfiniteMilestones,
+    useInfiniteMilestones,
   };
 }

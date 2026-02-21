@@ -19,12 +19,11 @@ const TasksPage = () => {
     createTask,
     updateTask,
     deleteTask,
-    getInfiniteTasks,
-    getTasksByStatus,
+    useInfiniteTasks,
   } = useTasks();
 
   // Infinite tasks query for list view
-  const infiniteTasks = getInfiniteTasks();
+  const infiniteTasks = useInfiniteTasks();
   
   const [activeTab, setActiveTab] = useState('list');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -103,7 +102,7 @@ const TasksPage = () => {
           <TabPanel isActive={activeTab === 'kanban'}>
             <TaskKanban
               onTaskClick={setSelectedTask}
-              getTasksByStatus={getTasksByStatus}
+              useInfiniteTasks={useInfiniteTasks}
               updateTask={updateTask}
               deleteTask={deleteTask}
             />

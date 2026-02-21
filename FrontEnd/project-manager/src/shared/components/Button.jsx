@@ -25,17 +25,18 @@ export const Button = ({
     lg: 'px-6 py-3 text-lg',
   };
 
-  const disabledStyles = disabled ? 'opacity-50 cursor-not-allowed' : '';
+  const isDisabled = disabled || loading;
+  const disabledStyles = isDisabled ? 'opacity-50 cursor-not-allowed' : '';
 
   return (
     <button
       type={type}
       className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${disabledStyles} ${className}`}
       onClick={onClick}
-      disabled={disabled}
+      disabled={isDisabled}
       {...props}
     >
-      {children}
+      {loading ? 'Loading...' : children}
     </button>
   );
 };

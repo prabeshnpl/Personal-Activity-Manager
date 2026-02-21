@@ -9,7 +9,7 @@ import ErrorState from '@/shared/components/Error/ErrorState';
 import {formatCurrency} from '@/shared/utils/formatCurrency';
 
 export const CategoryManager = ({ addActionRef }) => {
-  const { categories, createCategory, updateCategory, deleteCategory, categoryBreakdown } = useCategory();
+  const { createCategory, updateCategory, deleteCategory, categoryBreakdown } = useCategory();
   const {data:categoryData, isLoading: categoryLoading, error:categoryError, refetch} = categoryBreakdown;
   // const {data:categoryBreakdownData, isLoading: categoryBreakdownLoading, error:categoryBreakdownError} = categoryBreakdown;
 
@@ -41,7 +41,7 @@ export const CategoryManager = ({ addActionRef }) => {
     if (window.confirm('Delete this category? Transactions with this category will be uncategorized.')) {
       try {
         await deleteCategory.mutateAsync(categoryId);
-      } catch (error) {
+      } catch {
         alert('Failed to delete category');
       }
     }

@@ -18,7 +18,7 @@ export function useTransaction() {
   // Queries
 
   // Infinite loader for transactions
-  const getInfiniteTransactions = (overrideFilters = null) => {
+  const useInfiniteTransactions = (overrideFilters = null) => {
     const combined = { ...filters, ...(overrideFilters || {}) };
     return useInfiniteList(
       ["finance", "transactions", "infinite"], 
@@ -82,7 +82,7 @@ export function useTransaction() {
     // Data
     categories: categories,
     accounts: accounts,
-    getInfiniteTransactions,
+    useInfiniteTransactions,
 
     // Filters
     filters,
