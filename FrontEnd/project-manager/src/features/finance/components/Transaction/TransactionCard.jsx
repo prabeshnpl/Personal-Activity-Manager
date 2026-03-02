@@ -39,6 +39,11 @@ export const TransactionCard = ({ transaction, onUpdate, onDelete }) => {
                 {transaction.account.name}
               </span>
             )}
+            {transaction.remaining_balance !== undefined && (
+              <span className="px-2 py-0.5 bg-gray-100 text-gray-800 text-xs rounded-full">
+                Remaining Balance: {formatCurrency(transaction.remaining_balance)}
+              </span>
+            )}
           </div>
         </div>
       </div>

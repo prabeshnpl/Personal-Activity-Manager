@@ -1,8 +1,6 @@
 import React from 'react';
-import { Card } from '../../../shared/components/Card';
 import { 
   CheckCircle2, 
-  Clock, 
   AlertCircle, 
   PlayCircle,
   ListTodo 

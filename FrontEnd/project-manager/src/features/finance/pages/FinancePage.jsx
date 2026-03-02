@@ -4,6 +4,7 @@ import { TransactionsList } from '../components/Transaction/TransactionsList';
 import { Tabs, TabPanel } from '../../../shared/components/tabs/Tabs';
 import { BarChart3, List, PieChart, Settings } from 'lucide-react';
 import FinanceSettings from '../components/Settings/financeSettings';
+import { ReportsPage } from '../components/Report/ReportsPage';
 
 export const FinancePage = () => {
 
@@ -49,9 +50,7 @@ export const FinancePage = () => {
           </TabPanel>
 
           <TabPanel isActive={activeTab === 'reports'}>
-            <div className="text-center py-12 text-gray-500">
-              Reports module coming soon...
-            </div>
+            <ReportsPage />
           </TabPanel>
 
           <TabPanel isActive={activeTab === 'settings'}>

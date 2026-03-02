@@ -5,12 +5,15 @@ import { DescriptionField } from '@/shared/components/DescriptionField';
 
 export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) => {
   const isEditing = !!note;
-  const [formData, setFormData] = useState({
+  const getDefaultFormData = () => ({
     title: '',
     content: '',
     date: new Date().toISOString().split('T')[0],
     hours_spent: '',
     tags: '',
+  });
+  const [formData, setFormData] = useState({
+    ...getDefaultFormData(),
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -24,7 +27,10 @@ export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) =
         hours_spent: note.hours_spent || '',
         tags: note.tags?.join(', ') || '',
       });
+      return;
     }
+
+    setFormData(getDefaultFormData());
   }, [note]);
 
   const handleSubmit = async (e) => {
@@ -66,8 +72,8 @@ export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) =
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4" >
-      <div className="bg-white rounded-lg shadow-xl max-w-7xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4" onClick={onClose}>
+      <div className="bg-white rounded-lg shadow-xl max-w-7xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div 
           className="
             flex items-center justify-between 
@@ -96,7 +102,7 @@ export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) =
             <input
               type="text"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
               placeholder="e.g., Today's Learning: React Hooks"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
@@ -108,7 +114,7 @@ export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) =
               id="note-content"
               label="Content *"
               value={formData.content}
-              onChange={(value) => setFormData({ ...formData, content: value })}
+              onChange={(value) => setFormData((prev) => ({ ...prev, content: value }))}
               placeholder="What did you learn today? Write your notes here..."
               rows={14}
               disabled={loading}
@@ -123,7 +129,7 @@ export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) =
               <input
                 type="number"
                 value={formData.hours_spent}
-                onChange={(e) => setFormData({ ...formData, hours_spent: e.target.value })}
+                onChange={(e) => setFormData((prev) => ({ ...prev, hours_spent: e.target.value }))}
                 placeholder="e.g., 2"
                 min="0"
                 step="0.5"
@@ -139,7 +145,7 @@ export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) =
               <input
                 type="text"
                 value={formData.tags}
-                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                onChange={(e) => setFormData((prev) => ({ ...prev, tags: e.target.value }))}
                 placeholder="e.g., react, hooks, javascript"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={loading}

@@ -118,10 +118,10 @@ export const TaskCard = ({ task, onUpdate, onDelete, onClick }) => {
                   <span>Edit</span>
                 </button>
                 <button
-                  onClick={(e) => {
+                  onClick={async (e) => {
                     e.stopPropagation();
                     if (window.confirm('Delete this task?')) {
-                      onDelete(task.id);
+                      await onDelete.mutateAsync(task.id);
                     }
                     setShowMenu(false);
                   }}

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import ReactMde from "react-mde";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -21,7 +21,6 @@ export const DescriptionField = ({
   disabled = false,
   helperText = "Formatting: **bold**, *italic*, - bullets, 1. numbered, line breaks.",
 }) => {
-  const textareaRef = useRef(null);
   const [selectedTab, setSelectedTab] = useState("write");
   const ReactMdeComponent = ReactMde.default ?? ReactMde;
 
@@ -37,18 +36,17 @@ export const DescriptionField = ({
     []
   );
 
-  const applyEditorSelection = (next) => {
+  const applyEditorSelection = (next, textarea) => {
     onChange(next.value);
     requestAnimationFrame(() => {
-      const textarea = textareaRef.current;
-      if (!textarea) return;
+      if (!textarea || !textarea.isConnected) return;
       textarea.focus();
       textarea.setSelectionRange(next.selectionStart, next.selectionEnd);
     });
   };
 
   const handleEditorKeyDown = (event) => {
-    const textarea = textareaRef.current;
+    const textarea = event.currentTarget;
     if (!textarea || disabled) return;
 
     const currentValue = value || "";
@@ -59,10 +57,10 @@ export const DescriptionField = ({
     if (event.key === "Tab") {
       event.preventDefault();
       if (start === end) {
-        applyEditorSelection(insertTabGap(currentValue, start));
+        applyEditorSelection(insertTabGap(currentValue, start), textarea);
         return;
       }
-      applyEditorSelection(indentSelectedLines(currentValue, start, end));
+      applyEditorSelection(indentSelectedLines(currentValue, start, end), textarea);
       return;
     }
 
@@ -73,13 +71,13 @@ export const DescriptionField = ({
 
     if (shouldIndentRight) {
       event.preventDefault();
-      applyEditorSelection(indentSelectedLines(currentValue, start, end));
+      applyEditorSelection(indentSelectedLines(currentValue, start, end), textarea);
       return;
     }
 
     if (shouldIndentLeft) {
       event.preventDefault();
-      applyEditorSelection(outdentSelectedLines(currentValue, start, end));
+      applyEditorSelection(outdentSelectedLines(currentValue, start, end), textarea);
     }
   };
 
@@ -88,14 +86,14 @@ export const DescriptionField = ({
       <Label htmlFor={id}>{label}</Label>
       <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-2">
         <ReactMdeComponent
-          className="react-mde-embedded z-10cd"
+          className="react-mde-embedded z-10"
           value={value || ""}
           onChange={(val) => onChange(val)}
           selectedTab={selectedTab}
           onTabChange={setSelectedTab}
           generateMarkdownPreview={renderMarkdownPreview}
           childProps={{
-            textArea: { id, placeholder, rows, disabled, ref: textareaRef, onKeyDown: handleEditorKeyDown },
+            textArea: { id, placeholder, rows, disabled, onKeyDown: handleEditorKeyDown },
           }}
         />
       </div>

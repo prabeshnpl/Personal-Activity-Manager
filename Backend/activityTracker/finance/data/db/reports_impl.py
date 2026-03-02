@@ -186,7 +186,7 @@ class ReportsImpl:
             for txn in txns:
                 total_amount += txn.amount
                 transactions.append({
-                    'id': txn.id,
+                    'id': txn.id, # type: ignore
                     'date': txn.occurred_at.date().isoformat(),
                     'description': txn.description,
                     'amount': txn.amount,
@@ -216,19 +216,19 @@ class ReportsImpl:
             if group_by and total_amount > 0:
                 from collections import defaultdict
                 if group_by == 'category':
-                    stats = defaultdict(lambda: {'total': 0, 'count': 0})
+                    stats = defaultdict(lambda: {'total': 0.0, 'count': 0.0})
                     for txn in txns:
                         key = txn.category.name if txn.category else 'Uncategorized'
                         stats[key]['total'] += txn.amount
                         stats[key]['count'] += 1
                 elif group_by == 'account':
-                    stats = defaultdict(lambda: {'total': 0, 'count': 0})
+                    stats = defaultdict(lambda: {'total': 0.0, 'count': 0.0})
                     for txn in txns:
                         key = txn.account.name if txn.account else 'Unknown'
                         stats[key]['total'] += txn.amount
                         stats[key]['count'] += 1
                 elif group_by == 'month':
-                    stats = defaultdict(lambda: {'total': 0, 'count': 0})
+                    stats = defaultdict(lambda: {'total': 0.0, 'count': 0.0})
                     for txn in txns:
                         key = txn.occurred_at.strftime('%Y-%m')
                         stats[key]['total'] += txn.amount
@@ -244,4 +244,245 @@ class ReportsImpl:
             return Response({'data': {'summary': summary, 'transactions': transactions, 'grouped_data': grouped_data}})
         except Exception as e:
             print(f"Error occured while calculating detailed reports: {e}")
+            return Response({'detail': str(e)}, status=500)
+
+    def get_category_breakdown(self, search_params, organization=None, role=None):
+        """Return totals grouped by category for a given type/date range."""
+        try:
+            txn_type = search_params.get('type')
+            start_date = search_params.get('start_date')
+            end_date = search_params.get('end_date')
+
+            queryset = Transaction.objects.filter(organization=organization)
+            queryset = queryset.exclude(category__category_type="transfer")
+            if txn_type in ('income', 'expense'):
+                queryset = queryset.filter(transaction_type=txn_type)
+            if start_date:
+                queryset = queryset.filter(occurred_at__date__gte=start_date)
+            if end_date:
+                queryset = queryset.filter(occurred_at__date__lte=end_date)
+
+            from django.db.models import Sum, Count, Avg
+            categories = queryset.values(
+                'category_id',
+                'category__name',
+                'category__color',
+            ).annotate(
+                total_amount=Sum('amount'),
+                transaction_count=Count('id'),
+                average_per_transaction=Avg('amount'),
+            )
+
+            total_amount = queryset.aggregate(total=Sum('amount'))['total'] or 0
+            data = []
+            for cat in categories:
+                pct = round(cat['total_amount'] / total_amount * 100, 2) if total_amount else 0
+                data.append({
+                    'category_id': cat['category_id'],
+                    'category_name': cat['category__name'],
+                    'category_color': cat['category__color'],
+                    'total_amount': cat['total_amount'] or 0,
+                    'transaction_count': cat['transaction_count'],
+                    'percentage': pct,
+                    'average_per_transaction': cat['average_per_transaction'] or 0,
+                })
+
+            return Response({'data': data})
+        except Exception as e:
+            print(f"Error occured while calculating category breakdown: {e}")
+            return Response({'detail': str(e)}, status=500)
+
+    def get_account_breakdown(self, search_params, organization=None, role=None):
+        """Return totals grouped by account including income/expense/net and current balance."""
+        try:
+            start_date = search_params.get('start_date')
+            end_date = search_params.get('end_date')
+
+            queryset = Transaction.objects.filter(organization=organization)
+            queryset = queryset.exclude(category__category_type="transfer")
+            if start_date:
+                queryset = queryset.filter(occurred_at__date__gte=start_date)
+            if end_date:
+                queryset = queryset.filter(occurred_at__date__lte=end_date)
+
+            from django.db.models import Sum, Count, Q
+            accounts = queryset.values(
+                'account_id',
+                'account__name',
+                'account__account_type',
+                'account__balance',
+            ).annotate(
+                total_income=Sum('amount', filter=Q(transaction_type='income')),
+                total_expense=Sum('amount', filter=Q(transaction_type='expense')),
+                transaction_count=Count('id'),
+            )
+
+            data = []
+            for acc in accounts:
+                income = acc['total_income'] or 0
+                expense = acc['total_expense'] or 0
+                net = income - expense
+                data.append({
+                    'account_id': acc['account_id'],
+                    'account_name': acc['account__name'],
+                    'account_type': acc['account__account_type'],
+                    'total_income': income,
+                    'total_expense': expense,
+                    'net_change': net,
+                    'transaction_count': acc['transaction_count'],
+                    'current_balance': acc['account__balance'] or 0,
+                })
+
+            return Response({'data': data})
+        except Exception as e:
+            print(f"Error occured while calculating account breakdown: {e}")
+            return Response({'detail': str(e)}, status=500)
+
+    def get_monthly_comparison(self, search_params, organization=None, role=None):
+        """Return a comparison of income/expenses/net for a sequence of months."""
+        try:
+            year = int(search_params.get('year', date.today().year))
+            months_count = int(search_params.get('months', 6))
+
+            from django.db.models import Sum
+            labels = []
+            income_series = []
+            expense_series = []
+
+            for m in range(1, months_count + 1):
+                if m > 12:
+                    break
+                labels.append(calendar.month_abbr[m])
+                start = date(year, m, 1)
+                last_day = calendar.monthrange(year, m)[1]
+                end = date(year, m, last_day)
+
+                qs = Transaction.objects.filter(
+                    organization=organization,
+                    occurred_at__date__gte=start,
+                    occurred_at__date__lte=end,
+                ).exclude(category__category_type="transfer")
+                inc = qs.filter(transaction_type='income').aggregate(total=Sum('amount'))['total'] or 0
+                exp = qs.filter(transaction_type='expense').aggregate(total=Sum('amount'))['total'] or 0
+                income_series.append(int(inc))
+                expense_series.append(int(exp))
+
+            net_series = [i - e for i, e in zip(income_series, expense_series)]
+
+            # basic trend heuristics
+            def trend(vals):
+                if len(vals) < 2:
+                    return 'stable'
+                if vals[-1] > vals[0]:
+                    return 'increasing'
+                if vals[-1] < vals[0]:
+                    return 'decreasing'
+                return 'stable'
+
+            comparison = {
+                'income_trend': trend(income_series),
+                'expense_trend': trend(expense_series),
+                'best_month': labels[net_series.index(max(net_series))] if net_series else None,
+                'worst_month': labels[net_series.index(min(net_series))] if net_series else None,
+            }
+
+            return Response({'data': {
+                'months': labels,
+                'income': income_series,
+                'expenses': expense_series,
+                'net': net_series,
+                'comparison': comparison,
+            }})
+        except Exception as e:
+            print(f"Error occured while calculating monthly comparison: {e}")
+            return Response({'detail': str(e)}, status=500)
+
+    def get_trend_analysis(self, search_params, organization=None, role=None):
+        """Return simple trend statistics from historical transactions."""
+        try:
+            from django.db.models import Avg, Count, Sum
+            qs = Transaction.objects.filter(organization=organization).exclude(category__category_type="transfer")
+            today = date.today()
+            last_30 = today - timedelta(days=30)
+            last_7 = today - timedelta(days=7)
+
+            daily_avg = qs.filter(occurred_at__date__gte=last_30).aggregate(avg=Avg('amount'))['avg'] or 0
+            weekly_avg = qs.filter(occurred_at__date__gte=last_7).aggregate(total=Sum('amount'))['total'] or 0
+            monthly_avg = daily_avg * 30
+
+            # spending pattern: compare last month to previous month
+            prev_month_start = (today.replace(day=1) - timedelta(days=1)).replace(day=1)
+            prev_month_end = today.replace(day=1) - timedelta(days=1)
+            this_month_start = today.replace(day=1)
+            this_month_total = qs.filter(occurred_at__date__gte=this_month_start).aggregate(total=Sum('amount'))['total'] or 0
+            prev_month_total = qs.filter(occurred_at__date__gte=prev_month_start, occurred_at__date__lte=prev_month_end).aggregate(total=Sum('amount'))['total'] or 0
+            if this_month_total > prev_month_total:
+                pattern = 'increasing'
+            elif this_month_total < prev_month_total:
+                pattern = 'decreasing'
+            else:
+                pattern = 'stable'
+
+            # peak / lowest spending day of week
+            from django.db.models.functions import ExtractWeekDay
+            weekday_totals = (
+                qs.annotate(weekday=ExtractWeekDay('occurred_at'))
+                  .values('weekday')
+                  .annotate(total=Sum('amount'))
+                  .order_by('weekday')
+            )
+            # map Django weekday 1=Sunday
+            day_names = {1:'Sunday',2:'Monday',3:'Tuesday',4:'Wednesday',5:'Thursday',6:'Friday',7:'Saturday'}
+            peak = None
+            low = None
+            if weekday_totals:
+                peak_rec = max(weekday_totals, key=lambda r: r['total'] or 0)
+                low_rec = min(weekday_totals, key=lambda r: r['total'] or 0)
+                peak = day_names.get(peak_rec['weekday'])
+                low = day_names.get(low_rec['weekday'])
+
+            # simple forecast: assume this month's total continues
+            forecast = int(this_month_total)
+
+            return Response({'data': {
+                'daily_average': float(daily_avg),
+                'weekly_average': float(weekly_avg),
+                'monthly_average': float(monthly_avg),
+                'spending_pattern': pattern,
+                'peak_spending_day': peak,
+                'lowest_spending_day': low,
+                'forecast_next_month': forecast,
+            }})
+        except Exception as e:
+            print(f"Error occured while calculating trend analysis: {e}")
+            return Response({'detail': str(e)}, status=500)
+
+    def get_cash_flow(self, search_params, organization=None, role=None):
+        """Return simple cash flow stats using account balances and transaction history."""
+        try:
+            from django.db.models import Sum
+            from finance.models import Account
+
+            opening_balance = Account.objects.filter(organization=organization).aggregate(total=Sum('balance'))['total'] or 0
+
+            qs = Transaction.objects.filter(organization=organization).exclude(category__category_type="transfer")
+            total_inflow = qs.filter(transaction_type='income').aggregate(total=Sum('amount'))['total'] or 0
+            total_outflow = qs.filter(transaction_type='expense').aggregate(total=Sum('amount'))['total'] or 0
+
+            net_change = total_inflow - total_outflow
+            closing_balance = opening_balance + net_change
+            burn_rate = total_outflow / 30 if total_outflow else 0
+            runway = closing_balance / burn_rate if burn_rate else None
+
+            return Response({'data': {
+                'opening_balance': opening_balance,
+                'total_inflow': total_inflow,
+                'total_outflow': total_outflow,
+                'closing_balance': closing_balance,
+                'net_change': net_change,
+                'burn_rate': round(burn_rate, 2),
+                'runway_months': round(runway, 2) if runway is not None else None,
+            }})
+        except Exception as e:
+            print(f"Error occured while calculating cash flow: {e}")
             return Response({'detail': str(e)}, status=500)

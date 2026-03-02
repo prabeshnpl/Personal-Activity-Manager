@@ -31,9 +31,9 @@ export const TaskDetailModal = (props) => {
     await updateTask.mutateAsync({ id: task.id, data: { status: newStatus } });
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this task?')) {
-      deleteTask(task.id);
+      await deleteTask.mutateAsync(task.id);
       onClose();
     }
   };

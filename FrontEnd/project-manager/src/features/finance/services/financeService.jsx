@@ -65,8 +65,61 @@ export const financeService = {
   getAccountBalance: (id) =>
     api.get(`${ENDPOINTS.FINANCE_ACCOUNTS}/${id}/balance/`),
 
+  // Reports
+  getDetailedReport: (params = {}) => {
+    const query = new URLSearchParams();
+
+    if (params.type) {
+      query.append("type", params.type);
+    }
+
+    const categories = Array.isArray(params.category) ? params.category : [];
+    if (categories.length === 0) {
+      query.append("category[]", "");
+    } else {
+      categories.forEach((categoryId) => {
+        query.append("category[]", String(categoryId));
+      });
+    }
+
+    const accounts = Array.isArray(params.account) ? params.account : [];
+    if (accounts.length === 0) {
+      query.append("account[]", "");
+    } else {
+      accounts.forEach((accountId) => {
+        query.append("account[]", String(accountId));
+      });
+    }
+
+    if (params.startDate) {
+      query.append("startDate", params.startDate);
+    }
+
+    if (params.endDate) {
+      query.append("endDate", params.endDate);
+    }
+
+    if (params.groupBy) {
+      query.append("groupBy", params.groupBy);
+    }
+
+    return api.get(`${ENDPOINTS.FINANCE_REPORTS}/detailed/?${query.toString()}`);
+  },
+
+  getAccountBreakdown: (params) =>
+    api.get(`${ENDPOINTS.FINANCE_REPORTS}/account-breakdown/`, { params }),
+
+  getMonthlyComparison: (params) =>
+    api.get(`${ENDPOINTS.FINANCE_REPORTS}/monthly-comparison/`, { params }),
+
+  getTrendAnalysis: (params) =>
+    api.get(`${ENDPOINTS.FINANCE_REPORTS}/trend-analysis/`, { params }),
+
+  getCashFlow: (params) =>
+    api.get(`${ENDPOINTS.FINANCE_REPORTS}/cash-flow/`, { params }),
+
   // Export
-  exportTransactions: (format, params) =>
+  exportReport: (format, params) =>
     api.get(`${ENDPOINTS.FINANCE_EXPORT}/`, {
       params: { format, ...params },
       responseType: 'blob',
