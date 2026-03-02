@@ -11,6 +11,7 @@ class TransactionEntity:
         category: ['Category'] = None, # type: ignore
         created_by: ['CustomUser'] = None, # type: ignore
         amount: float = 0,
+        remaining_balance: float | None = 0,
         transaction_type: str = "income",
         occurred_at: Optional[datetime] = None,
         description: Optional[str] = None,
@@ -26,6 +27,7 @@ class TransactionEntity:
         self.occurred_at = occurred_at
         self.description = description
         self.created_at = created_at
+        self.remaining_balance = remaining_balance
 
     def __str__(self):
         return f"{self.amount} ({self.transaction_type})"

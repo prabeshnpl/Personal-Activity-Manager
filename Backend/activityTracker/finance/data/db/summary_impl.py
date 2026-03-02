@@ -10,7 +10,9 @@ class SummaryRepositoryImpl(SummaryRepository):
         try:
             period = search_params.get('period') or 'monthly'
 
-            transactions = Transaction.objects.filter(organization=organization)
+            transactions = Transaction.objects.\
+                filter(organization=organization).\
+                exclude(category__category_type="transfer")
 
             if account:=search_params.get("account"):
                 transactions = transactions.filter(account=account)

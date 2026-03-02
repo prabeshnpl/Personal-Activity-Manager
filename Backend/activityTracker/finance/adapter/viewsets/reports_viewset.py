@@ -27,3 +27,13 @@ class ReportView(BaseTenantViewSet):
         usecase = self.repository()
         response = usecase.get_income_expense_trend(search_params=search_params, organization=request.organization, role=request.role)
         return response
+
+    @action(methods=['GET'], detail=False, url_path="detailed")
+    def detailed(self, request):
+        """Get a detailed report of transactions matching the filters."""
+        search_params = {k: v[0] if isinstance(v, list) else v for k, v in request.query_params.items()}
+        search_params['user'] = request.user
+
+        usecase = self.repository()
+        response = usecase.get_detailed_reports(search_params=search_params, organization=request.organization, role=request.role)
+        return response

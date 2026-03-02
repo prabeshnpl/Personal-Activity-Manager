@@ -98,6 +98,8 @@ class Transaction(models.Model):
 
     amount = models.FloatField()
 
+    remaining_balance = models.FloatField(blank=True, null=True)
+
     transaction_type = models.CharField(
         max_length=16,
         choices=TRANSACTION_TYPE_CHOICES

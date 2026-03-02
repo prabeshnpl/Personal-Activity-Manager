@@ -53,7 +53,7 @@ class TransactionRepositoryImpl(TransactionRepository):
                 if data.get('transaction_type')=='expense' and account.balance < data.get("amount"): # type: ignore
                     return Response({'detail':'Not enough money in this account'}, status=400)
 
-                _transaction = Transaction.objects.create(**data)
+                _transaction = Transaction(**data)
 
                 if _transaction.transaction_type == 'income':
                     _transaction.account.balance += _transaction.amount
@@ -61,6 +61,11 @@ class TransactionRepositoryImpl(TransactionRepository):
                 else:
                     _transaction.account.balance -= _transaction.amount
                     _transaction.account.save()
+
+                remaining_balance = _transaction.account.balance
+                _transaction.remaining_balance = remaining_balance
+
+                _transaction.save()
                     
                 return self.to_entity(_transaction)
         except Exception as e:
@@ -116,4 +121,5 @@ class TransactionRepositoryImpl(TransactionRepository):
             occurred_at = obj.occurred_at,  
             description = obj.description,  
             created_at=obj.created_at,
+            remaining_balance=obj.remaining_balance
         )
