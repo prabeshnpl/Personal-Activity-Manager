@@ -5,11 +5,12 @@ from django.db import transaction
 from roadmap.domain.entity.milestone_entity import MilestoneEntity
 from roadmap.domain.repository.milestone_repo import MilestoneRepository
 from roadmap.models import Milestone
+from datetime import datetime
 
 class MilestoneRepositoryImpl(MilestoneRepository):
     def list_milestones(self, search_params: dict, organization:int, role:str) -> List[MilestoneEntity] | Response:
         try:
-            milestone = Milestone.objects.filter(roadmap__organization=organization)
+            milestone = Milestone.objects.filter(roadmap__organization=organization).order_by('-status', '-completed_at')
 
             if roadmap:=search_params.get("roadmap"):
                 milestone = milestone.filter(roadmap=roadmap)
@@ -39,8 +40,12 @@ class MilestoneRepositoryImpl(MilestoneRepository):
                 if key in ['id', 'roadmap', 'created_at']:
                     continue
                 elif key=='status':
-                    if value not in ['pending', 'missed', 'completed']:
-                        return Response({'detail':"Invalid type"}, status=400)
+                    if value=='completed':
+                        setattr(milestone, 'completed_at', datetime.now())
+                    elif value=='pending':
+                        setattr(milestone, 'completed_at', None)
+                    else:
+                        return Response({'detail':'Invalid key:value for updating milestone\'s status'})
                 setattr(milestone, key, value)
             
             milestone.save()

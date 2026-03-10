@@ -3,7 +3,7 @@ import { Calendar, CheckCircle2, Circle, Clock, Trash2 } from 'lucide-react';
 
 export const MilestoneCard = ({ milestone, onDelete, onToggle, onOpen }) => {
   const isOverdue = (milestone) => {
-    if (!milestone.due_date || milestone.is_completed) return false;
+    if (!milestone.due_date || isCompleted) return false;
     return new Date(milestone.due_date) < new Date();
   };
 
@@ -15,12 +15,14 @@ export const MilestoneCard = ({ milestone, onDelete, onToggle, onOpen }) => {
       ? `${descriptionPreview.slice(0, 117)}...`
       : descriptionPreview;
 
+  let isCompleted = milestone.status === 'completed';
+
   return (
     <div
       key={milestone.id}
       onClick={() => onOpen?.(milestone)}
       className={`p-3 rounded-lg border-2 transition-all cursor-pointer ${
-        milestone.is_completed
+        isCompleted
           ? 'bg-green-50 border-green-200'
           : isOverdue(milestone)
           ? 'bg-red-50 border-red-200'
@@ -31,11 +33,11 @@ export const MilestoneCard = ({ milestone, onDelete, onToggle, onOpen }) => {
         <button
           onClick={(event) => {
             event.stopPropagation();
-            onToggle({ milestoneId: milestone.id, isCompleted: milestone.is_completed });
+            onToggle({ milestoneId: milestone.id, isCompleted: milestone.status !== 'completed' });
           }}
           className="mt-0.5 shrink-0"
         >
-          {milestone.is_completed ? (
+          {milestone.status == 'completed' ? (
             <CheckCircle2 className="h-5 w-5 text-green-600" />
           ) : (
             <Circle className="h-5 w-5 text-gray-400 hover:text-blue-600" />
@@ -45,7 +47,7 @@ export const MilestoneCard = ({ milestone, onDelete, onToggle, onOpen }) => {
         <div className="flex-1 min-w-0">
           <h4
             className={`text-sm font-semibold text-gray-900 ${
-              milestone.is_completed ? 'line-through text-gray-500' : ''
+              milestone.status == 'completed' ? 'text-gray-500' : ''
             }`}
           >
             {milestone.title}
@@ -58,11 +60,20 @@ export const MilestoneCard = ({ milestone, onDelete, onToggle, onOpen }) => {
 
           <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-gray-600">
             <div className="flex items-center space-x-1">
-              <Calendar className="h-3.5 w-3.5" />
+              <strong>Due Date:  </strong><Calendar className="h-3.5 w-3.5" />
               <span className={isOverdue(milestone) ? 'text-red-600 font-medium' : ''}>
                 {formatDate(milestone.due_date)}
               </span>
             </div>
+
+            {isCompleted && (
+              <div className="flex items-center space-x-1">
+                <strong>Completion Date:  </strong><Calendar className="h-3.5 w-3.5" />
+                <span className={isOverdue(milestone) ? 'text-red-600 font-medium' : ''}>
+                  {formatDate(milestone.completed_at)}
+                </span>
+              </div>
+            )}
 
             {milestone.estimated_hours && (
               <div className="flex items-center space-x-1">

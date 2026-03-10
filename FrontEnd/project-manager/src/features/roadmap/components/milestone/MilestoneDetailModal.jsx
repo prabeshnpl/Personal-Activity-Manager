@@ -6,8 +6,10 @@ import { formatDate } from '../../../../shared/utils/formatDate';
 export const MilestoneDetailModal = ({ milestone, onClose, onDelete, onToggle }) => {
   if (!milestone) return null;
 
+  let isCompleted = milestone.status === 'completed';
+
   const isOverdue = (milestone) => {
-    if (!milestone.due_date || milestone.is_completed) return false;
+    if (!milestone.due_date || isCompleted) return false;
     return new Date(milestone.due_date) < new Date();
   };
 
@@ -23,7 +25,7 @@ export const MilestoneDetailModal = ({ milestone, onClose, onDelete, onToggle })
             <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-gray-600">
               <div className="flex items-center space-x-1">
                 <Calendar className="h-4 w-4" />
-                <span className={isOverdue(milestone) ? 'text-red-600 font-medium' : ''}>
+                <span className={ isCompleted ? 'text-gray-500' : isOverdue(milestone) ? 'text-red-600 font-medium' : ''}>
                   {formatDate(milestone.due_date)}
                 </span>
               </div>
@@ -35,7 +37,7 @@ export const MilestoneDetailModal = ({ milestone, onClose, onDelete, onToggle })
                   </span>
                 </div>
               )}
-              {milestone.is_completed && milestone.completed_at && (
+              {isCompleted && milestone.completed_at && (
                 <span className="text-green-600 text-xs">
                   Completed on {formatDate(milestone.completed_at)}
                 </span>
@@ -60,11 +62,11 @@ export const MilestoneDetailModal = ({ milestone, onClose, onDelete, onToggle })
             type="button"
             variant="secondary"
             onClick={() => {
-              onToggle?.({ milestoneId: milestone.id, isCompleted: milestone.is_completed });
+              onToggle?.({ milestoneId: milestone.id, isCompleted: !isCompleted });
             }}
             className="flex-1"
           >
-            {milestone.is_completed ? (
+            {isCompleted ? (
               <>
                 <Circle className="h-4 w-4 mr-2" />
                 Mark Incomplete

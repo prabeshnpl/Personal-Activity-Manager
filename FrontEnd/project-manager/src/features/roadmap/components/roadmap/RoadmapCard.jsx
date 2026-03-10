@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MarkdownContent } from '../../../../shared/components/MarkdownContent';
 import { formatDate } from "@/shared/utils/formatDate";
 import { 
   MoreVertical, 
@@ -28,14 +29,6 @@ export const RoadmapCard = ({ roadmap, onDelete, onClick, onEdit }) => {
     cancelled: 'bg-red-100 text-red-800',
   };
 
-  const getProgressColor = () => {
-    const progress = roadmap.progress_percentage || 0;
-    if (progress >= 75) return 'bg-green-500';
-    if (progress >= 50) return 'bg-blue-500';
-    if (progress >= 25) return 'bg-yellow-500';
-    return 'bg-red-500';
-  };
-
   return (
     <div
       className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer border-2"
@@ -53,7 +46,9 @@ export const RoadmapCard = ({ roadmap, onDelete, onClick, onEdit }) => {
             )}
           </div>
           {roadmap.description && (
-            <p className="text-sm text-gray-600 line-clamp-2">{roadmap.description}</p>
+            <p className="text-sm text-gray-600 line-clamp-2">
+              <MarkdownContent content={roadmap.description} className="mt-1" />
+            </p>
           )}
         </div>
 
@@ -105,22 +100,6 @@ export const RoadmapCard = ({ roadmap, onDelete, onClick, onEdit }) => {
               </div>
             </>
           )}
-        </div>
-      </div>
-
-      {/* Progress Bar */}
-      <div className="mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm text-gray-600">Progress</span>
-          <span className="text-sm font-semibold text-gray-900">
-            {roadmap.progress_percentage || 0}%
-          </span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className={`h-2 rounded-full transition-all ${getProgressColor()}`}
-            style={{ width: `${roadmap.progress_percentage || 0}%` }}
-          ></div>
         </div>
       </div>
 

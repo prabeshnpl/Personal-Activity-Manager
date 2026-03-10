@@ -1,5 +1,5 @@
 import { financeService } from "../../finance/services/financeService";
-import { roadmapService } from "../../roadmap/services/roadmapService";
+import { roadmapStatsService } from "../../roadmap/services/roadmapStatsService";
 import { taskService } from "../../tasks/services/taskService";
 
 export const dashboardService = {
@@ -20,7 +20,7 @@ export const dashboardService = {
       taskService.getTasks({ page: 1, page_size: 1, status: "in_progress" }),
       taskService.getTasks({ page: 1, page_size: 1, status: "pending" }),
       taskService.getTasks({ page: 1, page_size: 8, ordering: "-created_at" }),
-      roadmapService.getRoadmapStats(),
+      roadmapStatsService.getRoadmapStats(),
       roadmapService.getRoadmaps({ page: 1, page_size: 5, ordering: "-updated_at" }),
       financeService.getSummary({ period: "monthly" }),
       financeService.getTransactions({ page: 1, page_size: 6, ordering: "-occurred_at" }),

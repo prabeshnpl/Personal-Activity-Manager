@@ -17,7 +17,7 @@ export const DashboardFilters = ({
           onChange={(e) => setPeriod(e.target.value)}
           className="px-3 py-2 border cursor-pointer border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
         >
-          <option value="weekly">Weekly</option>
+          <option value="daily">Daily</option>
           <option value="monthly">Monthly</option>
           <option value="yearly">Yearly</option>
         </select>

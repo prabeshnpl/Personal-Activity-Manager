@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { roadmapService } from "../services/roadmapService";
+import { roadmapStatsService } from "../services/roadmapStatsService";
 
 export function useRoadmapProgress(roadmapId) {
   const progress = useQuery({
     queryKey: ["roadmaps", roadmapId, "progress"],
-    queryFn: () => roadmapService.getProgressReport(roadmapId),
+    queryFn: () => roadmapStatsService.getProgressReport(roadmapId),
     enabled: !!roadmapId,
   });
 

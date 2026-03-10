@@ -27,7 +27,7 @@ export const DescriptionField = ({
   const renderMarkdownPreview = useMemo(
     () => (markdown) =>
       Promise.resolve(
-        <div className="prose prose-sm max-w-none p-3">
+        <div className="prose prose-sm max-w-none p-3 h-full overflow-y-auto">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {normalizeMarkdownForRender(markdown || "")}
           </ReactMarkdown>
@@ -66,8 +66,13 @@ export const DescriptionField = ({
 
     if (!isCtrlOrMeta) return;
 
-    const shouldIndentRight = event.key === "}" || (event.key === "]" && event.shiftKey);
-    const shouldIndentLeft = event.key === "{" || event.key === "[";
+    // Support both physical bracket keys and produced characters across layouts:
+    // - Ctrl/Cmd + ] or Ctrl/Cmd + }
+    // - Ctrl/Cmd + [ or Ctrl/Cmd + {
+    const shouldIndentRight =
+      event.code === "BracketRight" || event.key === "]" || event.key === "}";
+    const shouldIndentLeft =
+      event.code === "BracketLeft" || event.key === "[" || event.key === "{";
 
     if (shouldIndentRight) {
       event.preventDefault();
@@ -82,18 +87,18 @@ export const DescriptionField = ({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 flex flex-col h-full">
       <Label htmlFor={id}>{label}</Label>
-      <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-2">
+      <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-2 flex-1 overflow-hidden flex flex-col">
         <ReactMdeComponent
-          className="react-mde-embedded z-10"
+          className="react-mde-embedded z-10 h-full flex flex-col"
           value={value || ""}
           onChange={(val) => onChange(val)}
           selectedTab={selectedTab}
           onTabChange={setSelectedTab}
           generateMarkdownPreview={renderMarkdownPreview}
           childProps={{
-            textArea: { id, placeholder, rows, disabled, onKeyDown: handleEditorKeyDown },
+            textArea: { id, placeholder, rows, disabled, onKeyDown: handleEditorKeyDown, className: "h-full w-full pl-4" },
           }}
         />
       </div>

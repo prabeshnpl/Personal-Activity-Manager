@@ -27,7 +27,7 @@ class SummaryRepositoryImpl(SummaryRepository):
             data = {}
             today = date.today()
 
-            if period == "weekly":
+            if period == "daily":
                 first_day_this_period = today - timedelta(days=6)  # Last 7 days
                 last_day_prev_period = first_day_this_period - timedelta(days=1)  # Day before current period
                 first_day_last_period = last_day_prev_period - timedelta(days=6)  # 7 days before current period

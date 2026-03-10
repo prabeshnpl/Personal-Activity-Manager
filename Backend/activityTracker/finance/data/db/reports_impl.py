@@ -18,7 +18,7 @@ class ReportsImpl:
     
     def get_income_expense_trend(self, search_params, organization=None, role=None):
         try:
-            period = search_params.get('period', 'monthly')  # weekly, monthly, yearly
+            period = search_params.get('period', 'monthly')  # daily, monthly, yearly
             category_id = search_params.get('category')
             account_id = search_params.get('account')
             # Build queryset with filters
@@ -36,10 +36,10 @@ class ReportsImpl:
             today = now.date()
             bucket_definitions = []
 
-            if period == 'weekly':
+            if period == 'daily':
                 end_date = today
                 start_date = end_date - timedelta(days=6)
-                period_label = "weekly"
+                period_label = "daily"
                 bucket_definitions = [start_date + timedelta(days=i) for i in range(7)]
             elif period == 'yearly':
                 end_year = today.year
@@ -48,21 +48,21 @@ class ReportsImpl:
                 end_date = date(end_year, 12, 31)
                 period_label = "yearly"
                 bucket_definitions = [start_year, end_year]
-            else:  # monthly -> fixed fiscal year window: Mar to Feb
-                fiscal_start_year = today.year if today.month >= 3 else today.year - 1
-                start_date = date(fiscal_start_year, 3, 1)
-                fiscal_end_year = fiscal_start_year + 1
-                end_date = date(
-                    fiscal_end_year,
-                    2,
-                    calendar.monthrange(fiscal_end_year, 2)[1]
-                )
+            else:
+                start_date = date(today.year - 1, today.month, 1)
+                end_date = date(today.year, today.month, today.day)
+
                 period_label = "monthly"
-                bucket_definitions = []
-                for idx in range(12):
-                    month_num = ((3 - 1 + idx) % 12) + 1
-                    year_num = fiscal_start_year + ((3 - 1 + idx) // 12)
-                    bucket_definitions.append(date(year_num, month_num, 1))
+                year = start_date.year
+                month = start_date.month
+
+                for _ in range(12):
+                    bucket_definitions.append(date(year, month, 1))
+                    # Move to next month
+                    month += 1
+                    if month > 12:
+                        month = 1
+                        year += 1
 
             queryset = queryset.filter(
                 occurred_at__date__gte=start_date,
@@ -74,7 +74,7 @@ class ReportsImpl:
                 order_by('occurred_at')
 
             period_data = {}
-            if period == 'weekly':
+            if period == 'daily':
                 for bucket_date in bucket_definitions:
                     period_data[bucket_date] = {'income': 0, 'expense': 0}
             elif period == 'yearly':
@@ -87,7 +87,7 @@ class ReportsImpl:
             for txn in transactions:
                 occurred = timezone.localtime(txn['occurred_at'])
 
-                if period == 'weekly':
+                if period == 'daily':
                     key = occurred.date()
                 elif period == 'yearly':
                     key = occurred.year
@@ -107,7 +107,7 @@ class ReportsImpl:
             total_expense = 0
 
             for bucket in bucket_definitions:
-                if period == 'weekly':
+                if period == 'daily':
                     label = bucket.strftime('%a %b %d') # type: ignore
                     data = period_data[bucket]
                 elif period == 'yearly':
@@ -407,7 +407,7 @@ class ReportsImpl:
             last_7 = today - timedelta(days=7)
 
             daily_avg = qs.filter(occurred_at__date__gte=last_30).aggregate(avg=Avg('amount'))['avg'] or 0
-            weekly_avg = qs.filter(occurred_at__date__gte=last_7).aggregate(total=Sum('amount'))['total'] or 0
+            daily_avg = qs.filter(occurred_at__date__gte=last_7).aggregate(total=Sum('amount'))['total'] or 0
             monthly_avg = daily_avg * 30
 
             # spending pattern: compare last month to previous month
@@ -446,7 +446,7 @@ class ReportsImpl:
 
             return Response({'data': {
                 'daily_average': float(daily_avg),
-                'weekly_average': float(weekly_avg),
+                'daily_average': float(daily_avg),
                 'monthly_average': float(monthly_avg),
                 'spending_pattern': pattern,
                 'peak_spending_day': peak,

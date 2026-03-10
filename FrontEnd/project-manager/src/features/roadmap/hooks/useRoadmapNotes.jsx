@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useInfiniteList from '../../../shared/hooks/useInfiniteList';
-import { roadmapService } from "../services/roadmapService";
+import { roadmapNoteService } from "../services/roadmapNoteService";
 
 export function useRoadmapNotes(roadmapId) {
   const queryClient = useQueryClient();
@@ -10,13 +10,13 @@ export function useRoadmapNotes(roadmapId) {
       ["roadmap-notes", roadmapId, "infinite"],
       (params) => {
         if (!roadmapId) return [];
-        return roadmapService.getNotes({ roadmap: roadmapId, ...params, page_size: 10 });
+        return roadmapNoteService.getNotes({ roadmap: roadmapId, ...params, page_size: 10 });
       },
       [roadmapId]
     );
 
   const createNote = useMutation({
-    mutationFn: roadmapService.createNote,
+    mutationFn: roadmapNoteService.createNote,
     onSuccess: () => {
       queryClient.invalidateQueries(["roadmap-notes", roadmapId, "infinite"]);
       queryClient.invalidateQueries(["roadmaps"]);
@@ -24,14 +24,14 @@ export function useRoadmapNotes(roadmapId) {
   });
 
   const updateNote = useMutation({
-    mutationFn: ({ id, data }) => roadmapService.updateNote(id, data),
+    mutationFn: ({ id, data }) => roadmapNoteService.updateNote(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries(["roadmap-notes", roadmapId, "infinite"]);
     },
   });
 
   const deleteNote = useMutation({
-    mutationFn: roadmapService.deleteNote,
+    mutationFn: roadmapNoteService.deleteNote,
     onSuccess: () => {
       queryClient.invalidateQueries(["roadmap-notes", roadmapId, "infinite"]);
     },

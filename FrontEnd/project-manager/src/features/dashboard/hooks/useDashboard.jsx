@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { financeService } from "../../finance/services/financeService";
+import { roadmapStatsService } from "../../roadmap/services/roadmapStatsService";
 import { roadmapService } from "../../roadmap/services/roadmapService";
 import { taskService } from "../../tasks/services/taskService";
 
@@ -98,7 +99,7 @@ export function useDashboard() {
 
   const roadmapStatsQuery = useQuery({
     queryKey: ["dashboard", "roadmaps", "stats"],
-    queryFn: () => roadmapService.getRoadmapStats(),
+    queryFn: () => roadmapStatsService.getRoadmapStats(),
     retry: false,
   });
 

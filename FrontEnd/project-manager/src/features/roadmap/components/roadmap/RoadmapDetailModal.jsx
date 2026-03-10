@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { X, Plus } from 'lucide-react';
 import { Tabs, TabPanel } from '../../../../shared/components/tabs/Tabs';
 import { ProgressTracker } from '../progress/ProgressTracker';
@@ -12,6 +12,7 @@ import { useRoadmapNotes } from '../../hooks/useRoadmapNotes';
 import { useRoadmapProgress } from '../../hooks/useRoadmapProgress';
 import { AddMilestoneModal } from '../milestone/AddMilestoneModal';
 import { AddNoteModal } from '../note/AddNoteModal';
+import { useRoadmap } from '../../hooks/useRoadmap';
 
 export const RoadmapDetailModal = ({
   roadmap,
@@ -30,6 +31,24 @@ export const RoadmapDetailModal = ({
   
   const { createNote, updateNote, deleteNote, useInfiniteNotes } = useRoadmapNotes(roadmap?.id);
   const { progress } = useRoadmapProgress(roadmap?.id);
+  const [currentStatus, setCurrentStatus] = useState(roadmap?.status);
+
+  useEffect(() => {
+    setCurrentStatus(roadmap?.status);
+  }, [roadmap?.id, roadmap?.status]);
+
+  const {updateRoadmap} = useRoadmap();
+  
+  const onUpdate = useMemo(() => ({
+    ...updateRoadmap,
+    mutate: (variables) => {
+      updateRoadmap.mutate(variables, {
+        onSuccess: () => {
+          setCurrentStatus('completed');
+        },
+      });
+    },
+  }), [updateRoadmap]);
 
   const infiniteMilestones = useInfiniteMilestones();
   const infiniteNotes = useInfiniteNotes();
@@ -80,8 +99,7 @@ export const RoadmapDetailModal = ({
     }
   };
 
-  const showGlobalAdd =
-    activeTab === 'milestones' || activeTab === 'notes';
+  const showGlobalAdd = activeTab === 'milestones' || activeTab === 'notes';
 
   const addButtonLabel = activeTab === 'milestones' ? 'Add Milestone' : 'Add Note';
 
@@ -124,11 +142,45 @@ export const RoadmapDetailModal = ({
           </TabPanel>
 
           <TabPanel isActive={activeTab === 'overview'}>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Overview</h3>
+            <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900">Overview</h3>
               <div className="text-gray-700">
                 {roadmap.description && (
                   <MarkdownContent content={roadmap.description} className="mt-1" />
+                )}
+              </div>
+
+              <div className="pt-4 border-t border-gray-200">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Roadmap Status</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Mark this roadmap complete when all planned work is finished.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        currentStatus === 'completed'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-yellow-100 text-yellow-800'
+                      }`}
+                    >
+                      {(currentStatus || roadmap.status || 'active').toUpperCase()}
+                    </span>
+                    <Button
+                      size="sm"
+                      onClick={() => onUpdate.mutate({ id: roadmap.id, data: { status: 'completed' } })}
+                      disabled={currentStatus !== 'active' || onUpdate.isPending}
+                    >
+                      {onUpdate.isPending ? 'Marking...' : 'Mark as Completed'}
+                    </Button>
+                  </div>
+                </div>
+                {onUpdate.isError && (
+                  <p className="text-xs text-red-600 mt-2">
+                    Failed to update status. Please try again.
+                  </p>
                 )}
               </div>
             </div>
@@ -180,4 +232,3 @@ export const RoadmapDetailModal = ({
     </div>
   );
 };
-

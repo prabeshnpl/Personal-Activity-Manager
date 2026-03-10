@@ -72,13 +72,13 @@ export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) =
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4" onClick={onClose}>
-      <div className="bg-white rounded-lg shadow-xl max-w-7xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-7xl w-full max-h-[90vh] overflow-y-auto">
         <div 
           className="
             flex items-center justify-between 
             px-6 py-2 border-b border-gray-200 
-            sticky top-0 bg-white z-10
+            shrink-0 bg-white z-10
           ">
           <h2 className="text-xl font-bold text-gray-900">
             {isEditing ? 'Edit Note' : 'Add Learning Note'}
@@ -88,7 +88,7 @@ export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) =
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
               {error}
@@ -155,8 +155,7 @@ export const AddNoteModal = ({ roadmapId, note, onClose, onCreate, onUpdate }) =
           </div>
 
           
-
-          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
+          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4 border-t border-gray-200 mt-4">
             <Button
               type="button"
               variant="secondary"

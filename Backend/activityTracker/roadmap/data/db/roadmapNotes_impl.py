@@ -9,7 +9,7 @@ from django.db.models import Q
 class RoadmapNotesRepositoryImpl(RoadmapNotesRepository):
     def list_roadmaps_notes(self, search_params: dict, organization:int, role:str) -> List[RoadmapNotesEntity] | Response:
         try:
-            roadmap_notes = RoadmapNotes.objects.filter(roadmap__organization=organization)
+            roadmap_notes = RoadmapNotes.objects.filter(roadmap__organization=organization).order_by('-created_at')
 
             if search:=search_params.get("search"):
                 roadmap_notes = roadmap_notes.filter(
