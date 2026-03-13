@@ -20,6 +20,8 @@ export const ProgressTracker = ({ progress, roadmap }) => {
     switch (progress.status) {
       case 'ahead':
         return 'bg-green-50 border-green-200 text-green-800';
+      case 'completed':
+        return 'bg-green-100 border-green-300 text-green-800';
       case 'delayed':
         return 'bg-red-50 border-red-200 text-red-800';
       default:
@@ -31,6 +33,8 @@ export const ProgressTracker = ({ progress, roadmap }) => {
     switch (progress.status) {
       case 'ahead':
         return 'Ahead of Schedule';
+      case 'completed':
+        return 'Completed';
       case 'delayed':
         return 'Behind Schedule';
       default:

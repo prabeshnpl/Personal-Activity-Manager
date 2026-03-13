@@ -7,9 +7,14 @@ export const NoteDetailModal = ({ note, onClose, onEdit, onDelete }) => {
   if (!note) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-start justify-between p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-full overflow-y-auto">
+        <div 
+          className="
+          flex items-start justify-between py-2 px-6 border-b
+          border-gray-200 sticky top-0 bg-white z-10
+          "
+        >
           <div className="flex-1 min-w-0">
             <h2 className="text-xl font-bold text-gray-900">{note.title}</h2>
             <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-gray-600">
@@ -59,7 +64,7 @@ export const NoteDetailModal = ({ note, onClose, onEdit, onDelete }) => {
           </div>
         </div>
 
-        <div className="p-6 space-y-4">
+        <div className="p-8 space-y-4">
           {note.content ? (
             <MarkdownContent content={note.content} className="text-sm" />
           ) : (
