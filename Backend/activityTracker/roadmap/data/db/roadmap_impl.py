@@ -154,18 +154,21 @@ class RoadmapRepositoryImpl(RoadmapRepository):
             # Velocity: hours per day
             velocity = round((hours_logged / days_elapsed), 2) if days_elapsed > 0 else round(hours_logged, 2)
 
-            # Expected completion percent by time elapsed
-            expected_percent = None
-            if days_total and days_total > 0:
-                expected_percent = (days_elapsed / days_total) * 100
-
             # Status determination
-            status = 'on_track'
-            if expected_percent is not None:
-                if progress_percentage < expected_percent - 5:
-                    status = 'delayed'
-                elif progress_percentage > expected_percent + 5:
-                    status = 'ahead'
+            if roadmap.status == 'completed':
+                status = 'completed'
+            else:
+                # Expected completion percent by time elapsed
+                expected_percent = None
+                if days_total and days_total > 0:
+                    expected_percent = (days_elapsed / days_total) * 100
+
+                status = 'on_track'
+                if expected_percent is not None:
+                    if progress_percentage < expected_percent - 5:
+                        status = 'delayed'
+                    elif progress_percentage > expected_percent + 5:
+                        status = 'ahead'
 
             data = {
                 'roadmap_id': id,

@@ -12,7 +12,7 @@ class TransactionRepositoryImpl(TransactionRepository):
             transactions = Transaction.objects.\
                 select_related("category", "account").\
                 filter(organization=organization).\
-                order_by('-occurred_at')
+                order_by('-occurred_at', '-created_at')
 
             if transaction_type:=search_params.get("type"):
                 transactions = transactions.filter(transaction_type=transaction_type)

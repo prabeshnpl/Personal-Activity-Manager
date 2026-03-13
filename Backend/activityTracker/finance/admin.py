@@ -4,7 +4,7 @@ from finance.models import Account, Category, Transaction
 # Register your models here.
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'organization', 'created_by','amount']
+    list_display = ['id', 'organization', 'created_by','amount', 'description']
 
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
