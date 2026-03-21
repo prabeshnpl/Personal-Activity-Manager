@@ -53,16 +53,6 @@ export const RoadmapDetailModal = ({
   const infiniteMilestones = useInfiniteMilestones();
   const infiniteNotes = useInfiniteNotes();
 
-  const milestones = useMemo(() => {
-    const pages = infiniteMilestones?.data?.pages || [];
-    return pages.flat();
-  }, [infiniteMilestones?.data?.pages]);
-
-  const notes = useMemo(() => {
-    const pages = infiniteNotes?.data?.pages || [];
-    return pages.flat();
-  }, [infiniteNotes?.data?.pages]);
-
   const tabs = [
     {
       id: 'overview',
@@ -78,13 +68,13 @@ export const RoadmapDetailModal = ({
       id: 'milestones',
       label: 'Milestones',
       icon: CheckCircle2,
-      badge: milestones.length || '0',
+      badge: infiniteMilestones?.data?.pages[0]?.meta?.total_count || '0',
     },
     {
       id: 'notes',
       label: 'Notes',
       icon: BookOpen,
-      badge: notes.length || '0',
+      badge: infiniteNotes?.data?.pages[0]?.meta?.total_count || '0',
     },
   ];
 

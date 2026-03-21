@@ -46,9 +46,9 @@ export const RoadmapCard = ({ roadmap, onDelete, onClick, onEdit }) => {
             )}
           </div>
           {roadmap.description && (
-            <p className="text-sm text-gray-600 line-clamp-2">
+            <div className="text-sm text-gray-600 line-clamp-2">
               <MarkdownContent content={roadmap.description} className="mt-1" />
-            </p>
+            </div>
           )}
         </div>
 
