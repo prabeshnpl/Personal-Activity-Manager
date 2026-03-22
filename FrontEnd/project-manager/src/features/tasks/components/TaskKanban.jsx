@@ -15,7 +15,7 @@ const colorClasses = {
   green: 'border-green-300',
 };
 
-const KanbanColumn = ({ column, useInfiniteTasks, onTaskClick, onUpdate, onDelete }) => {
+const KanbanColumn = ({ column, useInfiniteTasks, onTaskClick, onTaskEdit, onUpdate, onDelete }) => {
   const {
     data: pages,
     isLoading,
@@ -74,6 +74,7 @@ const KanbanColumn = ({ column, useInfiniteTasks, onTaskClick, onUpdate, onDelet
               onUpdate={onUpdate}
               onDelete={onDelete}
               onClick={() => onTaskClick(task)}
+              onEdit={onTaskEdit}
             />
           ))
         )}
@@ -83,7 +84,13 @@ const KanbanColumn = ({ column, useInfiniteTasks, onTaskClick, onUpdate, onDelet
   );
 };
 
-export const TaskKanban = ({ onTaskClick, useInfiniteTasks, updateTask: onUpdate, deleteTask: onDelete }) => {
+export const TaskKanban = ({
+  onTaskClick,
+  onTaskEdit,
+  useInfiniteTasks,
+  updateTask: onUpdate,
+  deleteTask: onDelete,
+}) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {columns.map((column) => (
@@ -92,6 +99,7 @@ export const TaskKanban = ({ onTaskClick, useInfiniteTasks, updateTask: onUpdate
           column={column}
           useInfiniteTasks={useInfiniteTasks}
           onTaskClick={onTaskClick}
+          onTaskEdit={onTaskEdit}
           onUpdate={onUpdate}
           onDelete={onDelete}
         />

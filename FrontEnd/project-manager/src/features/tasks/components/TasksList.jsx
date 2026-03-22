@@ -10,6 +10,7 @@ import { CheckSquare } from 'lucide-react';
 export const TasksList = ({ infiniteTasks, createTask, updateTask, deleteTask }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [editingTask, setEditingTask] = useState(null);
 
   const { 
     data:pages, 
@@ -75,9 +76,14 @@ export const TasksList = ({ infiniteTasks, createTask, updateTask, deleteTask })
             <TaskCard
               key={task.id}
               task={task}
-              updateTask={updateTask}
-              deleteTask={deleteTask}
+              onUpdate={updateTask}
+              onDelete={deleteTask}
               onClick={() => setSelectedTask(task)}
+              onEdit={(taskToEdit) => {
+                setSelectedTask(null);
+                setEditingTask(taskToEdit);
+                setShowAddModal(true);
+              }}
             />
           ))}
         </div>
@@ -96,8 +102,13 @@ export const TasksList = ({ infiniteTasks, createTask, updateTask, deleteTask })
 
       {showAddModal && (
         <AddTaskModal
-          onClose={() => setShowAddModal(false)}
-          createTask={createTask}
+          onClose={() => {
+            setShowAddModal(false);
+            setEditingTask(null);
+          }}
+          onCreate={createTask}
+          onUpdate={updateTask}
+          task={editingTask}
         />
       )}
 
@@ -107,6 +118,11 @@ export const TasksList = ({ infiniteTasks, createTask, updateTask, deleteTask })
           onClose={() => setSelectedTask(null)}
           updateTask={updateTask}
           deleteTask={deleteTask}
+          onEdit={(taskToEdit) => {
+            setSelectedTask(null);
+            setEditingTask(taskToEdit);
+            setShowAddModal(true);
+          }}
         />
       )}
     </>

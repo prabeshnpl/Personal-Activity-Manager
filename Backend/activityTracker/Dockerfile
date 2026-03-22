@@ -5,13 +5,13 @@ FROM python:3.15.0a7-slim-bookworm
 WORKDIR /app
 
 # Copy files into container
-COPY requirements.txt .
+COPY Backend/activityTracker/requirements.txt ./
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy rest of the app
-COPY . /app 
+COPY Backend/activityTracker/ ./
 
 # Expose port
 EXPOSE 8000

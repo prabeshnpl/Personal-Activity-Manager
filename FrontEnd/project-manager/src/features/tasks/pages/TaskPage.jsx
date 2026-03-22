@@ -28,6 +28,7 @@ const TasksPage = () => {
   const [activeTab, setActiveTab] = useState('list');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [editingTask, setEditingTask] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
 
   const tabs = [
@@ -76,8 +77,11 @@ const TasksPage = () => {
             />
 
             <Button 
-              size="sm" 
-              onClick={() => setShowAddModal(true)} 
+              size="sm"
+              onClick={() => {
+                setEditingTask(null);
+                setShowAddModal(true);
+              }}
               className='w-30 h-10 flex justify-center items-center'
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -102,6 +106,11 @@ const TasksPage = () => {
           <TabPanel isActive={activeTab === 'kanban'}>
             <TaskKanban
               onTaskClick={setSelectedTask}
+              onTaskEdit={(taskToEdit) => {
+                setSelectedTask(null);
+                setEditingTask(taskToEdit);
+                setShowAddModal(true);
+              }}
               useInfiniteTasks={useInfiniteTasks}
               updateTask={updateTask}
               deleteTask={deleteTask}
@@ -112,8 +121,13 @@ const TasksPage = () => {
         {/* Modals */}
         {showAddModal && (
           <AddTaskModal
-            onClose={() => setShowAddModal(false)}
+            onClose={() => {
+              setShowAddModal(false);
+              setEditingTask(null);
+            }}
             onCreate={createTask}
+            onUpdate={updateTask}
+            task={editingTask}
           />
         )}
 
@@ -123,6 +137,11 @@ const TasksPage = () => {
             onClose={() => setSelectedTask(null)}
             onUpdate={updateTask}
             onDelete={deleteTask}
+            onEdit={(taskToEdit) => {
+              setSelectedTask(null);
+              setEditingTask(taskToEdit);
+              setShowAddModal(true);
+            }}
           />
         )}
       </Card>

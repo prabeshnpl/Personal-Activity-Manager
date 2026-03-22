@@ -1,18 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../../../shared/components/Button';
 import { X } from 'lucide-react';
 
-export const AddTaskModal = ({ onClose, onCreate, task }) => {
+const toDateTimeLocalValue = (value) => {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+
+  const timezoneOffsetMs = date.getTimezoneOffset() * 60 * 1000;
+  return new Date(date.getTime() - timezoneOffsetMs).toISOString().slice(0, 16);
+};
+
+const toApiDateTime = (value) => {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+};
+
+export const AddTaskModal = ({ onClose, onCreate, onUpdate, task }) => {
   const isEditing = !!task;
   const [formData, setFormData] = useState({
-    title: task?.title || '',
-    description: task?.description || '',
-    priority: task?.priority || 'medium',
-    status: task?.status || 'pending',
-    due_at: task?.due_at || '',
+    title: '',
+    description: '',
+    priority: 'medium',
+    status: 'pending',
+    due_at: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setFormData({
+      title: task?.title || '',
+      description: task?.description || '',
+      priority: task?.priority || 'medium',
+      status: task?.status || 'pending',
+      due_at: toDateTimeLocalValue(task?.due_at || task?.deadline),
+    });
+  }, [task]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,10 +50,19 @@ export const AddTaskModal = ({ onClose, onCreate, task }) => {
 
     try {
       setLoading(true);
-      await onCreate.mutateAsync(formData);
+      const payload = {
+        ...formData,
+        due_at: toApiDateTime(formData.due_at),
+      };
+
+      if (isEditing) {
+        await onUpdate.mutateAsync({ id: task.id, data: payload });
+      } else {
+        await onCreate.mutateAsync(payload);
+      }
       onClose();
     } catch (err) {
-      setError(err.message || 'Failed to create task');
+      setError(err.message || `Failed to ${isEditing ? 'update' : 'create'} task`);
     } finally {
       setLoading(false);
     }
@@ -128,7 +162,7 @@ export const AddTaskModal = ({ onClose, onCreate, task }) => {
             <input
               type="datetime-local"
               value={formData.due_at}
-              onChange={(e) => setFormData({ ...formData, due_at: `${e.target.value}:00Z` })}
+              onChange={(e) => setFormData({ ...formData, due_at: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
             />
@@ -145,7 +179,7 @@ export const AddTaskModal = ({ onClose, onCreate, task }) => {
               Cancel
             </Button>
             <Button type="submit" disabled={loading} className="flex-1">
-              {loading ? 'Creating...' : isEditing ? 'Update Task' : 'Create Task'}
+              {loading ? (isEditing ? 'Updating...' : 'Creating...') : isEditing ? 'Update Task' : 'Create Task'}
             </Button>
           </div>
         </form>

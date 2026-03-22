@@ -11,7 +11,7 @@ import {
   Clock
 } from 'lucide-react';
 
-export const TaskCard = ({ task, onUpdate, onDelete, onClick }) => {
+export const TaskCard = ({ task, onUpdate, onDelete, onClick, onEdit }) => {
   const [showMenu, setShowMenu] = useState(false);
 
   const priorityColors = {
@@ -109,7 +109,7 @@ export const TaskCard = ({ task, onUpdate, onDelete, onClick }) => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    onClick();
+                    onEdit?.(task);
                     setShowMenu(false);
                   }}
                   className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
@@ -121,7 +121,7 @@ export const TaskCard = ({ task, onUpdate, onDelete, onClick }) => {
                   onClick={async (e) => {
                     e.stopPropagation();
                     if (window.confirm('Delete this task?')) {
-                      await onDelete.mutateAsync(task.id);
+                      await onDelete?.mutateAsync?.(task.id);
                     }
                     setShowMenu(false);
                   }}

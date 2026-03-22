@@ -13,7 +13,15 @@ import {
 
 export const TaskDetailModal = (props) => {
   
-  const { task, onClose, updateTask, deleteTask } = props;
+  const {
+    task,
+    onClose,
+    onEdit,
+    updateTask,
+    deleteTask,
+    onUpdate = updateTask,
+    onDelete = deleteTask,
+  } = props;
   
   const priorityColors = {
     low: 'bg-gray-100 text-gray-800',
@@ -28,12 +36,12 @@ export const TaskDetailModal = (props) => {
   };
 
   const handleStatusChange = async (newStatus) => {
-    await updateTask.mutateAsync({ id: task.id, data: { status: newStatus } });
+    await onUpdate.mutateAsync({ id: task.id, data: { status: newStatus } });
   };
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this task?')) {
-      await deleteTask.mutateAsync(task.id);
+      await onDelete.mutateAsync(task.id);
       onClose();
     }
   };
@@ -161,7 +169,7 @@ export const TaskDetailModal = (props) => {
         </Button>
         <Button
           variant="secondary"
-          onClick={onClose}
+          onClick={() => onEdit?.(task)}
           className="flex-1"
         >
           <Edit2 className="h-4 w-4 mr-2" />

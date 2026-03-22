@@ -3,7 +3,7 @@ import { FinanceDashboard } from '../components/Dashboard/FinanceDashboard';
 import { TransactionsList } from '../components/Transaction/TransactionsList';
 import { Tabs, TabPanel } from '../../../shared/components/tabs/Tabs';
 import { BarChart3, List, PieChart, Settings } from 'lucide-react';
-import FinanceSettings from '../components/Settings/financeSettings';
+import FinanceSettings from '../components/Settings/FinanceSettings';
 import { ReportsPage } from '../components/Report/ReportsPage';
 
 export const FinancePage = () => {

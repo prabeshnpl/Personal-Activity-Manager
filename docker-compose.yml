@@ -1,0 +1,77 @@
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: ./Backend/activityTracker/Dockerfile
+    container_name: 'api'
+    restart: always
+    ports: 
+      - 8000:8000
+    volumes:
+      - ./Backend/activityTracker:/app
+    depends_on:
+      - postgres-db
+    networks:
+      - my-network
+
+    # Use this for runtime environment args
+    env_file :
+      - .env
+
+    # Or use this for build environment args
+    # environment:
+    #   - DB_HOST=postgres-db
+    # If required use:
+    # profiles: ["dev"]
+
+  frontend:
+    build: 
+      context: .
+      dockerfile: ./FrontEnd/Dockerfile
+    container_name: 'frontend'
+    restart: always
+    ports: 
+      - 5173:5173
+    volumes:
+      - ./FrontEnd/project-manager:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=1000
+    depends_on:
+      - api
+    networks:
+      - my-network
+
+    # Use this for runtime environment args
+    env_file :
+      - .env
+    
+  postgres-db:
+    image: postgres:18
+    restart: unless-stopped
+    container_name: 'postgres-db'
+    volumes: 
+      - postgres_data:/var/lib/postgresql
+    ports:
+      - 5432:5432
+    networks:
+      - my-network
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+volumes:
+  postgres_data:
+    name: postgres_data
+
+networks:
+  my-network:
+    name: my-network
