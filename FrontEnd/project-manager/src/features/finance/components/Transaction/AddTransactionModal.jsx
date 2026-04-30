@@ -28,7 +28,7 @@ export const AddTransactionModal = ({ onClose, onCreate }) => {
       setError('Amount and description are required');
       return;
     }
-    formData.occurred_at = formData?.occurred_at ? `${formData.occurred_at}T00:00:00Z` : new Date();
+    formData.occurred_at = formData?.occurred_at ? `${formData.occurred_at}T00:00:00Z` : '';
 
     try {
       setLoading(true);

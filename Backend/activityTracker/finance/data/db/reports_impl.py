@@ -3,6 +3,7 @@ from django.utils import timezone
 from datetime import date, timedelta
 import calendar
 from finance.models import Transaction
+from django.utils.dateparse import parse_datetime
 
 class ReportsImpl:
     def get_reports(self, search_params, organization=None, role=None):
@@ -152,8 +153,8 @@ class ReportsImpl:
             txn_type = search_params.get('type')
             category_param = search_params.get('category')
             account_param = search_params.get('account')
-            start_date = search_params.get('start_date')
-            end_date = search_params.get('end_date')
+            start_date = parse_datetime(search_params.get('start_date'))
+            end_date = parse_datetime(search_params.get('end_date'))
             group_by = search_params.get('group_by')
 
             queryset = Transaction.objects.filter(organization=organization)
@@ -250,8 +251,8 @@ class ReportsImpl:
         """Return totals grouped by category for a given type/date range."""
         try:
             txn_type = search_params.get('type')
-            start_date = search_params.get('start_date')
-            end_date = search_params.get('end_date')
+            start_date = parse_datetime(search_params.get('start_date'))
+            end_date = parse_datetime(search_params.get('end_date'))
 
             queryset = Transaction.objects.filter(organization=organization)
             queryset = queryset.exclude(category__category_type="transfer")
@@ -295,8 +296,8 @@ class ReportsImpl:
     def get_account_breakdown(self, search_params, organization=None, role=None):
         """Return totals grouped by account including income/expense/net and current balance."""
         try:
-            start_date = search_params.get('start_date')
-            end_date = search_params.get('end_date')
+            start_date = parse_datetime(search_params.get('start_date'))
+            end_date = parse_datetime(search_params.get('end_date'))
 
             queryset = Transaction.objects.filter(organization=organization)
             queryset = queryset.exclude(category__category_type="transfer")

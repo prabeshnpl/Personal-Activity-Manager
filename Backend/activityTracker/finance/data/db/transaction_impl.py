@@ -84,6 +84,8 @@ class TransactionRepositoryImpl(TransactionRepository):
                 elif key=='transaction_type':
                     if value not in ['income', 'expense']:
                         return Response({'detail':"Invalid transaction_type"}, status=400)
+                elif key=='occurred_at':
+                    value = parse_datetime(value)
                 setattr(transaction, key, value)
             
             transaction.save()
