@@ -1,6 +1,15 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useOrganizationStore } from "./organizationStore";
+import { normalizeMediaUrl } from "@/shared/utils/normalizeMediaUrl";
+
+const normalizeUser = (user) => {
+  if (!user) return null;
+  return {
+    ...user,
+    profile_picture: normalizeMediaUrl(user.profile_picture),
+  };
+};
 
 export const useAuthStore = create(
   persist(
@@ -12,7 +21,7 @@ export const useAuthStore = create(
       login: (response) =>
         set({
           accessToken: response?.access,
-          user: response?.user,
+          user: normalizeUser(response?.user),
           isAuthenticated: true,
         }),
 
@@ -34,7 +43,7 @@ export const useAuthStore = create(
       },
 
       updateUser: (user) => {
-        set({ user })
+        set({ user: normalizeUser(user) })
       },
     }),
     {
@@ -44,6 +53,11 @@ export const useAuthStore = create(
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state?.user) {
+          state.user = normalizeUser(state.user);
+        }
+      },
     }
   )
 );

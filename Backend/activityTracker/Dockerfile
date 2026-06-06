@@ -1,20 +1,21 @@
-# Choose base image
-FROM python:3.15.0a7-slim-bookworm
+# Base image with dependencies installed
+FROM python:3.15.0a7-slim-bookworm AS base
 
-# Set working directory inside container
 WORKDIR /app
 
-# Copy files into container
 COPY Backend/activityTracker/requirements.txt ./
-
-# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy rest of the app
 COPY Backend/activityTracker/ ./
 
-# Expose port
-EXPOSE 8000
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# Command to run server
+FROM base AS development
+EXPOSE 8000
 CMD ["python", "-u", "manage.py", "runserver", "0.0.0.0:8000"]
+
+FROM base AS production
+RUN pip install --no-cache-dir gunicorn
+EXPOSE 8000
+CMD ["gunicorn", "activityTracker.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]

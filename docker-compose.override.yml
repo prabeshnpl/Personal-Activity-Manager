@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./Backend/activityTracker/Dockerfile
+      target: development
+    container_name: 'api-dev'
+    restart: always
+    ports:
+      - 8000:8000
+    volumes:
+      - ./Backend/activityTracker:/app
+    depends_on:
+      - postgres-db
+    networks:
+      - my-network
+    env_file:
+      - .env
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./FrontEnd/Dockerfile
+      target: development
+    container_name: 'frontend-dev'
+    restart: always
+    ports:
+      - 5173:5173
+    volumes:
+      - ./FrontEnd/project-manager:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=1000
+    depends_on:
+      - api
+    networks:
+      - my-network

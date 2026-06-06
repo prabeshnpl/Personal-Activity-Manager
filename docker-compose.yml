@@ -1,57 +1,43 @@
+version: "3.9"
+
 services:
   api:
-    build: 
+    build:
       context: .
       dockerfile: ./Backend/activityTracker/Dockerfile
+      target: production
     container_name: 'api'
-    restart: always
-    ports: 
+    restart: unless-stopped
+    ports:
       - 8000:8000
-    volumes:
-      - ./Backend/activityTracker:/app
     depends_on:
       - postgres-db
     networks:
       - my-network
-
-    # Use this for runtime environment args
-    env_file :
+    env_file:
       - .env
 
-    # Or use this for build environment args
-    # environment:
-    #   - DB_HOST=postgres-db
-    # If required use:
-    # profiles: ["dev"]
-
   frontend:
-    build: 
+    build:
       context: .
       dockerfile: ./FrontEnd/Dockerfile
+      target: production
+      args:
+        VITE_API_BASE_URL: "/api/v1"
     container_name: 'frontend'
-    restart: always
-    ports: 
-      - 5173:5173
-    volumes:
-      - ./FrontEnd/project-manager:/app
-      - /app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-      - CHOKIDAR_INTERVAL=1000
+    restart: unless-stopped
+    ports:
+      - 5173:80
     depends_on:
       - api
     networks:
       - my-network
 
-    # Use this for runtime environment args
-    env_file :
-      - .env
-    
   postgres-db:
     image: postgres:18
     restart: unless-stopped
     container_name: 'postgres-db'
-    volumes: 
+    volumes:
       - postgres_data:/var/lib/postgresql
     ports:
       - 5432:5432
@@ -66,7 +52,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
 
 volumes:
   postgres_data:
