@@ -16,12 +16,12 @@ export default defineConfig({
     proxy: {
       "/api": {
         // target: "http://127.0.0.1:8000",
-        target: "http://api:8000",
+        target: process.env.VITE_API_BASE_URL,
         changeOrigin: true,
         secure: false,
       },
       "/media": {
-        target: "http://api:8000",
+        target: process.env.VITE_API_BASE_URL,
         changeOrigin: true,
         secure: false,
       },
