@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------------
 # STAGE 1: Base Image
 # -----------------------------------------------------------------------------
-FROM python:3.14-slim-bookworm
+FROM python:3.14-slim-bookworm AS base
 
 # Set the working directory inside the container.
 WORKDIR /app
@@ -57,12 +57,12 @@ RUN pip install --no-cache-dir gunicorn
 # Application port.
 EXPOSE 8000
 
+# Collecting static files during build
+RUN python manage.py collectstatic --noinput
+
 # Create a non-root user For better security:
 RUN adduser --disabled-password appuser
 USER appuser
-
-# Collecting static files during build
-RUN python manage.py collectstatic --noinput
 
 # Start Gunicorn and bind it to all network interfaces.
 #

@@ -95,8 +95,12 @@ WSGI_APPLICATION = 'activityTracker.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv("POSTGRES_DB"),           # POSTGRES_DB in docker-compose
+        'USER': os.getenv("POSTGRES_USER"),         # POSTGRES_USER in docker-compose
+        'PASSWORD': os.getenv("POSTGRES_PASSWORD"), # POSTGRES_PASSWORD in docker-compose
+        'HOST': 'postgres-db',                      # SERVICE-NAME in docker-compose.yml
+        'PORT': '5432',                             # Default Postgres port
     }
 }
 
@@ -152,9 +156,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
     "https://irate-brunilda-uncaustically.ngrok-free.dev",
     "http://frontend:5173",
-    "http://172.20.0.4:5173/"
+    "http://172.20.0.4:5173"
 ]
 
 CORS_ALLOW_CREDENTIALS = True 
