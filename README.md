@@ -1,9 +1,11 @@
 # Project
 
 - Development: 
-    `docker compose up`
+    `docker compose -p personal-tracker-dev up`
+    `docker compose -p personal-tracker-dev down`
 - Production: 
-    `docker compose -f docker-compose.yml up`
+    `docker compose -p personal-tracker-prod -f docker-compose.yml up`
+    `docker compose -p personal-tracker-prod -f docker-compose.yml down`
 
 This is because -f is used to define which compose file to execute.
 

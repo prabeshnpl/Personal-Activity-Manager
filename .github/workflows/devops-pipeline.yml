@@ -1,0 +1,56 @@
+# 1. Name of your pipeline
+name: App CI/CD Pipeline
+
+# 2. The Trigger Event: Run only when code is pushed to the main branch
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  # JOB 1: Continuous Integration (Testing)
+  run-tests:
+    runs-on: ubuntu-latest # Tells GitHub to give us a fresh Ubuntu machine
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4 # An official action that clones your code onto the runner
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+          # 'uses' is like calling a programming function, 'with' is how you pass arguments/parameters into that function.
+
+      - name: Install App Dependencies
+        run: pip install -r Backend/activityTracker/requirements.txt 
+        # 'run' command directly runs command inside terminal, 
+        # whereas 'uses' uses predefined set of command called actions
+        # (foreg: logging into docker can take very long boilerplate commands)
+
+      - name: Run Test Suite
+        run: pytest # If this fails, the whole pipeline stops right here!
+
+  # JOB 2: Continuous Deployment (Build & Ship)
+  build-and-ship:
+    runs-on: ubuntu-latest
+    needs: run-tests # Crucial: Don't run this job unless 'run-tests' passes successfully!
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3 # Uses GitHub's official Docker login tool
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }} # Automatically grabs your GitHub username
+          password: ${{ secrets.GITHUB_TOKEN }} # An automated, temporary password given by GitHub
+
+      # Use Bake to parse the compose file and build/push with cache
+      - name: Build and Push Production via Bake
+        uses: docker/bake-action@v3
+        with:
+          files: docker-compose.yml # Targets ONLY your production file
+          push: true
+          set: |
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=max

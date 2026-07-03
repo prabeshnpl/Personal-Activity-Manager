@@ -153,8 +153,8 @@ class ReportsImpl:
             txn_type = search_params.get('type')
             category_param = search_params.get('category')
             account_param = search_params.get('account')
-            start_date = parse_datetime(search_params.get('start_date'))
-            end_date = parse_datetime(search_params.get('end_date'))
+            start_date = search_params.get('start_date') 
+            end_date = search_params.get('end_date') 
             group_by = search_params.get('group_by')
 
             queryset = Transaction.objects.filter(organization=organization)
@@ -175,8 +175,10 @@ class ReportsImpl:
                 except ValueError:
                     pass
             if start_date:
+                start_date = parse_datetime(start_date)
                 queryset = queryset.filter(occurred_at__date__gte=start_date)
             if end_date:
+                end_date = parse_datetime(end_date)
                 queryset = queryset.filter(occurred_at__date__lte=end_date)
 
             # retrieve ordered transactions and prefetch related to avoid N+1
