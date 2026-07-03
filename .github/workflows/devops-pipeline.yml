@@ -28,7 +28,9 @@ jobs:
         # (foreg: logging into docker can take very long boilerplate commands)
 
       - name: Run Test Suite
-        run: pytest # If this fails, the whole pipeline stops right here!
+        run: python Backend/activityTracker/manage.py test
+        env:
+          PYTHONPATH: Backend/activityTracker # If this fails, the whole pipeline stops right here!
 
   # JOB 2: Continuous Deployment (Build & Ship)
   build-and-ship:
