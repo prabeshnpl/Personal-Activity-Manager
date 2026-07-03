@@ -58,6 +58,9 @@ jobs:
           DB_PORT=${{ secrets.DB_PORT }}
           EOF
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
       # Use Bake to parse the compose file and build/push with cache
       - name: Build and Push Production via Bake
         uses: docker/bake-action@v7
