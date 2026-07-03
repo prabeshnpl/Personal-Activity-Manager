@@ -53,19 +53,10 @@ jobs:
           cat > .env << EOF
           POSTGRES_DB=${{ secrets.POSTGRES_DB }}
           POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD=${ets.{ secrets.POSTGRES_PASSWORD }}
-          DB_HOST=${{ secrDB_HOST }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          DB_HOST=${{ secrets.DB_HOST }}
           DB_PORT=${{ secrets.DB_PORT }}
           EOF
-
-      - name: Build and Push Production via Bake
-        uses: docker/bake-action@v3
-        with:
-          files: docker-compose.yml
-          push: true
-          set: |
-            *.cache-from=type=gha
-            *.cache-to=type=gha,mode=max
 
       # Use Bake to parse the compose file and build/push with cache
       - name: Build and Push Production via Bake
