@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest # Tells GitHub to give us a fresh Ubuntu machine
     steps:
       - name: Checkout repository code
-        uses: actions/checkout@v4 # An official action that clones your code onto the runner
+        uses: actions/checkout@v6 # An official action that clones your code onto the runner
 
       - name: Set up Python environment
         uses: actions/setup-python@v5
@@ -39,7 +39,7 @@ jobs:
     needs: run-tests # Crucial: Don't run this job unless 'run-tests' passes successfully!
     steps:
       - name: Checkout repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Log in to GHCR
         uses: docker/login-action@v3 # Uses GitHub's official Docker login tool
@@ -50,7 +50,7 @@ jobs:
 
       # Use Bake to parse the compose file and build/push with cache
       - name: Build and Push Production via Bake
-        uses: docker/bake-action@v3
+        uses: docker/bake-action@v7
         with:
           files: docker-compose.yml # Targets ONLY your production file
           push: true
