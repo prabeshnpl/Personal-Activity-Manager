@@ -93,23 +93,21 @@ WSGI_APPLICATION = 'activityTracker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv("POSTGRES_DB"),           # POSTGRES_DB in docker-compose
+        'USER': os.getenv("POSTGRES_USER"),         # POSTGRES_USER in docker-compose
+        'PASSWORD': os.getenv("POSTGRES_PASSWORD"), # POSTGRES_PASSWORD in docker-compose
+        'HOST': 'postgres-db',                      # SERVICE-NAME in docker-compose.yml
+        'PORT': '5432',                             # Default Postgres port
+    }
+}
 if os.getenv('ENVIRONMENT') == 'testing':
-    DATABASES = {
+    DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': ':memory:',  # In-memory SQLite for fast tests
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv("POSTGRES_DB"),           # POSTGRES_DB in docker-compose
-            'USER': os.getenv("POSTGRES_USER"),         # POSTGRES_USER in docker-compose
-            'PASSWORD': os.getenv("POSTGRES_PASSWORD"), # POSTGRES_PASSWORD in docker-compose
-            'HOST': 'postgres-db',                      # SERVICE-NAME in docker-compose.yml
-            'PORT': '5432',                             # Default Postgres port
-        }
-    }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
