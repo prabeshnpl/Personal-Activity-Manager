@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: ./Backend/activityTracker/Dockerfile
       target: production
+    image: ghcr.io/prabeshnpl/tracker-backend:latest
     container_name: 'api'
     restart: unless-stopped
     ports:
@@ -22,6 +23,7 @@ services:
       target: production
       args:
         VITE_API_BASE_URL: "/api/v1"
+    image: ghcr.io/prabeshnpl/tracker-frontend:latest
     container_name: 'frontend'
     restart: unless-stopped
     ports:
