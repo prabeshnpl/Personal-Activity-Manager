@@ -1,0 +1,18 @@
+services:
+  api:
+    build:
+      target: production
+    image: ghcr.io/prabeshnpl/tracker-backend:latest
+    container_name: 'api-prod'
+    restart: unless-stopped
+
+  frontend:
+    build:
+      target: production
+    ports:
+      - 5173:80
+    image: ghcr.io/prabeshnpl/tracker-frontend:latest
+    container_name: 'frontend-prod'
+    restart: unless-stopped
+
+  

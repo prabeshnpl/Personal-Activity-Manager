@@ -24,12 +24,12 @@
 
 # Pull repo from Github and run
 
-- Development: 
-    - `docker compose -p personal-tracker-dev up`
-    - `docker compose -p personal-tracker-dev down`
+- Development(default loads override): 
+    - `docker compose up`
+    - `docker compose down`
 - Production: 
-    - `docker compose -p personal-tracker-prod -f docker-compose.yml up`
-    - `docker compose -p personal-tracker-prod -f docker-compose.yml down`
+    - `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d`
+    - `docker-compose -f docker-compose.yml -f docker-compose.prod.yml down`
 
 This is because `-f` is used to define which compose file to execute.
 
@@ -45,18 +45,14 @@ For Example:
 ```
 docker run --rm `
 -v postgres_data:/volume `
--v ${PWD}:/backup `
+-v ${pwd}:/backup `
 ubuntu `
 tar czf /backup/backup.tar.gz /volume
 ```
 
 ## Restore db
 ```
-docker run --rm \ `
--v postgres_data:/volume \ `
--v $(pwd):/backup \
-ubuntu \ `
-tar xzf /backup/backup.tar.gz -C /
+docker run --rm -v postgres_data:/volume -v ${PWD}:/backup ubuntu tar xzf /backup/backup.tar.gz -C /volume
 ```
 
 ## Transfer from db.sqlite3 into postgres

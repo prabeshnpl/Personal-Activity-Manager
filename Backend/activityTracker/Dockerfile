@@ -6,6 +6,11 @@ FROM python:3.14-slim-bookworm AS base
 # Set the working directory inside the container.
 WORKDIR /app
 
+# Install netcat
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends netcat-openbsd && \
+    rm -rf /var/lib/apt/lists/*
+
 # Copy dependency files into container
 COPY Backend/activityTracker/requirements.txt ./
 
@@ -34,10 +39,6 @@ FROM base AS development
 # Django development server port.
 EXPOSE 8000
 
-# Start Django development server.
-# -u ensures unbuffered output for real-time logs.
-CMD ["python", "-u", "manage.py", "runserver", "0.0.0.0:8000"]
-
 
 # -----------------------------------------------------------------------------
 # STAGE 3: Production Environment
@@ -57,22 +58,6 @@ RUN pip install --no-cache-dir gunicorn
 # Application port.
 EXPOSE 8000
 
-# Collecting static files during build
-RUN python manage.py collectstatic --noinput
-
 # Create a non-root user For better security:
 RUN adduser --disabled-password appuser
 USER appuser
-
-# Start Gunicorn and bind it to all network interfaces.
-#
-# Workers:
-#   3 worker processes handle incoming requests.
-#   Adjust based on CPU resources and application workload.
-#
-# WSGI module:
-#   activityTracker.wsgi:application
-#   -> project_name/wsgi.py
-#
-
-CMD ["gunicorn", "activityTracker.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]

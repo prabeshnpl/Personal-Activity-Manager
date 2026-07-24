@@ -3,14 +3,16 @@ services:
     build:
       context: .
       dockerfile: ./Backend/activityTracker/Dockerfile
-      target: production
-    image: ghcr.io/prabeshnpl/tracker-backend:latest
-    container_name: 'api'
-    restart: unless-stopped
     ports:
       - 8000:8000
+    command: ["sh", "/app/wsgi-entrypoint.sh"]
     depends_on:
-      - postgres-db
+      postgres-db:
+        condition: service_healthy
+        required: true
+      redis:
+        condition: service_started
+        required: true
     networks:
       - my-network
     env_file:
@@ -20,14 +22,8 @@ services:
     build:
       context: .
       dockerfile: ./FrontEnd/Dockerfile
-      target: production
       args:
-        VITE_API_BASE_URL: "/api/v1"
-    image: ghcr.io/prabeshnpl/tracker-frontend:latest
-    container_name: 'frontend'
-    restart: unless-stopped
-    ports:
-      - 5173:80
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
     depends_on:
       - api
     networks:
@@ -52,6 +48,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - my-network
 
 volumes:
   postgres_data:
