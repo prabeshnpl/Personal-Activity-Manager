@@ -6,6 +6,7 @@ import { MilestonesList } from '../milestone/MilestoneList';
 import { NotesSection } from '../note/NotesSection';
 import { Target, CheckCircle2, BookOpen } from 'lucide-react';
 import { Button } from '../../../../shared/components/Button';
+import { ConfirmationDialog } from '../../../../shared/components/ConfirmationDialog';
 import { MarkdownContent } from '../../../../shared/components/MarkdownContent';
 import { useMilestone } from '../../hooks/useMilestone';
 import { useRoadmapNotes } from '../../hooks/useRoadmapNotes';
@@ -21,6 +22,7 @@ export const RoadmapDetailModal = ({
   const [activeTab, setActiveTab] = useState('overview');
   const [showAddMilestone, setShowAddMilestone] = useState(false);
   const [showAddNote, setShowAddNote] = useState(false);
+  const [showCompleteConfirmation, setShowCompleteConfirmation] = useState(false);
   const [editingNote, setEditingNote] = useState(null);
   const { 
     createMilestone, 
@@ -93,6 +95,11 @@ export const RoadmapDetailModal = ({
 
   const addButtonLabel = activeTab === 'milestones' ? 'Add Milestone' : 'Add Note';
 
+  const handleCompleteConfirmation = () => {
+    onUpdate.mutate({ id: roadmap.id, data: { status: 'completed' } });
+    setShowCompleteConfirmation(false);
+  };
+
   return (
     <div 
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4" 
@@ -160,7 +167,7 @@ export const RoadmapDetailModal = ({
                     </span>
                     <Button
                       size="sm"
-                      onClick={() => onUpdate.mutate({ id: roadmap.id, data: { status: 'completed' } })}
+                      onClick={() => setShowCompleteConfirmation(true)}
                       disabled={currentStatus !== 'active' || onUpdate.isPending}
                     >
                       {onUpdate.isPending ? 'Marking...' : 'Mark as Completed'}
@@ -216,6 +223,16 @@ export const RoadmapDetailModal = ({
             }}
             onCreate={createNote}
             onUpdate={updateNote}
+          />
+        )}
+
+        {showCompleteConfirmation && (
+          <ConfirmationDialog
+            title="Complete roadmap?"
+            message="Are you sure you want to mark this roadmap as completed?"
+            confirmLabel="Mark as Completed"
+            onConfirm={handleCompleteConfirmation}
+            onCancel={() => setShowCompleteConfirmation(false)}
           />
         )}
       </div>

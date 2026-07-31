@@ -8,11 +8,11 @@ class AccountRepositoryImpl(AccountRepository):
     def list_accounts(self, search_params: dict, organization:int, role:str) -> List[AccountEntity] | Response:
         try:
             accounts = Account.objects.filter(organization=organization)
-
-            return [self.to_entity(account) for account in accounts]
         except Exception as e:
             print(f"Error occured in fetching accounts:{repr(e)}")
             return Response({'detail':f"{str(e)}"}, status=500)
+        else:
+            return [self.to_entity(account) for account in accounts]
         
     def create_account(self, data: dict, organization:int, role:str) -> AccountEntity | Response:
         try:
