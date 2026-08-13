@@ -14,6 +14,7 @@ class NotificationRepositoryImpl(NotificationRepository):
             filtered_data = {k: v for k, v in data.items() if k in field_names}
             
             instance =  Notification(**filtered_data)
+            instance.save()
 
             return self.to_entity(instance), 200
         except Exception as e:
@@ -55,7 +56,7 @@ class NotificationRepositoryImpl(NotificationRepository):
     def mark_all_as_read_notification(self, user_id:int, organization:int) -> Optional[NotificationEntity]:
         try:
 
-            count = Notification.objects.filter(recipient=user_id, organization=organization).update(is_read=True)
+            count = Notification.objects.filter(recipient_id=user_id, organization_id=organization).update(is_read=True)
 
             response = {
                 "updated_count": count,
@@ -67,7 +68,11 @@ class NotificationRepositoryImpl(NotificationRepository):
 
     def unread_notification_count(self, user_id:int, organization_id:int):
         try:
-            count = Notification.objects.filter(recepient_id=user_id, organization_id=organization_id, is_read=False)
+            count = Notification.objects.filter(
+                recipient_id=user_id, 
+                organization_id=organization_id, 
+                is_read=False
+            ).count()
             response = {
                 "count": count,
             }
@@ -78,7 +83,7 @@ class NotificationRepositoryImpl(NotificationRepository):
     def clear_read_notification(self, user_id:int, organization_id:int):
         try:
             count, _ = Notification.objects.filter(
-                recepient_id=user_id, 
+                recipient_id=user_id, 
                 organization_id=organization_id, 
                 is_read=True
             ).delete()
@@ -92,7 +97,7 @@ class NotificationRepositoryImpl(NotificationRepository):
     
     def delete_notification(self, id:int, user_id:int, organization_id:int) -> Optional[NotificationEntity]:
         try:
-            instance =  Notification.objects.filter(id=id, recepient_id=user_id, organization_id=organization_id).first()
+            instance =  Notification.objects.filter(id=id, recipient_id=user_id, organization_id=organization_id).first()
             if instance:
                 instance.delete()
                 return (f"Deleted Successfully", 204)
@@ -104,8 +109,8 @@ class NotificationRepositoryImpl(NotificationRepository):
     def list_notifications(self, search_params: dict) -> Optional[List[NotificationEntity]]:
         try:
             instances = Notification.objects.filter(
-                recipient=search_params.get("user"),
-                organization=search_params.get("organization")
+                recipient_id=search_params.get("user").id,
+                organization_id=search_params.get("organization").id
             ).order_by('-id')
 
             return [self.to_entity(instance) for instance in instances], 200

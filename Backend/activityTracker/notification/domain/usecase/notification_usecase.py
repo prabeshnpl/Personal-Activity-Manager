@@ -23,8 +23,11 @@ class MarkAsReadNotificationUseCase:
         self.repo = repo
 
     def execute(self, data: dict) -> Optional[tuple[dict,int]]:
+        id = data.get("id")
+        if not id:
+            return ({"Detail":"Invalid ID"}, 400)
         return self.repo.mark_as_read_notification(
-            id=data.get("id"),
+            id=id,
             user_id=data.get('user_id'), 
             organization_id=data.get('organization_id')
         )
@@ -66,8 +69,11 @@ class DeleteNotificationUseCase:
         self.repo = repo
 
     def execute(self, data: dict) -> Optional[tuple[dict, int]]:
+        id = data.get("id")
+        if not id:
+            return ({"Detail":"Invalid ID"}, 400)
         return self.repo.delete_notification(
-            id=data.get("id"),
+            id=id,
             user_id=data.get('user_id'), 
             organization_id=data.get('organization_id')
         )
