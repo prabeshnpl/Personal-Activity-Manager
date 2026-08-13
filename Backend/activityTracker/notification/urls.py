@@ -11,5 +11,5 @@ router.register(r'fcm-device', CustomFCMDeviceViewSet, basename='fcm-device')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('testnotificaiton/', TestPushNotification.as_view(), name="jop" ),
+    path('testnotification/', TestPushNotification.as_view(), name="jop" ),
 ]

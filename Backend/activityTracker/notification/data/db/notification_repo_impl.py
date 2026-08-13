@@ -1,5 +1,5 @@
 from typing import Optional, List
-from Backend.activityTracker.notification.models import Notification
+from notification.models import Notification
 from notification.domain.repository.notification_repo import NotificationRepository
 from notification.domain.entity.notification_entity import NotificationEntity
 
