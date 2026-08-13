@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useAuthStore } from '../../stores/authStore';
-import { OrganizationSwitcher } from '../../features/dashboard/components/OrganizationSwitcher';
-import { Bell, User, LogOut, Settings, Menu } from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
+import { OrganizationSwitcher } from '@/features/dashboard/components/OrganizationSwitcher';
+import { NotificationBell } from '@/features/notification/components/NotificationBell';
+import { User, LogOut, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-export const TopBar = ({ onToggleSidebar }) => {
+export const TopBar = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -21,52 +22,26 @@ export const TopBar = ({ onToggleSidebar }) => {
     return user?.email?.substring(0, 2).toUpperCase() || 'U';
   };
 
-  const getFullName = () => {
-    if (user?.first_name && user?.last_name) {
-      return `${user.first_name} ${user.last_name}`;
-    }
-    return user?.email || 'User';
-  };
-
   return (
-    <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+    <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 flex items-center justify-between">
       <div className="flex items-center space-x-4">
-        <button onClick={onToggleSidebar} className="p-2 rounded-lg hover:bg-gray-100 md:hidden">
-          <Menu className="h-5 w-5 text-gray-700" />
-        </button>
-        <h1 className="text-2xl font-bold text-blue-600">OrgManager</h1>
-        <div className="hidden sm:block">
-          <OrganizationSwitcher />
-        </div>
+        <h1 className="text-xl sm:text-2xl font-bold text-blue-600">OrgManager</h1>
+        <OrganizationSwitcher />
       </div>
 
-      <div className="flex items-center space-x-4">
-        {/* Notifications */}
-        <button className="p-2 rounded-lg hover:bg-gray-100 relative">
-          <Bell className="h-5 w-5 text-gray-600 cursor-pointer" />
-          <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
-        </button>
+      <div className="flex items-center space-x-2 sm:space-x-4">
+        {/* Notification Bell */}
+        <NotificationBell />
 
         {/* User Menu */}
         <div className="relative">
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer"
+            className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100"
           >
-            {user?.profile_picture ? (
-              <img
-                src={user.profile_picture}
-                alt="Profile"
-                className="h-8 w-8 rounded-full object-cover"
-              />
-            ) : (
-              <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
-                {getInitials()}
-              </div>
-            )}
-            <span className="text-sm font-medium text-gray-700 hidden sm:block">
-              {getFullName()}
-            </span>
+            <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
+              {getInitials()}
+            </div>
           </button>
 
           {showUserMenu && (

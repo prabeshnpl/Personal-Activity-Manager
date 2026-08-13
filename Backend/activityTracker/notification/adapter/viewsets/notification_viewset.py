@@ -28,12 +28,12 @@ class NotificationViewet(BaseTenantModelViewSet):
         search_params['user'] = request.user
         search_params['organization'] = request.organization
 
-        response, status_code = usecase.execute(search_params=search_params)
+        _response, status_code = usecase.execute(search_params=search_params)
 
         if status_code!=200:
-            return Response(response, status=int(status_code))
+            return Response(_response, status=int(status_code))
         
-        page = self.paginate_queryset(response)
+        page = self.paginate_queryset(_response)
 
         serializer = self.get_serializer(
             page, many=True,
@@ -44,7 +44,7 @@ class NotificationViewet(BaseTenantModelViewSet):
         )
 
         response = self.get_paginated_response(serializer.data)
-        response.data['count'] = len(entities)
+        response.data['count'] = len(_response)
         return response
        
     def destroy(self, request, *args, **kwargs):
