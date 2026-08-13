@@ -101,7 +101,7 @@ class NotificationViewet(BaseTenantModelViewSet):
 
         return Response(data=response, status=status_code)
 
-    @action(methods=['POST'], detail=False, url_path="unread-count")
+    @action(methods=['GET'], detail=False, url_path="unread-count")
     def unread_count(self, request, *args, **kwargs):
         data = {
             "organization_id":request.organization.id,
