@@ -5,8 +5,8 @@ class NotificationEntity:
     def __init__(
         self,
         id: int,
-        organization: int,
-        recipient: int,
+        organization_id: int,
+        recipient_id: int,
         notification_type: str,
         title: str,
         message: str,
@@ -16,8 +16,8 @@ class NotificationEntity:
         created_at: Optional[datetime] = None,
     ):
         self.id = id
-        self.organization = organization
-        self.recipient = recipient
+        self.organization_id = organization_id
+        self.recipient_id = recipient_id
         self.notification_type = notification_type
         self.title = title
         self.message = message

@@ -13,11 +13,11 @@ class NotificationRepository(ABC):
         pass
 
     @abstractmethod
-    def mark_as_read_notification(self, user_id:int, organization:int) -> Optional[NotificationEntity]:
+    def mark_as_read_notification(self, id:int, user_id:int, organization_id:int) -> Optional[NotificationEntity]:
         pass
 
     @abstractmethod
-    def mark_all_as_read_notification(self,  user_id:int, organization:int) -> Optional[NotificationEntity]:
+    def mark_all_as_read_notification(self,  user_id:int, organization_id:int) -> Optional[NotificationEntity]:
         pass
 
     @abstractmethod

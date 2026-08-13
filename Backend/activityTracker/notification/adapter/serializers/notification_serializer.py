@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from notification.models import Notification
+from notification.domain.entity.notification_entity import NotificationEntity
 
 class NotificationSerializer(serializers.Serializer):
-    class Meta:
-        model = Notification
-        fields = '__all__'
+    def to_representation(self, instance: NotificationEntity):
+        return instance.__dict__

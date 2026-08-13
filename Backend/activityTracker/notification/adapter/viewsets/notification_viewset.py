@@ -23,17 +23,20 @@ class NotificationViewet(BaseTenantModelViewSet):
         search_params['organization'] = request.organization
         response, status_code = usecase.execute(search_params=search_params)
 
+        serializer = self.get_serializer(response, many=True)
+
         if status_code!=200:
             return Response(response, status=int(status_code))
        
-        return Response(self.get_serializer(response, many=True).data, status=int(status_code))
+        return Response(serializer.data, status=int(status_code))
 
     @action(methods=['POST'], detail=True, url_path="mark_as_read")
     def mark_as_read(self, request, *args, **kwargs):
+        
         data = {
             "id": kwargs.get("pk"),
-            "organization":request.organization,
-            "role":request.role
+            "organization_id":request.organization.id,
+            "user_id":request.user.id
         }
 
         usecase = MarkAsReadNotificationUseCase(repo=self.repository())
@@ -45,8 +48,8 @@ class NotificationViewet(BaseTenantModelViewSet):
     @action(methods=['POST'], detail=False, url_path="mark_all_as_read")
     def mark_all_as_read(self, request, *args, **kwargs):
         data = {
-            "organization":request.organization,
-            "role":request.role
+            "organization_id":request.organization.id,
+            "user_id":request.user.id
         }
 
         usecase = MarkAllAsReadNotificationUseCase(repo=self.repository())

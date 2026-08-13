@@ -28,10 +28,10 @@ class NotificationRepositoryImpl(NotificationRepository):
         except Exception as e:
             return (f"Error : {str(e)}", 500)
 
-    def mark_as_read_notification(self, user_id:int, organization:int) -> Optional[NotificationEntity]:
+    def mark_as_read_notification(self, id:int, user_id:int, organization_id:int) -> Optional[NotificationEntity]:
         try:
 
-            instance =  Notification.objects.filter(id=id, recipient=user_id, organization=organization).first()
+            instance =  Notification.objects.filter(id=id, recipient_id=user_id, organization_id=organization_id).first()
 
             if not instance:
                 return ("Invalid notification id", 400)
@@ -66,7 +66,7 @@ class NotificationRepositoryImpl(NotificationRepository):
     def list_notifications(self, search_params: dict) -> Optional[List[NotificationEntity]]:
         try:
             instances = Notification.objects.filter(
-                recipient=search_params.get("user_id"),
+                recipient=search_params.get("user"),
                 organization=search_params.get("organization")
             ).order_by('-id')
 
@@ -75,7 +75,8 @@ class NotificationRepositoryImpl(NotificationRepository):
         except Exception as e:
             return (f"Error : {str(e)}", 500)
 
-    def to_entity(obj:Notification):
-        return NotificationEntity(**obj.__dict__)
+    def to_entity(self, obj:Notification):
+        data = {k : v for k,v in obj.__dict__.items() if not k.startswith('_')}
+        return NotificationEntity(**data)
         
 

@@ -23,14 +23,24 @@ class MarkAsReadNotificationUseCase:
         self.repo = repo
 
     def execute(self, data: dict) -> Optional[tuple[str,int]]:
-        return self.repo.mark_as_read_notification(id=data.id, user_id=data.user_id, organization=data.organization)
+        response, status = self.repo.mark_as_read_notification(
+            id=data.get("id"),
+            user_id=data.get('user_id'), 
+            organization_id=data.get('organization_id')
+        )
+        return ({'detail':response}, status)
+
 
 class MarkAllAsReadNotificationUseCase:
     def __init__(self, repo: NotificationRepository):
         self.repo = repo
 
-    def execute(self, id: int, data: dict) -> Optional[tuple[str,int]]:
-        return self.repo.mark_all_as_read_notification(user_id=data.user_id, organization=data.organization)
+    def execute(self, data: dict) -> Optional[tuple[str,int]]:
+        response, status = self.repo.mark_all_as_read_notification(
+            user_id=data.get('user_id'), 
+            organization_id=data.get('organization_id')
+        )
+        return ({'detail':response}, status)
 
 
 class DeleteNotificationUseCase:
