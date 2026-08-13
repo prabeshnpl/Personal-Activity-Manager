@@ -22,33 +22,45 @@ class MarkAsReadNotificationUseCase:
     def __init__(self, repo: NotificationRepository):
         self.repo = repo
 
-    def execute(self, data: dict) -> Optional[tuple[str,int]]:
-        response, status = self.repo.mark_as_read_notification(
+    def execute(self, data: dict) -> Optional[tuple[dict,int]]:
+        return self.repo.mark_as_read_notification(
             id=data.get("id"),
             user_id=data.get('user_id'), 
             organization_id=data.get('organization_id')
         )
-        return ({'detail':response}, status)
 
 
 class MarkAllAsReadNotificationUseCase:
     def __init__(self, repo: NotificationRepository):
         self.repo = repo
 
-    def execute(self, data: dict) -> Optional[tuple[str,int]]:
-        response, status = self.repo.mark_all_as_read_notification(
+    def execute(self, data: dict) -> Optional[tuple[dict,int]]:
+        return self.repo.mark_all_as_read_notification(
             user_id=data.get('user_id'), 
             organization_id=data.get('organization_id')
         )
-        return ({'detail':response}, status)
 
+class ClearReadNotificationUsecase:
+    def __init__(self, repo: NotificationRepository):
+            self.repo = repo
+    
+    def execute(self, data: dict) -> Optional[tuple[dict, int]]:
+        return self.repo.clear_read_notification(
+            id=data.get("id"),
+            user_id=data.get('user_id'), 
+            organization_id=data.get('organization_id')
+        )
 
 class DeleteNotificationUseCase:
     def __init__(self, repo: NotificationRepository):
         self.repo = repo
 
-    def execute(self, id: int) -> Optional[tuple[str, int]]:
-        return self.repo.delete_notification(id=id)
+    def execute(self, data: dict) -> Optional[tuple[dict, int]]:
+        return self.repo.delete_notification(
+            id=data.get("id"),
+            user_id=data.get('user_id'), 
+            organization_id=data.get('organization_id')
+        )
 
 
 class ListNotificationsUseCase:

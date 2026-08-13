@@ -39,27 +39,47 @@ class NotificationRepositoryImpl(NotificationRepository):
             instance.is_read = True
             instance.save()            
 
-            return ("Success", 200)
+            response = {
+                "id": id,
+                "is_read": True,
+                "message": "Notification marked as read"
+            }
+            return (response, 200)
         except Exception as e:
             return (f"Error : {str(e)}", 500)
 
     def mark_all_as_read_notification(self, user_id:int, organization:int) -> Optional[NotificationEntity]:
         try:
 
-            Notification.objects.filter(recipient=user_id, organization=organization).update(is_read=True)
+            count = Notification.objects.filter(recipient=user_id, organization=organization).update(is_read=True)
 
-            return ("Success", 200)
+            response = {
+                "updated_count": count,
+                "message": "All notifications marked as read"
+            }
+            return (response, 200)
         except Exception as e:
             return (f"Error : {str(e)}", 500)
 
-    def delete_notification(self, id: int) -> Optional[NotificationEntity]:
+    def clear_read_notification(self, user_id:int, organization_id:int):
         try:
-            instance =  Notification.objects.get(id=id)
+            count, _ = Notification.objects.filter(recepient_id=user_id, organization_id=organization_id).delete()
+            response = {
+                "deleted_count": count,
+                "message": "Read notifications cleared"
+            }
+            return (response, 200)
+        except Exception as e:
+            return (f"Error : {str(e)}", 500)
+    
+    def delete_notification(self, id:int, user_id:int, organization_id:int) -> Optional[NotificationEntity]:
+        try:
+            instance =  Notification.objects.filter(id=id, recepient_id=user_id, organization_id=organization_id).first()
             if instance:
                 instance.delete()
-                return f"Deleted Successfully", 200
+                return (f"Deleted Successfully", 204)
             else:
-                return f"Invalid instance id.", 400
+                return (f"Invalid instance id.", 400)
         except Exception as e:
             return (f"Error : {str(e)}", 500)
 

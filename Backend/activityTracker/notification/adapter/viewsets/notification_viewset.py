@@ -1,5 +1,8 @@
 from notification.adapter.serializers.notification_serializer import NotificationSerializer
-from notification.domain.usecase.notification_usecase import ListNotificationsUseCase, MarkAllAsReadNotificationUseCase, MarkAsReadNotificationUseCase
+from notification.domain.usecase.notification_usecase import (
+    ClearReadNotificationUsecase, DeleteNotificationUseCase, ListNotificationsUseCase, 
+    MarkAllAsReadNotificationUseCase, MarkAsReadNotificationUseCase
+)
 from notification.data.db.notification_repo_impl import NotificationRepositoryImpl
 from utils.tenantViewsets import BaseTenantModelViewSet
 from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
@@ -30,6 +33,19 @@ class NotificationViewet(BaseTenantModelViewSet):
        
         return Response(serializer.data, status=int(status_code))
 
+    def destroy(self, request, *args, **kwargs):
+
+        usecase = DeleteNotificationUseCase(repo=self.repository())
+
+        data = {
+            "id": kwargs.get("pk"),
+            "organization_id":request.organization.id,
+            "user_id":request.user.id
+        }
+        response, status_code = usecase.execute(data=data)
+
+        return Response(response,status=status_code)
+
     @action(methods=['POST'], detail=True, url_path="mark_as_read")
     def mark_as_read(self, request, *args, **kwargs):
         
@@ -53,6 +69,19 @@ class NotificationViewet(BaseTenantModelViewSet):
         }
 
         usecase = MarkAllAsReadNotificationUseCase(repo=self.repository())
+
+        response, status_code = usecase.execute(data=data)
+
+        return Response(data=response, status=status_code)
+
+    @action(methods=['POST'], detail=False, url_path="clear-read")
+    def clear_read(self, request, *args, **kwargs):
+        data = {
+            "organization_id":request.organization.id,
+            "user_id":request.user.id
+        }
+
+        usecase = ClearReadNotificationUsecase(repo=self.repository())
 
         response, status_code = usecase.execute(data=data)
 

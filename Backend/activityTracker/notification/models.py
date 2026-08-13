@@ -6,10 +6,36 @@ from user.models import CustomUser
 
 
 class Notification(models.Model):
+
     NOTIFICATION_TYPE_CHOICES = (
-        ('task_deadline', 'Task Deadline'),
-        ('roadmap_delay', 'Roadmap Delay'),
+        # Task-related notifications
+        ('task_delay', 'Task Delay'),
+        ('task_assigned', 'Task Assigned'),
+        ('task_completed', 'Task Completed'),
+
+        # Finance-related notifications
         ('finance_alert', 'Finance Alert'),
+        ('budget_exceeded', 'Budget Exceeded'),
+        ('transaction_added', 'Transaction Added'),
+
+        # Roadmap-related notifications
+        ('roadmap_milestone', 'Roadmap Milestone'),
+        ('roadmap_delayed', 'Roadmap Delayed'),
+
+        # Member/organization notifications
+        ('member_invited', 'Member Invited'),
+        ('member_joined', 'Member Joined'),
+        ('role_changed', 'Role Changed'),
+        ('organization_updated', 'Organization Updated'),
+    )
+
+    SOURCE_TYPE_CHOICES = (
+        ('TASK', 'Task'),
+        ('FINANCE', 'Finance'),
+        ('ROADMAP', 'Roadmap'),
+        ('MILESTONE', 'Milestone'),
+        ('ORGANIZATION', 'Organization'),
+        ('MEMBER', 'Member'),
     )
 
     organization = models.ForeignKey(
@@ -32,7 +58,11 @@ class Notification(models.Model):
     title = models.CharField(max_length=255)
     message = models.TextField()
 
-    source_type = models.CharField(max_length=64)
+    source_type = models.CharField(
+        max_length=64,
+        choices=SOURCE_TYPE_CHOICES
+    )
+    
     source_id = models.PositiveIntegerField()
 
     is_read = models.BooleanField(default=False)

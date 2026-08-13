@@ -37,4 +37,8 @@ export const ENDPOINTS = {
 
   //MILESTONE
   MILESTONE: '/milestone',
+
+  // Notifications
+  NOTIFICATIONS: '/notification', 
+
 };
