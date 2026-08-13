@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'finance',
     'notification',
     'roadmap',
-    
+    'fcm_django'
     
 ]
 
@@ -227,4 +227,19 @@ REST_FRAMEWORK = {
         "%Y-%m-%dT%H:%M:%SZ",
     ],
     "EXCEPTION_HANDLER": "utils.drf_default_response.custom_exception_handler"
+}
+
+# FCM configuration
+
+import firebase_admin  # type: ignore
+from firebase_admin import credentials # type: ignore
+
+cred = credentials.Certificate(os.path.join(BASE_DIR, 'firebase/serviceAccountKey.json'))
+FIREBASE_APP = firebase_admin.initialize_app(cred)
+
+FCM_DJANGO_SETTINGS = {
+    "DEFAULT_FIREBASE_APP": FIREBASE_APP,
+    "ONE_DEVICE_PER_USER": False,
+    "DELETE_INACTIVE_DEVICES": True,
+    "APP_VERBOSE_NAME": "FCM_DEVICES", # default: _('FCM Django')
 }

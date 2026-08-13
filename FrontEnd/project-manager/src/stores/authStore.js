@@ -17,6 +17,7 @@ export const useAuthStore = create(
       accessToken: null,
       user: null,
       isAuthenticated: false,
+      fcm_token: null,
 
       login: (response) =>
         set({
@@ -31,6 +32,8 @@ export const useAuthStore = create(
           isAuthenticated: !!accessToken || state.isAuthenticated,
         })),
 
+      setFCMToken: (fcm_token) => set({fcm_token}),
+
       logout: () => {
         // Clear organization store on logout
         useOrganizationStore.getState().clearOrganizations();
@@ -39,6 +42,7 @@ export const useAuthStore = create(
           accessToken: null,
           user: null,
           isAuthenticated: false,
+          fcm_token: null
         });
       },
 
@@ -52,6 +56,7 @@ export const useAuthStore = create(
         accessToken: state.accessToken,
         user: state.user,
         isAuthenticated: state.isAuthenticated,
+        fcm_token: state.fcm_token
       }),
       onRehydrateStorage: () => (state) => {
         if (state?.user) {

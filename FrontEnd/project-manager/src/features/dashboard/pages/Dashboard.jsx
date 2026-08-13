@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useOrganizationstore } from '../../organization/hooks/useOrganizationstore';
 import { StatsCard } from '../components/StatsCard';
 import { QuickActions } from '../components/QuickActions';
@@ -8,10 +8,17 @@ import { CheckSquare, Map, Wallet, TrendingUp } from 'lucide-react';
 import { useDashboard } from '../hooks/useDashboard';
 import { DashboardHealth } from '../components/DashboardHealth';
 import { DashboardRecentActivity } from '../components/DashboardRecentActivity';
+import { requestAndSaveFcmToken } from '@/shared/utils/fcm';
 
 export const Dashboard = () => {
   const { activeOrganization, loading } = useOrganizationstore();
   const { metrics, sectionStatus } = useDashboard();
+
+  useEffect(() => {
+    requestAndSaveFcmToken();
+  }, []);
+
+  // console.log("Loaded Project ID:", firebaseConfig.projectId);
 
   if (loading) {
     return (

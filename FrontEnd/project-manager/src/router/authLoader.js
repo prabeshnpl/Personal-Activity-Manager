@@ -13,9 +13,6 @@ export const authLoader = async () => {
   if (!useAuthStore.getState().isAuthenticated) {
     throw redirect("/login");
   }
-  // else if (useAuthStore.getState().isAuthenticated) {
-  //   throw redirect("/");
-  // }
 
   return null;
 };

@@ -26,6 +26,7 @@ urlpatterns = [
     path("api/v1/", include("roadmap.urls")),
     path("api/v1/finance/", include("finance.urls")),
     path("api/v1/", include("tasks.urls")),
+    path("api/v1/", include("notification.urls")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -12,6 +12,7 @@ class NotificationEntity:
         message: str,
         source_type: str,
         source_id: int,
+        is_read: bool,
         created_at: Optional[datetime] = None,
     ):
         self.id = id
@@ -23,6 +24,7 @@ class NotificationEntity:
         self.source_type = source_type
         self.source_id = source_id
         self.created_at = created_at
+        self.is_read = is_read
 
     def __str__(self):
         return self.title

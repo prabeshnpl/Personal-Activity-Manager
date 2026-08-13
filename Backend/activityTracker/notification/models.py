@@ -35,6 +35,8 @@ class Notification(models.Model):
     source_type = models.CharField(max_length=64)
     source_id = models.PositiveIntegerField()
 
+    is_read = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

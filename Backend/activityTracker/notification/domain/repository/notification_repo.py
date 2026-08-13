@@ -13,7 +13,11 @@ class NotificationRepository(ABC):
         pass
 
     @abstractmethod
-    def update_notification(self, id: int, data: dict) -> Optional[NotificationEntity]:
+    def mark_as_read_notification(self, user_id:int, organization:int) -> Optional[NotificationEntity]:
+        pass
+
+    @abstractmethod
+    def mark_all_as_read_notification(self,  user_id:int, organization:int) -> Optional[NotificationEntity]:
         pass
 
     @abstractmethod
