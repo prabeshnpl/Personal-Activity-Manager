@@ -1,7 +1,8 @@
+from notification.models import Notification
 from notification.adapter.serializers.notification_serializer import NotificationSerializer
 from notification.domain.usecase.notification_usecase import (
     ClearReadNotificationUsecase, DeleteNotificationUseCase, ListNotificationsUseCase, 
-    MarkAllAsReadNotificationUseCase, MarkAsReadNotificationUseCase
+    MarkAllAsReadNotificationUseCase, MarkAsReadNotificationUseCase, UnreadCountNotificationUsecase
 )
 from notification.data.db.notification_repo_impl import NotificationRepositoryImpl
 from utils.tenantViewsets import BaseTenantModelViewSet
@@ -18,21 +19,34 @@ class NotificationViewet(BaseTenantModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = NotificationSerializer
     pagination_class = CustomPageNumberPagination
+    queryset = Notification.objects.all()
 
     def list(self, request, *args, **kwargs):
         usecase = ListNotificationsUseCase(repo=self.repository())
+
         search_params = {k: v[0] if isinstance(v, list) else v for k, v in request.query_params.items()}
         search_params['user'] = request.user
         search_params['organization'] = request.organization
-        response, status_code = usecase.execute(search_params=search_params)
 
-        serializer = self.get_serializer(response, many=True)
+        response, status_code = usecase.execute(search_params=search_params)
 
         if status_code!=200:
             return Response(response, status=int(status_code))
-       
-        return Response(serializer.data, status=int(status_code))
+        
+        page = self.paginate_queryset(response)
 
+        serializer = self.get_serializer(
+            page, many=True,
+            context={
+                "timezone": request.headers.get("X-Timezone"), 
+                "request":request
+            }
+        )
+
+        response = self.get_paginated_response(serializer.data)
+        response.data['count'] = len(entities)
+        return response
+       
     def destroy(self, request, *args, **kwargs):
 
         usecase = DeleteNotificationUseCase(repo=self.repository())
@@ -86,3 +100,17 @@ class NotificationViewet(BaseTenantModelViewSet):
         response, status_code = usecase.execute(data=data)
 
         return Response(data=response, status=status_code)
+
+    @action(methods=['POST'], detail=False, url_path="unread-count")
+    def unread_count(self, request, *args, **kwargs):
+        data = {
+            "organization_id":request.organization.id,
+            "user_id":request.user.id
+        }
+
+        usecase = UnreadCountNotificationUsecase(repo=self.repository())
+
+        response, status_code = usecase.execute(data=data)
+
+        return Response(data=response, status=status_code)
+    

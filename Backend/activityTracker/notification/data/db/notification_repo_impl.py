@@ -31,7 +31,11 @@ class NotificationRepositoryImpl(NotificationRepository):
     def mark_as_read_notification(self, id:int, user_id:int, organization_id:int) -> Optional[NotificationEntity]:
         try:
 
-            instance =  Notification.objects.filter(id=id, recipient_id=user_id, organization_id=organization_id).first()
+            instance =  Notification.objects.filter(
+                id=id, 
+                recipient_id=user_id, 
+                organization_id=organization_id
+            ).first()
 
             if not instance:
                 return ("Invalid notification id", 400)
@@ -61,9 +65,23 @@ class NotificationRepositoryImpl(NotificationRepository):
         except Exception as e:
             return (f"Error : {str(e)}", 500)
 
+    def unread_notification_count(self, user_id:int, organization_id:int):
+        try:
+            count = Notification.objects.filter(recepient_id=user_id, organization_id=organization_id, is_read=False)
+            response = {
+                "count": count,
+            }
+            return (response, 200)
+        except Exception as e:
+            return (f"Error : {str(e)}", 500)
+
     def clear_read_notification(self, user_id:int, organization_id:int):
         try:
-            count, _ = Notification.objects.filter(recepient_id=user_id, organization_id=organization_id).delete()
+            count, _ = Notification.objects.filter(
+                recepient_id=user_id, 
+                organization_id=organization_id, 
+                is_read=True
+            ).delete()
             response = {
                 "deleted_count": count,
                 "message": "Read notifications cleared"

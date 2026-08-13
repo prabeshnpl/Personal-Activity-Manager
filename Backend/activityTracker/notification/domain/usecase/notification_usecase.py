@@ -51,6 +51,16 @@ class ClearReadNotificationUsecase:
             organization_id=data.get('organization_id')
         )
 
+class UnreadCountNotificationUsecase:
+    def __init__(self, repo: NotificationRepository):
+            self.repo = repo
+    
+    def execute(self, data: dict) -> Optional[tuple[dict, int]]:
+        return self.repo.unread_notification_count(
+            user_id=data.get('user_id'), 
+            organization_id=data.get('organization_id')
+        )
+
 class DeleteNotificationUseCase:
     def __init__(self, repo: NotificationRepository):
         self.repo = repo
