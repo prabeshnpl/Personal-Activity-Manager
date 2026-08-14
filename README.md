@@ -43,16 +43,17 @@ For Example:
 
 ## Backup Postgres-db
 ```
-docker run --rm `
--v postgres_data:/volume `
--v ${pwd}:/backup `
-ubuntu `
-tar czf /backup/backup.tar.gz /volume
+docker exec -t postgres-db pg_dumpall -U admin > backup_all.sql
 ```
 
 ## Restore db
 ```
-docker run --rm -v postgres_data:/volume -v ${PWD}:/backup ubuntu tar xzf /backup/backup.tar.gz -C /volume
+docker exec -i postgres-db psql -U new_admin -d postgres < backup_all.sql
+```
+
+## If backing up to different db
+```
+docker exec -it postgres17-db psql -U new_admin -c "CREATE DATABASE tracker(or db name);"
 ```
 
 ## Transfer from db.sqlite3 into postgres

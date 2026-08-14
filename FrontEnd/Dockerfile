@@ -46,15 +46,6 @@ RUN npm ci --legacy-peer-deps
 # Copy application source code
 COPY FrontEnd/project-manager/ ./
 
-# Build-time environment variable.
-# Vite injects variables prefixed with VITE_ into the frontend bundle.
-#
-# Example:
-# docker build --build-arg VITE_API_BASE_URL=https://api.example.com .
-#
-ARG VITE_API_BASE_URL="/api/v1"
-ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
-
 # Generate optimized static files into /app/dist
 RUN npm run build
 

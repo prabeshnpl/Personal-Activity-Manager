@@ -48,9 +48,9 @@ jobs:
           username: ${{ github.actor }} # Automatically grabs your GitHub username
           password: ${{ secrets.GITHUB_TOKEN }} # An automated, temporary password given by GitHub
 
-      - name: Create .env.backend file
+      - name: Create .env file
         run: |
-          cat > .env.backend << EOF
+          cat > .env << EOF
           POSTGRES_DB=${{ secrets.POSTGRES_DB }}
           POSTGRES_USER=${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}

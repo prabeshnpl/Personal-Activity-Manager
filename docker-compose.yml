@@ -16,14 +16,12 @@ services:
     networks:
       - my-network
     env_file:
-      - .env.backend
+      - .env
 
   frontend:
     build:
       context: .
       dockerfile: ./FrontEnd/Dockerfile
-      args:
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
     depends_on:
       - api
     networks:
@@ -34,11 +32,11 @@ services:
   postgres-db:
     image: postgres:18
     restart: unless-stopped
-    container_name: 'postgres-db'
+    container_name: "${DB_HOST}"
     volumes:
       - postgres_data:/var/lib/postgresql
     ports:
-      - 5432:5432
+      - ${DB_PORT}:5432
     networks:
       - my-network
     environment:

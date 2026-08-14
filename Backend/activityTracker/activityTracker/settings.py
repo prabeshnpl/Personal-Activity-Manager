@@ -100,8 +100,8 @@ DATABASES = {
         'NAME': os.getenv("POSTGRES_DB"),           # POSTGRES_DB in docker-compose
         'USER': os.getenv("POSTGRES_USER"),         # POSTGRES_USER in docker-compose
         'PASSWORD': os.getenv("POSTGRES_PASSWORD"), # POSTGRES_PASSWORD in docker-compose
-        'HOST': 'postgres-db',                      # SERVICE-NAME in docker-compose.yml
-        'PORT': '5432',                             # Default Postgres port
+        'HOST': os.getenv("DB_HOST"),                      # SERVICE-NAME in docker-compose.yml
+        'PORT': os.getenv("DB_PORT"),                             # Default Postgres port
     }
 }
 if os.getenv('ENVIRONMENT') == 'testing':
