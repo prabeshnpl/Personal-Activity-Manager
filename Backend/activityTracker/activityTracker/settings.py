@@ -231,11 +231,16 @@ REST_FRAMEWORK = {
 
 # FCM configuration
 
-import firebase_admin  # type: ignore
-from firebase_admin import credentials # type: ignore
+FIREBASE_SERVICE_ACCOUNT_KEY = os.getenv('FIREBASE_SERVICE_ACCOUNT_KEY')
 
-cred = credentials.Certificate(json.loads(os.getenv('FIREBASE_SERVICE_ACCOUNT_KEY')))
-FIREBASE_APP = firebase_admin.initialize_app(cred)
+if os.getenv('ENVIRONMENT') != 'testing' and FIREBASE_SERVICE_ACCOUNT_KEY:
+    import firebase_admin  # type: ignore
+    from firebase_admin import credentials # type: ignore
+
+    cred = credentials.Certificate(json.loads(FIREBASE_SERVICE_ACCOUNT_KEY))
+    FIREBASE_APP = firebase_admin.initialize_app(cred)
+else:
+    FIREBASE_APP = None
 
 FCM_DJANGO_SETTINGS = {
     "DEFAULT_FIREBASE_APP": FIREBASE_APP,

@@ -31,7 +31,8 @@ jobs:
         run: python Backend/activityTracker/manage.py test
         env:
           ENVIRONMENT: testing
-          PYTHONPATH: Backend/activityTracker # If this fails, the whole pipeline stops right here!
+          PYTHONPATH: Backend/activityTracker
+          FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
 
   # JOB 2: Continuous Deployment (Build & Ship)
   build-and-ship:
