@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 from corsheaders.defaults import default_headers
-import os
+import os, json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -234,7 +234,7 @@ REST_FRAMEWORK = {
 import firebase_admin  # type: ignore
 from firebase_admin import credentials # type: ignore
 
-cred = credentials.Certificate(os.path.join(BASE_DIR, 'firebase/serviceAccountKey.json'))
+cred = credentials.Certificate(json.loads(os.getenv('FIREBASE_SERVICE_ACCOUNT_KEY')))
 FIREBASE_APP = firebase_admin.initialize_app(cred)
 
 FCM_DJANGO_SETTINGS = {

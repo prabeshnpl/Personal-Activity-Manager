@@ -7,6 +7,8 @@ env/
 # Dependencies
 node_modules/
 .env
+.env.backend
+.env.frontend
 
 # Logs
 logs

@@ -16,7 +16,7 @@ services:
     networks:
       - my-network
     env_file:
-      - .env
+      - .env.backend
 
   frontend:
     build:
@@ -28,6 +28,8 @@ services:
       - api
     networks:
       - my-network
+    env_file:
+      - .env.frontend
 
   postgres-db:
     image: postgres:18
