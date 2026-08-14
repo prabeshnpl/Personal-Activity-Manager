@@ -19,7 +19,7 @@
         - `echo "YOUR_GITHUB_TOKEN" | docker login ghcr.io -u prabeshnpl --password-stdin`
 
     3. Start the app
-        - `docker compose up -d`
+        - `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d`
 
 
 # Pull repo from Github and run
@@ -27,19 +27,6 @@
 - Development(default loads override): 
     - `docker compose up`
     - `docker compose down`
-- Production: 
-    - `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d`
-    - `docker-compose -f docker-compose.yml -f docker-compose.prod.yml down`
-
-This is because `-f` is used to define which compose file to execute.
-
-For Example: 
-
-- This docker-compose will be overrided by override.yml since it comes later. 
-    - `docker compose -f docker-compose.yml docker-compose.override.yml up`
-
-- This override.yml will be overrided by docker-compose since it comes later. 
-    - `docker compose -f docker-compose.override.yml up docker-compose.yml `
 
 ## Backup Postgres-db
 ```

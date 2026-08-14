@@ -13,6 +13,8 @@ services:
       redis:
         condition: service_started
         required: true
+    volumes:
+      - ./staticfiles:/vol/web/static
     networks:
       - my-network
     env_file:

@@ -60,4 +60,8 @@ EXPOSE 8000
 
 # Create a non-root user For better security:
 RUN adduser --disabled-password appuser
+
+# Create static files directory that appuser can access
+RUN mkdir -p /vol/web/static && chown -R appuser:appuser /vol/web
+
 USER appuser
