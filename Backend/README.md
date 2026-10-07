@@ -15,7 +15,7 @@
         - `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d`
 
 # Pull repo from Github and run
-
+- First restore the data if needed. Command is provided below.
 - Development(default loads override): 
     - `docker compose up`
     - `docker compose down`
@@ -38,13 +38,14 @@ git checkout v1.0.0
 ```
 
 ## Backup Postgres-db
+- Run it strictly on `git bash` or `cmd` not in `powershell`
 ```
 docker exec -t postgres-db pg_dumpall -U admin > backup_all.sql
 ```
 
 ## Restore db
 ```
-docker exec -i postgres-db psql -U new_admin -d postgres < backup_all.sql
+docker exec -i postgres-db psql -U admin -d postgres < backup_all.sql
 ```
 
 ## If backing up to different db

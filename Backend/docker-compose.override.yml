@@ -5,4 +5,4 @@ services:
     container_name: 'api-dev'
     restart: always
     volumes:
-      - ./Backend/activityTracker:/app
+      - .:/app

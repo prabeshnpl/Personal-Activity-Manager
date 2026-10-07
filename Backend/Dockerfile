@@ -12,14 +12,14 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy dependency files into container
-COPY Backend/activityTracker/requirements.txt ./
+COPY requirements.txt .
 
 # Install Python dependencies.
 # --no-cache-dir reduces image size by removing pip cache.
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the Django application source code.
-COPY Backend/activityTracker/ ./
+COPY . /app
 
 # Reduces unnecessary .pyc file generation inside containers.
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -33,6 +33,7 @@ ENV PYTHONUNBUFFERED=1
 # -----------------------------------------------------------------------------
 # Typical usage:
 # docker build --target development -t activity-tracker-dev .
+# or build:target:development in compose-file
 # -----------------------------------------------------------------------------
 FROM base AS development
 
@@ -49,6 +50,7 @@ EXPOSE 8000
 #
 # Typical usage:
 # docker build --target production -t activity-tracker-prod .
+# or build:target:production in compose-file
 # -----------------------------------------------------------------------------
 FROM base AS production
 
