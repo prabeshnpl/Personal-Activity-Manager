@@ -20,17 +20,6 @@ services:
     env_file:
       - .env
 
-  frontend:
-    build:
-      context: .
-      dockerfile: ./FrontEnd/Dockerfile
-    depends_on:
-      - api
-    networks:
-      - my-network
-    env_file:
-      - .env.frontend
-
   postgres-db:
     image: postgres:18
     restart: unless-stopped

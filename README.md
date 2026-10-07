@@ -1,26 +1,18 @@
 # Pull image from GHCR and run directly
 - Pull (If public):
-    1. Create docker-compose.yml file
-        ```
-        version: '3.8'
-
-        services:
-        frontend:
-            image: ghcr.io/your-github-username/tracker-frontend:latest
-            ports:
-            - "80:80"
-
-        backend:
-            image: ghcr.io/your-github-username/tracker-backend:latest
-            ports:
-            - "8000:8000"
-        ```       
-    2. Log into GHCR(if private)
+     
+    1. Log into GHCR(if private)
         - `echo "YOUR_GITHUB_TOKEN" | docker login ghcr.io -u prabeshnpl --password-stdin`
-
+    2. Create docker-compose.yml file
+        ```
+        services:
+            backend:
+                image: ghcr.io/your-github-username/tracker-backend:latest
+                ports:
+                    - "8000:8000"
+        ```          
     3. Start the app
         - `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d`
-
 
 # Pull repo from Github and run
 
@@ -28,7 +20,7 @@
     - `docker compose up`
     - `docker compose down`
 
-# Create or Checkoout specific version of the project using tag
+# Create or check-out specific version of the project using tag
 
 - Create and push a tag
 ```powershell
@@ -41,7 +33,7 @@ git push origin v1.0.0
 git clone https://github.com/username/repo.git
 cd repo
 git tag
-git show v1
+git tag -n v1
 git checkout v1.0.0
 ```
 

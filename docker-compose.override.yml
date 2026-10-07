@@ -6,20 +6,3 @@ services:
     restart: always
     volumes:
       - ./Backend/activityTracker:/app
-
-  frontend:
-    build:
-      context: .
-      dockerfile: ./FrontEnd/Dockerfile
-      target: development
-    container_name: 'frontend-dev'
-    restart: always
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./FrontEnd/project-manager:/app
-      - /app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-      - CHOKIDAR_INTERVAL=1000
-
