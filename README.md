@@ -40,6 +40,8 @@ git push origin v1.0.0
 ```powershell
 git clone https://github.com/username/repo.git
 cd repo
+git tag
+git show v1
 git checkout v1.0.0
 ```
 
