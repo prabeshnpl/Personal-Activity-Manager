@@ -28,6 +28,21 @@
     - `docker compose up`
     - `docker compose down`
 
+# Create or Checkoout specific version of the project using tag
+
+- Create and push a tag
+```powershell
+git tag -a v1.0.0 -m "Meta Data for the tag."
+git push origin v1.0.0
+```
+
+- Retrieve specific version
+```powershell
+git clone https://github.com/username/repo.git
+cd repo
+git checkout v1.0.0
+```
+
 ## Backup Postgres-db
 ```
 docker exec -t postgres-db pg_dumpall -U admin > backup_all.sql
