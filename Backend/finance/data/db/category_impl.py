@@ -17,7 +17,7 @@ class CategoryRepositoryImpl(CategoryRepository):
         
     def create_category(self, data: dict, organization:int, role:str) -> CategoryEntity | Response:
         try:
-            if data.get('category_type') not in ['income', 'expense', 'loan_given', 'loan_taken', 'transfer']:
+            if data.get('category_type') not in ['income', 'expense', 'liabilities', 'assets', 'transfer']:
                 return Response({'detail':"Invalid category_type"}, status=400)
             
             category = Category.objects.create(**data)

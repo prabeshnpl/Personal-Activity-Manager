@@ -17,6 +17,10 @@ class TransactionSerializer(serializers.ModelSerializer):
             'id':instance.account.id,
             'name':instance.account.name
         } if instance.account else {}
+        rep['to_account'] = {
+            'id':instance.to_account.id,
+            'name':instance.to_account.name
+        } if instance.to_account else {}
         
         return rep
     

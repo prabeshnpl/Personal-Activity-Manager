@@ -45,22 +45,31 @@ class TransactionRepositoryImpl(TransactionRepository):
         
     def create_transaction(self, data: dict, organization:int, role:str) -> TransactionEntity | Response:
         try:
-            with transaction.atomic(): # type: ignore
-                if data.get('transaction_type') not in ['income', 'expense']:
+            with transaction.atomic(): 
+                transaction_type = data.get('transaction_type')
+                if transaction_type not in ['income', 'expense', 'liabilities', 'assets', 'transfer']:
                     return Response({'detail':"Invalid transaction_type"}, status=400)
 
                 account = data.get('account')
-                if data.get('transaction_type')=='expense' and account.balance < data.get("amount"): # type: ignore
+
+                if transaction_type != "transfer":
+                    data["to_account"] = None
+
+                if data.get('transaction_type') in ['expense', 'transfer'] and account.balance < data.get("amount"): 
                     return Response({'detail':'Not enough money in this account'}, status=400)
 
                 _transaction = Transaction(**data)
 
-                if _transaction.transaction_type == 'income':
+                if transaction_type == 'income':
                     _transaction.account.balance += _transaction.amount
                     _transaction.account.save()
-                else:
+                elif transaction_type == 'expense':
                     _transaction.account.balance -= _transaction.amount
                     _transaction.account.save()
+                elif transaction_type == 'transfer':
+                    _transaction.account.balance -= _transaction.amount
+                    _transaction.to_account.balance += _transaction.amount
+                    _transaction.account.save()                    
 
                 remaining_balance = _transaction.account.balance
                 _transaction.remaining_balance = remaining_balance
@@ -116,6 +125,7 @@ class TransactionRepositoryImpl(TransactionRepository):
             id=obj.id, # type: ignore
             organization=obj.organization,
             account=obj.account,
+            to_account=obj.to_account,
             transaction_type=obj.transaction_type,    
             category=obj.category,      
             created_by = obj.created_by,  

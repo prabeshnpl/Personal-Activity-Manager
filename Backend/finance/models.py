@@ -36,8 +36,8 @@ class Category(models.Model):
     CATEGORY_TYPE_CHOICES = (
         ('income', 'Income'),
         ('expense', 'Expense'),
-        ('loan-taken', 'LOAN-TAKEN'),
-        ('loan-given', 'LOAN-GIVEN'),
+        ('assets', 'ASSETS'),
+        ('liabilities', 'LIABILIIES'),
         ('transfer', 'Transfer'),
     )
 
@@ -68,6 +68,9 @@ class Transaction(models.Model):
     TRANSACTION_TYPE_CHOICES = (
         ('income', 'Income'),
         ('expense', 'Expense'),
+        ('assets', 'ASSETS'),
+        ('liabilities', 'LIABILIIES'),
+        ('transfer', 'Transfer'),
     )
 
     organization = models.ForeignKey(
@@ -80,6 +83,14 @@ class Transaction(models.Model):
         Account,
         related_name="transactions",
         on_delete=models.PROTECT
+    )
+
+    to_account = models.ForeignKey(
+        Account,
+        related_name="transfer_transactions",
+        on_delete=models.PROTECT,
+        blank=True, 
+        null=True
     )
 
     category = models.ForeignKey(
