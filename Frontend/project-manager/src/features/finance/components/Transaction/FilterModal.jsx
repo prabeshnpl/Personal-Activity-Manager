@@ -23,7 +23,7 @@ const FilterModal = ({
               onChange={(e) =>
                 setFilters({ ...filters, type: e.target.value || null })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2  focus:ring-blue-500"
             >
               <option value="">All</option>
               <option value="income">Income</option>
