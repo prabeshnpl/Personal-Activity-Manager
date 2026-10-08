@@ -27,12 +27,6 @@ export function useTransaction() {
     );
   };
 
-  const categories = useQuery({
-    queryKey: ["finance", "categories"],
-    queryFn:  () => financeService.getCategories(),
-    retry: false
-  });
-
   // Transaction Mutations
   const createTransaction = useMutation({
     mutationFn: financeService.createTransaction,
@@ -80,7 +74,6 @@ export function useTransaction() {
 
   return {
     // Data
-    categories: categories,
     accounts: accounts,
     useInfiniteTransactions,
 

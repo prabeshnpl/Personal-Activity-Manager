@@ -1,15 +1,14 @@
 import React, { useRef, useState } from 'react';
 import { TabPanel } from '../../../../shared/components/tabs/Tabs';
 import { CategoryManager } from '../Category/CategoryManager';
-import { AccountManager } from '../Account/AccountManager';
+import { AccountPage } from '../Account/AccountPage';
 import { Button } from '../../../../shared/components/Button';
 import { Plus } from 'lucide-react';
 
-const FinanceSettings = () => {
+export const FinanceSettings = () => {
 
     const [activeTab, setActiveTab] = useState('account');
     const categoryAddActionRef = useRef(null);
-    const accountAddActionRef = useRef(null);
 
     const tabs = [
         {
@@ -21,16 +20,6 @@ const FinanceSettings = () => {
         label: 'Category'
         },
     ];
-
-    const addButtonConfig = activeTab === 'category'
-      ? {
-          label: 'Add Category',
-          onClick: () => categoryAddActionRef.current?.(),
-        }
-      : {
-          label: 'Add Account',
-          onClick: () => accountAddActionRef.current?.(),
-        };
 
     return (
         <div className='h-full flex flex-col overflow-hidden'>
@@ -58,23 +47,25 @@ const FinanceSettings = () => {
                   );
                 })}
               </nav>
-              <Button 
-                size="sm" 
-                onClick={addButtonConfig.onClick} 
-                className="h-10 px-2 py-1 text-xs inline-flex items-center shrink-0 whitespace-nowrap"
-              >                
-                <span className="inline-flex items-center gap-1">
-                  <Plus className="h-3.5 w-3.5" />
-                  {addButtonConfig.label}
-                </span>
-              </Button>
+              {activeTab === 'category' && (
+                <Button
+                  size="sm"
+                  onClick={() => categoryAddActionRef.current?.()}
+                  className="h-10 px-2 py-1 text-xs inline-flex items-center shrink-0 whitespace-nowrap"
+                >
+                  <span className="inline-flex items-center gap-1">
+                    <Plus className="h-3.5 w-3.5" />
+                    Add Category
+                  </span>
+                </Button>
+              )}
             </div>
 
             <div className='mt-4 flex-1 min-h-0 overflow-hidden'>
 
                 <TabPanel isActive={activeTab === 'account'}>
                   <div className="h-full overflow-y-auto pr-1">
-                    <AccountManager addActionRef={accountAddActionRef} />
+                    <AccountPage />
                   </div>
                 </TabPanel>
 

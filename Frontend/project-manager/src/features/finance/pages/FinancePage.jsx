@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { FinanceDashboard } from '../components/Dashboard/FinanceDashboard';
 import { TransactionsList } from '../components/Transaction/TransactionsList';
 import { Tabs, TabPanel } from '../../../shared/components/tabs/Tabs';
-import { BarChart3, List, PieChart, Settings } from 'lucide-react';
-import FinanceSettings from '../components/Settings/FinanceSettings';
+import { BarChart3, List, PieChart, Settings, Building2 } from 'lucide-react';
+import { FinanceSettings } from '../components/Settings/FinanceSettings';
 import { ReportsPage } from '../components/Report/ReportsPage';
+import { AccountPage } from '../components/Account/AccountPage';
 
 export const FinancePage = () => {
 
@@ -26,6 +27,11 @@ export const FinancePage = () => {
       id: 'reports',
       label: 'Reports',
       icon: PieChart,
+    },
+    {
+      id: 'accounts',
+      label: 'Accounts',
+      icon: Building2,
     },
     {
       id: 'settings',
@@ -51,6 +57,10 @@ export const FinancePage = () => {
 
           <TabPanel isActive={activeTab === 'reports'}>
             <ReportsPage />
+          </TabPanel>
+
+          <TabPanel isActive={activeTab === 'accounts'}>
+            <AccountPage />
           </TabPanel>
 
           <TabPanel isActive={activeTab === 'settings'}>

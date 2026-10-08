@@ -10,6 +10,7 @@ import FilterModal from './FilterModal';
 import ErrorState from '../../../../shared/components/Error/ErrorState';
 import SearchBar from '../../../../shared/components/Search/SearchBar';
 import { useTransaction } from '../../hooks/useTransaction';
+import { useCategory } from '../../hooks/useCategory';
 
 export const TransactionsList = () => {
   const {
@@ -19,10 +20,11 @@ export const TransactionsList = () => {
     deleteTransaction,
     filters,
     setFilters,
-    categories,
     accounts,
     exportTransactions,
   } = useTransaction();
+
+  const { categories, createCategory, updateCategory, deleteCategory, categoryBreakdown } = useCategory();
 
   const infiniteTransactions = useInfiniteTransactions();
   const [showAddModal, setShowAddModal] = useState(false);
@@ -88,6 +90,7 @@ export const TransactionsList = () => {
               <Filter className="h-4 w-4" />
               <span className="hidden sm:inline ml-2">Filter</span>
             </Button>
+
             <Button
               size="sm"
               variant="ghost"
@@ -97,6 +100,7 @@ export const TransactionsList = () => {
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline ml-2">Export</span>
             </Button>
+
             <Button size="sm" onClick={() => setShowAddModal(true)} className="flex items-center">
               <Plus className="h-6 w-6" />
               <span className="hidden md:inline ml-2">Add</span>
@@ -148,6 +152,11 @@ export const TransactionsList = () => {
         <AddTransactionModal
           onClose={() => setShowAddModal(false)}
           onCreate={createTransaction}
+          categories={categories}
+          createCategory={createCategory}
+          updateCategory={updateCategory}
+          deleteCategory={deleteCategory}
+          accounts={accounts}
         />
       )}
     </div>

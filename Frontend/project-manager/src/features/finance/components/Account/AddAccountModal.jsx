@@ -46,7 +46,6 @@ export const AddAccountModal = ({ account, onClose, onCreate, onUpdate }) => {
       }
       onClose();
     } catch (err) {
-      onClose();
       setError(err.message || `Failed to ${isEditing ? 'update' : 'create'} account`);
     } finally {
       setLoading(false);

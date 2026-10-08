@@ -14,6 +14,7 @@ export const Button = ({
   
   const variants = {
     primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
+    semi_primary: 'bg-blue-100 text-gray-600 hover:bg-blue-200 focus:ring-blue-400',
     secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-500',
     danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
     ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
@@ -31,7 +32,7 @@ export const Button = ({
   return (
     <button
       type={type}
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${disabledStyles} ${className}`}
+      className={`${className} ${baseStyles} ${variants[variant]} ${sizes[size]} ${disabledStyles}`}
       onClick={onClick}
       disabled={isDisabled}
       {...props}
