@@ -9,10 +9,11 @@ export const useOrganizationStore = create(
 
       setOrganizations: (orgs) => {
         const currentActive = get().activeOrganization;
+        const activeOrganization =
+          orgs.find((org) => org.id === currentActive?.id) || orgs[0] || null;
         set({
           organizations: orgs,
-          // If no active org, set first one (personal org)
-          activeOrganization: currentActive || orgs[0] || null,
+          activeOrganization,
         });
       },
 
